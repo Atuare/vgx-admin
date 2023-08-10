@@ -1,0 +1,45 @@
+:root {
+  --neutral-1: "#B3B3B3"
+  --neutral-2: "#E3DBDB"
+  --neutral-3: "#FFFFFF"
+  --neutral-4: "#000000"
+
+  --primary-1: "#001866"
+  --primary-2: "#123CA6"
+  --primary-3: "#0A8CF7"
+  --primary-4: "#31DE90"
+
+  --secondary-1: "#5212A6"
+  --secondary-2: "#7712C4"
+  --secondary-3: "#5F33FF"
+  --secondary-4: "#0A8CF7"
+  --secondary-5: "#31DE90"
+  --secondary-6: "#F9DE4A"
+  --secondary-7: "#FF9012"
+  --secondary-8: "#ED34D1"
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+input,
+button {
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
