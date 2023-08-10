@@ -1,22 +1,22 @@
 :root {
-  --neutral-1: "#B3B3B3"
-  --neutral-2: "#E3DBDB"
-  --neutral-3: "#FFFFFF"
-  --neutral-4: "#000000"
+  --neutral-1: #b3b3b3;
+  --neutral-2: #e3dbdb;
+  --neutral-3: #ffffff;
+  --neutral-4: #000000;
 
-  --primary-1: "#001866"
-  --primary-2: "#123CA6"
-  --primary-3: "#0A8CF7"
-  --primary-4: "#31DE90"
+  --primary-1: #001866;
+  --primary-2: #123ca6;
+  --primary-3: #0a8cf7;
+  --primary-4: #31de90;
 
-  --secondary-1: "#5212A6"
-  --secondary-2: "#7712C4"
-  --secondary-3: "#5F33FF"
-  --secondary-4: "#0A8CF7"
-  --secondary-5: "#31DE90"
-  --secondary-6: "#F9DE4A"
-  --secondary-7: "#FF9012"
-  --secondary-8: "#ED34D1"
+  --secondary-1: #5212a6;
+  --secondary-2: #7712c4;
+  --secondary-3: #5f33ff;
+  --secondary-4: #0a8cf7;
+  --secondary-5: #31de90;
+  --secondary-6: #f9de4a;
+  --secondary-7: #ff9012;
+  --secondary-8: #ed34d1;
 }
 
 * {
@@ -39,6 +39,20 @@ button {
   border: none;
   outline: none;
   background: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+b,
+small {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
