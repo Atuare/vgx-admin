@@ -1,0 +1,33 @@
+.button {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  box-shadow: 0px 5px 20px 0px #00000033;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.5s all cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.primary {
+  background: var(--primary-4);
+  color: var(--primary-1);
+  &:hover {
+    background: var(--hover-primary-4);
+  }
+}
+
+.secondary {
+  background: var(--primary-3);
+  color: var(--neutral-3);
+  &:hover {
+    background: var(--hover-primary-3);
+  }
+}
+
+.pressed:not(.secondary) {
+  background: var(--pressed-primary-4);
+}
+.pressed:not(.primary) {
+  background: var(--pressed-primary-3);
+}
