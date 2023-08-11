@@ -1,0 +1,51 @@
+.item {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    svg {
+      width: 24px;
+      height: 24px;
+
+      path {
+        fill: var(--primary-1);
+      }
+    }
+
+    p {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-1);
+      text-transform: uppercase;
+    }
+  }
+
+  &.active {
+    background: var(--primary-1);
+
+    .item__button {
+      svg {
+        path {
+          fill: var(--neutral-3);
+        }
+      }
+
+      p {
+        color: var(--neutral-3);
+      }
+    }
+  }
+}

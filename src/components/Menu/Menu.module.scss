@@ -1,0 +1,30 @@
+.sidebar {
+  width: 16%;
+  height: 100vh;
+  padding: 32px 16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+
+  &__title {
+    padding: 16px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary-1);
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}
