@@ -151,7 +151,7 @@ export function Settings() {
   );
 }
 
-export function ChevronLeft() {
+export function ChevronDown() {
   return (
     <svg
       width="24"

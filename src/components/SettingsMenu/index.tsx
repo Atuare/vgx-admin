@@ -1,4 +1,4 @@
-import { ChevronLeft } from "@/assets/Icons";
+import { ChevronDown } from "@/assets/Icons";
 import styles from "./SettingsMenu.module.scss";
 import { ReactNode } from "react";
 
@@ -18,7 +18,7 @@ export function SettingsMenu({
       <button className={styles.item__button}>
         {icon}
         <p>{title}</p>
-        <ChevronLeft />
+        <ChevronDown />
       </button>
     </li>
   );
