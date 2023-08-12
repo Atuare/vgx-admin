@@ -2,6 +2,7 @@
   --neutral-1: #b3b3b3;
   --neutral-2: #e3dbdb;
   --neutral-3: #ffffff;
+  --hover-neutral-3: #e6e6e6;
   --neutral-4: #000000;
 
   --primary-1: #001866;
@@ -60,4 +61,24 @@ small {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+}
+
+::placeholder {
+  color: var(--neutral-1);
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: var(--neutral-1);
+}
+
+::-ms-input-placeholder {
+  color: var(--neutral-1);
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
 }
