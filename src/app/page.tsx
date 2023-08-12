@@ -22,6 +22,8 @@ export default function Home() {
           <AdmProfile image={Avatar} name="Nome perfil" role="Função" />
         </div>
       </header>
+
+      <HomeData />
     </div>
   );
 }
