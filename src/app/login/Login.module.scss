@@ -56,6 +56,12 @@
         padding-inline: 16px;
         background: var(--neutral-3);
         box-shadow: 0px 5px 20px 0px #00000033;
+
+        transition: 0.04s all ease-in-out;
+
+        &:focus {
+          border: 2px solid var(--primary-2);
+        }
       }
     }
 
