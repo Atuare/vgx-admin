@@ -1,0 +1,43 @@
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  position: relative;
+
+  img {
+    border-radius: 50%;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    h3 {
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--neutral-4);
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--neutral-4);
+    }
+  }
+
+  svg {
+    cursor: pointer;
+
+    transition: 0.5s all cubic-bezier(0.19, 1, 0.22, 1);
+
+    &.active {
+      transform: rotate(180deg);
+    }
+
+    path {
+      fill: var(--neutral-4);
+    }
+  }
+}
