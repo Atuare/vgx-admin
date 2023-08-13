@@ -4,6 +4,7 @@ import styles from "./Home.module.scss";
 import { AdmProfile } from "@/components/AdmProfile";
 import { HomeData } from "@/components/HomeData";
 import Avatar from "@/assets/avatar.png";
+import { Calendar } from "@/components/Calendar";
 
 export default function Home() {
   const date = dayjs(new Date()).format("dddd, DD MMM YYYY");
@@ -24,6 +25,7 @@ export default function Home() {
       </header>
 
       <HomeData />
+      <Calendar />
     </div>
   );
 }
