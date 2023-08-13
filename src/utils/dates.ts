@@ -41,8 +41,11 @@ export const handleNextDate = (month: number, year: number) => {
   const incrementMonth = month !== 11 ? month + 1 : 0;
 
   // Se o ano for igual ao atual e o mês for igual a Dezembro, mantém o mês em Dezembro, senão, incrementa o mês
-  const newMonth =
+  let newMonth =
     year === new Date().getFullYear() && month === 11 ? 11 : incrementMonth;
+
+  const isSameMonth = month === new Date().getMonth();
+  if (isSameMonth) newMonth = month;
 
   return {
     newYear,

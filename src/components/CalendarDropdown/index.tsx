@@ -41,6 +41,10 @@ export function CalendarDropdown({
               <button
                 key={crypto.randomUUID()}
                 onClick={() => handleChangeMonth(index)}
+                disabled={
+                  index > new Date().getMonth() &&
+                  year === new Date().getFullYear()
+                }
                 className={`${index === month ? styles.active : ""}`}
               >
                 <Check />
@@ -51,6 +55,10 @@ export function CalendarDropdown({
               <button
                 key={crypto.randomUUID()}
                 onClick={() => handleChangeYear(item)}
+                disabled={
+                  month > new Date().getMonth() &&
+                  item === new Date().getFullYear()
+                }
                 className={`${item === year ? styles.active : ""}`}
               >
                 <Check />
