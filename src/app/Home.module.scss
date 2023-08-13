@@ -37,26 +37,6 @@
       display: flex;
       align-items: center;
       gap: 24px;
-
-      input {
-        width: 400px;
-        height: 56px;
-        border-radius: 8px;
-        color: var(--neutral-4);
-
-        font-weight: 400;
-        font-size: 17px;
-
-        background: var(--neutral-3);
-        box-shadow: 0px 5px 20px 0px #00000033;
-        padding-inline: 16px;
-
-        transition: 0.04s all ease-in-out;
-
-        &:focus {
-          border: 2px solid var(--primary-2);
-        }
-      }
     }
   }
 }
