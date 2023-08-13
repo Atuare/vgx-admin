@@ -123,12 +123,13 @@ function CalendarItem({
 
   const borderCondition =
     index !== 0 && ((index + 1) % 7 === 0 || index + 1 === length);
+  const radiusCondition = length > 35 ? 35 : 28;
 
   return (
     <div
       className={`${styles.calendar__item} ${isActive ? styles.active : ""}`}
       style={{
-        borderRadius: index === 28 ? "0 0 0 8px" : "",
+        borderRadius: index === radiusCondition ? "0 0 0 8px" : "",
         borderRight: borderCondition ? "1px solid #e8e8e8" : "",
       }}
     >
