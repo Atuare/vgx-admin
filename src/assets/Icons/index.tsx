@@ -274,3 +274,68 @@ export function ClearAll() {
     </svg>
   );
 }
+
+export function TriangleDown() {
+  return (
+    <svg
+      width="8"
+      height="4"
+      viewBox="0 0 8 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0.25 0L4 3.75L7.75 0H0.25Z" fill="#fff" />
+    </svg>
+  );
+}
+
+export function ArrowLeft() {
+  return (
+    <svg
+      width="8"
+      height="13"
+      viewBox="0 0 8 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.70492 1.91L6.29492 0.5L0.294922 6.5L6.29492 12.5L7.70492 11.09L3.12492 6.5L7.70492 1.91Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
+
+export function ArrowRight() {
+  return (
+    <svg
+      width="8"
+      height="13"
+      viewBox="0 0 8 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1.70492 0.5L0.294922 1.91L4.87492 6.5L0.294922 11.09L1.70492 12.5L7.70492 6.5L1.70492 0.5Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
+
+export function Check() {
+  return (
+    <svg
+      width="18"
+      height="14"
+      viewBox="0 0 18 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6.00003 11.17L1.83003 6.99997L0.410034 8.40997L6.00003 14L18 1.99997L16.59 0.589966L6.00003 11.17Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
