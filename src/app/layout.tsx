@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import "./globals.scss";
 import type { Metadata } from "next";
-import { Sora, Roboto } from "next/font/google";
+import { Sora, Roboto, Inter } from "next/font/google";
 import { Menu } from "@/components/Menu";
 
 const sora = Sora({
@@ -16,6 +16,11 @@ const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-roboto",
+});
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["500"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-br">
       <body
-        className={`${roboto.variable} ${sora.variable} `}
+        className={`${inter.variable} ${roboto.variable} ${sora.variable} `}
         style={{ display: pathname !== "/login" ? "flex" : "inherit" }}
       >
         {pathname !== "/login" && <Menu />}
