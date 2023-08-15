@@ -3,49 +3,39 @@
   height: 56px;
   border-radius: 8px;
   padding: 16px;
+  cursor: pointer;
+
   display: flex;
   align-items: center;
+  gap: 16px;
 
-  &__button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
+  svg {
+    min-width: 24px;
+    min-height: 24px;
+    path {
+      fill: var(--primary-1);
+    }
+  }
 
+  p {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary-1);
+    text-transform: uppercase;
     text-align: left;
-
-    cursor: pointer;
-
-    svg {
-      width: 24px;
-      height: 24px;
-
-      path {
-        fill: var(--primary-1);
-      }
-    }
-
-    p {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--primary-1);
-      text-transform: uppercase;
-    }
   }
 
   &.active {
     background: var(--primary-1);
 
-    .item__button {
-      svg {
-        path {
-          fill: var(--neutral-3);
-        }
+    svg {
+      path {
+        fill: var(--neutral-3);
       }
+    }
 
-      p {
-        color: var(--neutral-3);
-      }
+    p {
+      color: var(--neutral-3);
     }
   }
 }

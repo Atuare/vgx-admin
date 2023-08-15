@@ -18,6 +18,7 @@ import {
 } from "@/assets/Icons";
 import { MenuItem } from "../MenuItem";
 import { SettingsMenu } from "../SettingsMenu";
+import { configItems } from "@/utils/sidebar";
 
 const menuItems = [
   {
@@ -51,7 +52,7 @@ const menuItems = [
     icon: <ContentPaste />,
   },
   {
-    name: "Exames admissionais",
+    name: "Exames Admissionais",
     value: "/admission-exams",
     icon: <Hospital />,
   },
@@ -67,20 +68,24 @@ export function Menu() {
 
   return (
     <aside className={styles.sidebar}>
-      <Image alt="vgx logo" src={Logo} />
+      <div className={styles.sidebar__logo}>
+        <Image alt="vgx logo" src={Logo} />
+      </div>
 
       <nav className={styles.menu}>
         <h2 className={styles.sidebar__title}>Menu</h2>
         <ul className={styles.menu__list}>
-          {menuItems.map(item => (
+          {menuItems.map((item, index) => (
             <MenuItem
               icon={item.icon}
               title={item.name}
               value={item.value}
               active={pathname === item.value}
               key={crypto.randomUUID()}
+              index={index}
             />
           ))}
+
           <SettingsMenu
             icon={<Settings />}
             title="Configurações"
