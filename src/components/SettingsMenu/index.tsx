@@ -1,6 +1,9 @@
+import { ReactNode, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "@/assets/Icons";
+import { configItems } from "@/utils/sidebar";
 import styles from "./SettingsMenu.module.scss";
-import { ReactNode } from "react";
 
 interface SettingsMenuProps {
   title: string;
@@ -13,13 +16,38 @@ export function SettingsMenu({
   active = false,
   icon,
 }: SettingsMenuProps) {
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const pathname = usePathname();
+
   return (
-    <li className={`${styles.item} ${active ? styles.active : ""}`}>
-      <button className={styles.item__button}>
-        {icon}
-        <p>{title}</p>
-        <ChevronDown />
-      </button>
-    </li>
+    <div className={styles.settingsMenu}>
+      <li>
+        <button
+          className={`${styles.item} ${active ? styles.active : ""} ${
+            openDropdown ? styles.dropdown : ""
+          }`}
+          onClick={() => setOpenDropdown(prev => !prev)}
+        >
+          {icon}
+          <p>{title}</p>
+          <ChevronDown />
+        </button>
+      </li>
+      <ul className={styles.item__list}>
+        {openDropdown &&
+          configItems.map(item => (
+            <li key={crypto.randomUUID()}>
+              <Link
+                className={`${
+                  pathname.includes(item.path) ? styles.active : ""
+                }`}
+                href={item.path}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
+      </ul>
+    </div>
   );
 }

@@ -36,10 +36,17 @@
     align-items: center;
     gap: 40px;
 
-    svg {
-      cursor: pointer;
-      path {
-        fill: var(--primary-1);
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        cursor: pointer;
+
+        path {
+          fill: var(--primary-1);
+        }
       }
     }
   }

@@ -7,6 +7,7 @@ interface MenuItemProps {
   value: string;
   active?: boolean;
   icon: ReactNode;
+  index: number;
 }
 
 export function MenuItem({
@@ -14,13 +15,16 @@ export function MenuItem({
   active = false,
   icon,
   value,
+  index,
 }: MenuItemProps) {
   return (
-    <li className={`${styles.item} ${active ? styles.active : ""}`}>
+    <li>
       <Link href={value}>
-        <button className={styles.item__button}>
+        <button className={`${styles.item} ${active ? styles.active : ""}`}>
           {icon}
-          <p>{title}</p>
+          <p style={{ alignSelf: index === 6 ? "flex-start" : "flex-end" }}>
+            {title}
+          </p>
         </button>
       </Link>
     </li>
