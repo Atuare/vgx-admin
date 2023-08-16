@@ -25,7 +25,7 @@ export default function Login() {
           <input type="password" id="password" />
         </div>
 
-        <Button text="ENTRAR" type="primary" />
+        <Button text="ENTRAR" buttonType="primary" />
       </div>
     </div>
   );
