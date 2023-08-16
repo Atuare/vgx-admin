@@ -81,31 +81,4 @@
       grid-template-columns: repeat(7, 1fr);
     }
   }
-
-  &__item {
-    height: 193px;
-    padding: 12px;
-    border-bottom: 1px solid #e8e8e8;
-    border-left: 1px solid #e8e8e8;
-
-    div {
-      width: 45px;
-      height: 45px;
-      padding: 10px;
-
-      span {
-        font-family: var(--font-inter);
-        font-weight: 500;
-        font-size: 21px;
-        color: var(--neutral-2);
-      }
-    }
-
-    &.active {
-      div {
-        border: 1px solid var(--primary-1);
-        border-radius: 50%;
-      }
-    }
-  }
 }

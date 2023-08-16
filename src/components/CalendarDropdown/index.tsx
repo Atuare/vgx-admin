@@ -1,6 +1,5 @@
 import { useState } from "react";
 import styles from "./CalendarDropdown.module.scss";
-import "@/styles/scrollbar.scss";
 import { generateYears, months } from "@/utils/dates";
 import { Check, TriangleDown } from "@/assets/Icons";
 

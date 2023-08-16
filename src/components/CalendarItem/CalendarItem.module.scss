@@ -1,0 +1,35 @@
+.item {
+  height: 193px;
+  padding: 12px;
+  border-bottom: 1px solid #e8e8e8;
+  border-left: 1px solid #e8e8e8;
+  cursor: pointer;
+
+  div {
+    width: 45px;
+    height: 45px;
+    padding: 10px;
+    display: grid;
+    place-content: center;
+
+    span {
+      font-family: var(--font-inter);
+      font-weight: 500;
+      font-size: 21px;
+      color: var(--neutral-2);
+    }
+  }
+
+  &[data-state="selected"] {
+    div span {
+      color: var(--primary-1);
+    }
+  }
+
+  &.active {
+    div {
+      border: 1px solid var(--primary-1);
+      border-radius: 50%;
+    }
+  }
+}

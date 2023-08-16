@@ -11,14 +11,20 @@ import {
   months,
 } from "@/utils/dates";
 import dayjs from "dayjs";
+import { CalendarItem } from "../CalendarItem";
 
-export function Calendar() {
+interface CalendarProps {
+  handleToggleCalendarDate: (startDate: string, endDate: string) => void;
+}
+
+export function Calendar({ handleToggleCalendarDate }: CalendarProps) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [month, setMonth] = useState<number>(new Date().getMonth());
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [daysInMonth, setDaysInMonth] = useState<number[]>(
     getDaysInMonth(month, year),
   );
+  const [selectedDays, setSelectedDays] = useState<number[]>([]);
 
   const handleChangeMonth = (month: number) => {
     setMonth(month);
@@ -37,9 +43,30 @@ export function Calendar() {
     setYear(newYear);
   };
 
+  const handleIntervalDays = (day: number, type: "add" | "remove") => {
+    if (type === "add") {
+      setSelectedDays(prev => [...prev, day]);
+    } else {
+      setSelectedDays(prev => prev.filter(item => item !== day));
+    }
+  };
+
   useEffect(() => {
     setDaysInMonth(getDaysInMonth(month, year));
   }, [month, year]);
+
+  useEffect(() => {
+    if (selectedDays.length > 1) {
+      const maxDay = Math.max(...selectedDays);
+      const minDay = Math.min(...selectedDays);
+
+      const startDate = dayjs(`${year}-${month + 1}-${minDay}`).toISOString();
+      const endDate = dayjs(`${year}-${month + 1}-${maxDay}`).toISOString();
+
+      handleToggleCalendarDate(startDate, endDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDays]);
 
   return (
     <div className={styles.calendar}>
@@ -85,6 +112,8 @@ export function Calendar() {
               year={year}
               index={index}
               length={daysInMonth.length}
+              handleIntervalDays={handleIntervalDays}
+              days={selectedDays}
             />
           ))}
         </div>
@@ -98,44 +127,6 @@ export function Calendar() {
           month={month}
         />
       )}
-    </div>
-  );
-}
-
-function CalendarItem({
-  day,
-  year,
-  month,
-  index,
-  length,
-}: {
-  day: number;
-  year: number;
-  month: number;
-  index: number;
-  length: number;
-}) {
-  const date = dayjs(`${year}-${month + 1}-${day}`).toDate();
-  const isActive =
-    dayjs(new Date()).isSame(date, "day") &&
-    dayjs(new Date()).isSame(date, "month") &&
-    dayjs(new Date()).isSame(date, "year");
-
-  const borderCondition =
-    index !== 0 && ((index + 1) % 7 === 0 || index + 1 === length);
-  const radiusCondition = length > 35 ? 35 : 28;
-
-  return (
-    <div
-      className={`${styles.calendar__item} ${isActive ? styles.active : ""}`}
-      style={{
-        borderRadius: index === radiusCondition ? "0 0 0 8px" : "",
-        borderRight: borderCondition ? "1px solid #e8e8e8" : "",
-      }}
-    >
-      <div>
-        <span>{day}</span>
-      </div>
     </div>
   );
 }
