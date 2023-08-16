@@ -1,6 +1,5 @@
-"use client";
 import styles from "./Button.module.scss";
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
@@ -9,19 +8,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ text, buttonType, icon, ...props }: ButtonProps) {
-  const [clicked, setClicked] = useState<boolean>(false);
-
   return (
-    <button
-      className={`${clicked ? styles.pressed : ""}  ${styles.button} ${
-        styles[buttonType]
-      } }`}
-      onClick={event => {
-        event?.preventDefault();
-        setClicked(true);
-      }}
-      {...props}
-    >
+    <button className={`${styles.button} ${styles[buttonType]} }`} {...props}>
       {text}
       {icon && icon}
     </button>
