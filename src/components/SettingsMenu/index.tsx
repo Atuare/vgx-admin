@@ -33,21 +33,23 @@ export function SettingsMenu({
           <ChevronDown />
         </button>
       </li>
-      <ul className={styles.item__list}>
-        {openDropdown &&
-          configItems.map(item => (
-            <li key={crypto.randomUUID()}>
-              <Link
+      {openDropdown && (
+        <div className={styles.item__dropdown}>
+          <div className={styles.item__dropdown__border} />
+          <ul className={styles.item__dropdown__list}>
+            {configItems.map(item => (
+              <li
                 className={`${
                   pathname.includes(item.path) ? styles.active : ""
                 }`}
-                href={item.path}
+                key={crypto.randomUUID()}
               >
-                {item.name}
-              </Link>
-            </li>
-          ))}
-      </ul>
+                <Link href={item.path}>{item.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

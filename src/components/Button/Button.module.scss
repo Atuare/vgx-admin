@@ -19,6 +19,10 @@
     background: var(--hover-primary-4);
   }
 
+  &:focus {
+    background: var(--pressed-primary-4);
+  }
+
   svg path {
     fill: var(--primary-1);
   }
@@ -27,6 +31,9 @@
 .secondary {
   background: var(--primary-3);
   color: var(--neutral-3);
+
+  background: var(--pressed-primary-3);
+
   svg path {
     fill: var(--neutral-3);
   }
@@ -64,11 +71,4 @@
   svg path {
     fill: var(--primary-1);
   }
-}
-
-.pressed:not(.secondary):not(.error):not(.default) {
-  background: var(--pressed-primary-4);
-}
-.pressed:not(.primary):not(.error):not(.default) {
-  background: var(--pressed-primary-3);
 }
