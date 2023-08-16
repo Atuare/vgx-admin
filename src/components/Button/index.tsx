@@ -2,22 +2,21 @@
 import styles from "./Button.module.scss";
 import { ButtonHTMLAttributes, useEffect, useState } from "react";
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
-  type: "primary" | "secondary";
+  buttonType: "primary" | "secondary" | "error" | "default";
   icon?: React.ReactNode;
-  props?: ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
-export function Button({ text, props, type, icon }: ButtonProps) {
+export function Button({ text, buttonType, icon, ...props }: ButtonProps) {
   const [clicked, setClicked] = useState<boolean>(false);
 
   return (
     <button
-      className={`${clicked ? styles.pressed : ""}  ${styles.button} ${
-        styles[type]
-      } }`}
       {...props}
+      className={`${clicked ? styles.pressed : ""}  ${styles.button} ${
+        styles[buttonType]
+      } }`}
       onClick={() => setClicked(true)}
     >
       {text}

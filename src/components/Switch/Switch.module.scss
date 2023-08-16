@@ -1,0 +1,40 @@
+.switch {
+  width: 72px;
+  height: 32px;
+  background-color: var(--error);
+  border-radius: 100px;
+  position: relative;
+  padding: 4px 6px;
+  cursor: pointer;
+
+  &[data-state="checked"] {
+    background-color: var(--sucess);
+
+    .switch__thumb {
+      transform: translateX(36px);
+    }
+
+    svg {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+    }
+  }
+
+  &__thumb {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: var(--neutral-3);
+    border-radius: 50%;
+    transition: transform 100ms;
+    transform: translateX(2px);
+    will-change: transform;
+  }
+
+  svg {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+  }
+}
