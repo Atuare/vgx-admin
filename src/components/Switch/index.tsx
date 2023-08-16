@@ -4,13 +4,11 @@ import styles from "./Switch.module.scss";
 
 interface SwitchProps {
   handleSwitchChange: (checked: boolean) => void;
-  checked: "ATIVO" | "INATIVO";
+  checked: boolean;
 }
 
 export function Switch({ handleSwitchChange, checked }: SwitchProps) {
-  const [checkedState, setCheckedState] = useState(
-    checked === "ATIVO" ? true : false,
-  );
+  const [checkedState, setCheckedState] = useState(checked);
 
   const handleChangeValue = () => {
     setCheckedState(prev => !prev);
