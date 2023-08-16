@@ -2,10 +2,8 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
-  VisibilityState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -19,11 +17,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "./TableComponents";
+
+import { useRouter } from "next/navigation";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
@@ -34,17 +34,15 @@ import { ProcessType } from "@/@types/Process";
 import { DataTablePagination } from "./Pagination";
 import { useProcesses } from "@/hooks/useProcesses";
 
-const handleSwitchChange = () => {
-  // console.log("switch");
-};
-
-const columnHelper = createColumnHelper<ProcessType>();
-
 interface DataTableProps {
   data: ProcessType[];
   totalCount: number;
   handleClickCell: (row: number) => void;
 }
+
+const handleSwitchChange = () => {
+  // console.log("switch");
+};
 
 export function DataTable({
   data,
@@ -55,8 +53,18 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  const { push } = useRouter();
 
-  const { defaultTableSize } = useProcesses();
+  const { defaultTableSize, processes } = useProcesses();
+  const columnHelper = createColumnHelper<ProcessType>();
+
+  const handleGoDataPage = (rowIndex: number) => {
+    processes.processes.map((process, index) => {
+      if (rowIndex === index) {
+        push(`/process/${process.id}`);
+      }
+    });
+  };
 
   const columns = [
     columnHelper.accessor("status", {
@@ -104,7 +112,14 @@ export function DataTable({
 
     columnHelper.accessor("unit.unitName", {
       header: () => <FilterButton title="Processo/Cargo" />,
-      cell: row => <div>{row.getValue() ? row.getValue() : "-"}</div>,
+      cell: row => (
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() => handleGoDataPage(row.row.index)}
+        >
+          {row.getValue() ? row.getValue() : "-"}
+        </div>
+      ),
     }),
 
     columnHelper.accessor("role.roleText", {
