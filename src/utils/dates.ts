@@ -69,8 +69,8 @@ export const handlePreviousDate = (month: number, year: number) => {
 };
 
 export function getDaysInMonth(month: number, year: number) {
-  let days = [];
-  let previousDays = [];
+  const days = [];
+  const previousDays = [];
   const date = `${year}-${month + 1}-01`;
   const daysInMonth = dayjs(date).daysInMonth();
 
