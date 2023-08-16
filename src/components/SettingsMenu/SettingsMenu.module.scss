@@ -1,4 +1,5 @@
 .settingsMenu {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -48,10 +49,10 @@
         &:last-child {
           transform: rotate(180deg);
         }
+      }
 
-        p {
-          color: var(--neutral-3);
-        }
+      p {
+        color: var(--neutral-3);
       }
     }
 
@@ -64,23 +65,46 @@
     }
   }
 
-  .item__list {
+  .item__dropdown {
+    width: 100%;
+    height: 616px;
     display: flex;
-    flex-direction: column;
-    gap: 24px;
-    border-left: 2px solid var(--primary-1);
-    padding-left: 16px;
+    gap: 16px;
+    padding-left: 26px;
 
-    a {
-      font-weight: 700;
-      font-size: 17px;
-      color: var(--primary-2);
-      padding: 15px 8px;
+    &__border {
+      width: 2px;
+      height: 100%;
+      background: var(--primary-1);
+    }
 
-      &.active {
-        background: var(--primary-2);
-        border-radius: 8px;
-        color: var(--neutral-3);
+    &__list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      li {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 56px;
+
+        padding: 15px 8px;
+
+        a {
+          font-weight: 700;
+          font-size: 17px;
+          color: var(--primary-2);
+        }
+
+        &.active {
+          background: var(--primary-2);
+          border-radius: 8px;
+          a {
+            color: var(--neutral-3);
+          }
+        }
       }
     }
   }

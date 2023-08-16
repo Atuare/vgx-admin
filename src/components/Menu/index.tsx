@@ -65,6 +65,7 @@ const menuItems = [
 
 export function Menu() {
   const pathname = usePathname();
+  const pathnameFiltered = pathname.split("/").slice(0, 2).join("/");
 
   return (
     <aside className={styles.sidebar}>
@@ -80,7 +81,7 @@ export function Menu() {
               icon={item.icon}
               title={item.name}
               value={item.value}
-              active={pathname === item.value}
+              active={pathnameFiltered === item.value}
               key={crypto.randomUUID()}
               index={index}
             />
@@ -89,7 +90,7 @@ export function Menu() {
           <SettingsMenu
             icon={<Settings />}
             title="Configurações"
-            active={pathname.includes("/settings")}
+            active={pathnameFiltered === "/config"}
           />
         </ul>
       </nav>
