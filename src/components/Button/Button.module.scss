@@ -35,9 +35,40 @@
   }
 }
 
-.pressed:not(.secondary) {
+.error {
+  background: var(--error);
+  color: var(--neutral-3);
+  &:hover {
+    background: var(--hover-error);
+  }
+
+  svg path {
+    fill: var(--neutral-3);
+  }
+}
+
+.default {
+  background: none;
+  border-radius: 8px;
+  border: 1px solid var(--primary-1);
+  box-shadow: none;
+
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--primary-1);
+
+  &:hover {
+    border: 1px solid var(--primary-2);
+  }
+
+  svg path {
+    fill: var(--primary-1);
+  }
+}
+
+.pressed:not(.secondary):not(.error):not(.default) {
   background: var(--pressed-primary-4);
 }
-.pressed:not(.primary) {
+.pressed:not(.primary):not(.error):not(.default) {
   background: var(--pressed-primary-3);
 }
