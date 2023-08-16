@@ -13,11 +13,11 @@ export function Button({ text, buttonType, icon, ...props }: ButtonProps) {
 
   return (
     <button
-      {...props}
       className={`${clicked ? styles.pressed : ""}  ${styles.button} ${
         styles[buttonType]
       } }`}
       onClick={() => setClicked(true)}
+      {...props}
     >
       {text}
       {icon && icon}
