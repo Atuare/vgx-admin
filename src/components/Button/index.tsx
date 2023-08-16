@@ -1,6 +1,6 @@
 "use client";
 import styles from "./Button.module.scss";
-import { ButtonHTMLAttributes, useEffect, useState } from "react";
+import { ButtonHTMLAttributes, useState } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
@@ -16,7 +16,10 @@ export function Button({ text, buttonType, icon, ...props }: ButtonProps) {
       className={`${clicked ? styles.pressed : ""}  ${styles.button} ${
         styles[buttonType]
       } }`}
-      onClick={() => setClicked(true)}
+      onClick={event => {
+        event?.preventDefault();
+        setClicked(true);
+      }}
       {...props}
     >
       {text}
