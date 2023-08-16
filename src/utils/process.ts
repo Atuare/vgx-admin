@@ -17,3 +17,16 @@ export async function getAllProcess(page: number, size: number) {
     },
   );
 }
+
+export async function deleteProcess(id: string | string[]) {
+  return axios.delete(
+    `https://6365-45-7-1-149.ngrok-free.app/api/process/${id}`,
+    {
+      headers: {
+        "ngrok-skip-browser-warning": true,
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRkY2E0YmEzLTA5ZDUtNGY0ZS1hZTBhLTc2OTc4OWUyZjJlZiIsIm5hbWUiOiJpdXJ5MiIsInByb2ZpbGUiOiJFTVBMT1lFRSIsImVtcGxveWVlIjp7ImlkIjoiZThjMzMwYzUtNWVmNS00NDIyLTg4MDgtNzVjMzVlZDNiOTVjIn0sImlhdCI6MTY5MjEyMDg5OSwiZXhwIjoxNzIzNjU2ODk5fQ.JjY86nLMLoE-vPDqFVsMenoZblyHF1QDKhVR43QSBdM",
+      },
+    },
+  );
+}

@@ -1,14 +1,15 @@
 "use client";
 import { ReactNode, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./ProcessData.module.scss";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import { Delete, EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
-import { getAllProcess } from "@/utils/process";
+import { deleteProcess, getAllProcess } from "@/utils/process";
 import { ProcessType } from "@/@types/Process";
+
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
@@ -17,9 +18,17 @@ export default function ProcessData() {
   const [process, setProcess] = useState<ProcessType>();
   const [value, setValue] = useState<string>("");
   const params = useParams();
+  const { push } = useRouter();
 
   function handleInputValue(value: string) {
     setValue(value);
+  }
+
+  function handleDeleteProcess() {
+    deleteProcess(params.id).then(() => {
+      push("/process");
+      location.reload();
+    });
   }
 
   async function handleGetProcess() {
@@ -51,7 +60,7 @@ export default function ProcessData() {
         <div>
           <h1>{process?.role.roleText}</h1>
           <div className={styles.buttonContainer}>
-            <DeleteModal>
+            <DeleteModal handleDeleteProcess={handleDeleteProcess}>
               <Button
                 text="Excluir processo"
                 buttonType="error"
@@ -158,7 +167,13 @@ function DataInput({
   );
 }
 
-function DeleteModal({ children }: { children: ReactNode }) {
+function DeleteModal({
+  children,
+  handleDeleteProcess,
+}: {
+  children: ReactNode;
+  handleDeleteProcess: () => void;
+}) {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
@@ -186,7 +201,7 @@ function DeleteModal({ children }: { children: ReactNode }) {
                 <Button text="Cancelar" buttonType="default" />
               </span>
             </AlertDialog.Cancel>
-            <AlertDialog.Action asChild>
+            <AlertDialog.Action asChild onClick={handleDeleteProcess}>
               <span>
                 <Button text="Excluir" buttonType="error" icon={<Delete />} />
               </span>
