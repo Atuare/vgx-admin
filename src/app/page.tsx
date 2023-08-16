@@ -7,15 +7,23 @@ import { HomeData } from "@/components/HomeData";
 import Avatar from "@/assets/avatar.png";
 import { Calendar } from "@/components/Calendar";
 import { SearchInput } from "@/components/SearchInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [value, setValue] = useState<string>("");
+  const [calendarDates, setCalendarDates] = useState<{
+    startDate: string;
+    endDate: string;
+  } | null>(null);
   const date = dayjs(new Date()).format("dddd, DD MMM YYYY");
   const actualDate = date.charAt(0).toUpperCase() + date.slice(1);
 
   function handleInputValue(value: string) {
     setValue(value);
+  }
+
+  function handleToggleCalendarDate(startDate: string, endDate: string) {
+    setCalendarDates({ startDate, endDate });
   }
 
   return (
@@ -32,8 +40,8 @@ export default function Home() {
         </div>
       </header>
 
-      <HomeData />
-      <Calendar />
+      <HomeData calendarDates={calendarDates} />
+      <Calendar handleToggleCalendarDate={handleToggleCalendarDate} />
     </div>
   );
 }
