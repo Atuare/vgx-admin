@@ -1,11 +1,15 @@
 "use client";
 
 import { ReactNode } from "react";
+import { Provider } from "react-redux";
 import { usePathname } from "next/navigation";
 import "./globals.scss";
 import type { Metadata } from "next";
 import { Sora, Roboto, Inter } from "next/font/google";
 import { Menu } from "@/components/Menu";
+import { store } from "@/store/store";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { ProfileEnum } from "@/enums/profile.enum";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -33,13 +37,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="pt-br">
-      <body
-        className={`${inter.variable} ${roboto.variable} ${sora.variable} `}
-        style={{ display: pathname !== "/login" ? "flex" : "inherit" }}
-      >
-        {pathname !== "/login" && <Menu />}
-        {children}
-      </body>
+      <Provider store={store}>
+        <body
+          className={`${inter.variable} ${roboto.variable} ${sora.variable} `}
+          style={{ display: pathname !== "/login" ? "flex" : "inherit" }}
+        >
+          <ProtectedRoute allowedRoles={["EMPLOYEE"]}>
+            {pathname !== "/login" && <Menu />}
+            {children}
+          </ProtectedRoute>
+        </body>
+      </Provider>
     </html>
   );
 }
