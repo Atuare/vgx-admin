@@ -57,7 +57,7 @@ const menuItems = [
     icon: <Hospital />,
   },
   {
-    name: "Adimissões",
+    name: "Admissões",
     value: "/admissions",
     icon: <Profile />,
   },
