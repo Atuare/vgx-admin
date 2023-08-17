@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getAllProcess(page: number, size: number) {
   return await axios.get(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/process/findAll`,
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/process/findAll`,
     {
       headers: {
         "ngrok-skip-browser-warning": true,
@@ -19,7 +19,7 @@ export async function getAllProcess(page: number, size: number) {
 }
 
 export async function deleteProcess(id: string | string[]) {
-  return axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/process/${id}`, {
+  return axios.delete(`${process.env.NEXT_PUBLIC_BASE_API_URL}/process/${id}`, {
     headers: {
       "ngrok-skip-browser-warning": true,
       Authorization:
