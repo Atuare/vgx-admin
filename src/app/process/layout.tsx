@@ -8,7 +8,7 @@ import { ArrowBack } from "@/assets/Icons";
 import { useEffect, useState } from "react";
 import { ProcessesType } from "@/@types/Process";
 import { ProcessesDataContext } from "@/contexts/ProcessesDataContext";
-import { getAllProcess } from "@/utils/process";
+import { useGetAllProcessQuery } from "@/services/api/fetchApi";
 
 const titles = {
   "/process": "Processos",
@@ -22,18 +22,16 @@ export default function ProcessLayout({
   children: React.ReactNode;
 }) {
   const [processes, setProcesses] = useState<ProcessesType>();
+  const { data, isSuccess } = useGetAllProcessQuery({ page: 1, size: 1 });
 
   const pathname = usePathname();
   const { back } = useRouter();
 
-  const getProcesses = async () => {
-    const data = await getAllProcess(1, 1).then(({ data }) => data);
-    setProcesses(data);
-  };
-
   useEffect(() => {
-    getProcesses();
-  }, []);
+    if (isSuccess) {
+      setProcesses(data);
+    }
+  }, [isSuccess]);
 
   if (!processes) return null;
 

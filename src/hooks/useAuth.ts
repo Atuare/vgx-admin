@@ -1,4 +1,4 @@
-import { useGetLoggedUserQuery } from "@/services/userApi";
+import { useGetLoggedUserQuery } from "@/services/api/userApi";
 import { redirect, useRouter } from "next/navigation";
 
 export const useAuth = () => {

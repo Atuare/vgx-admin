@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { redirect } from "next/navigation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/schemas/loginSchema";
-import { useLoginMutation } from "@/services/authApi";
+import { useLoginMutation } from "@/services/api/authApi";
 
 import styles from "./Login.module.scss";
 
