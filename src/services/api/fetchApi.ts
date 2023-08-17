@@ -49,6 +49,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAllUnits: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/unit/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -57,4 +66,5 @@ export const {
   useGetAllProcessQuery,
   useDeleteProcessMutation,
   useGetAdminStatisticsQuery,
+  useGetAllUnitsQuery,
 } = fetchApi;
