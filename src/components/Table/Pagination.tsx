@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import styles from "./Pagination.module.scss";
 import { Table } from "@tanstack/react-table";
 import { useProcesses } from "@/hooks/useProcesses";
-import { getAllProcess } from "@/utils/process";
+import { fetchApi } from "@/services/api/fetchApi";
+import { useDispatch } from "react-redux";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -15,6 +16,18 @@ export function DataTablePagination<TData>({
   const [pages, setPages] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { setProcesses, defaultTableSize } = useProcesses();
+  const dispatch = useDispatch();
+
+  async function getAllProcess(page: number, defaultTableSize: number) {
+    const { data: processesData } = await dispatch<any>(
+      fetchApi.endpoints.getAllProcess.initiate({
+        page: page,
+        size: defaultTableSize,
+      }),
+    );
+
+    return processesData;
+  }
 
   async function handlePaginationChange(to: "previous" | "next") {
     let page = currentPage;
@@ -28,9 +41,7 @@ export function DataTablePagination<TData>({
       page += 1;
     }
 
-    const data = await getAllProcess(page, defaultTableSize).then(
-      ({ data }) => data,
-    );
+    const data = await getAllProcess(page, defaultTableSize);
     if (to === "previous") {
       table.previousPage();
     } else {
@@ -73,9 +84,7 @@ export function DataTablePagination<TData>({
               key={crypto.randomUUID()}
               data-state={currentPage === item ? "active" : "inactive"}
               onClick={async () => {
-                const data = await getAllProcess(item, defaultTableSize).then(
-                  ({ data }) => data,
-                );
+                const data = await getAllProcess(item, defaultTableSize);
                 table.setPageIndex(item - 1);
                 setProcesses(data);
                 setCurrentPage(item);

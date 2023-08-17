@@ -31,13 +31,16 @@ export const fetchApi = createApi({
         },
       }),
     }),
-    deleteProcess: builder.mutation<any, any>({
-      query: id => ({
+    deleteProcess: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
         url: `/process/${id}`,
         method: "DELETE",
       }),
     }),
-    getAdminStatistics: builder.query<any, any>({
+    getAdminStatistics: builder.query<
+      any,
+      { startDate?: string; endDate?: string }
+    >({
       query: ({ startDate, endDate }) => ({
         url: "/admin-statistics",
         params: {

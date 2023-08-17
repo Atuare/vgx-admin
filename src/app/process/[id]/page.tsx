@@ -1,13 +1,18 @@
 "use client";
 import { ReactNode, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import {
+  fetchApi,
+  useDeleteProcessMutation,
+  useGetAllProcessQuery,
+} from "@/services/api/fetchApi";
+import { useDispatch } from "react-redux";
 import styles from "./ProcessData.module.scss";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import { Delete, EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
-import { deleteProcess, getAllProcess } from "@/utils/process";
 import { ProcessType } from "@/@types/Process";
 
 import dayjs from "dayjs";
@@ -15,6 +20,12 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 export default function ProcessData() {
+  const { data, isSuccess } = useGetAllProcessQuery({
+    page: 1,
+    size: 1,
+  });
+  const [deleteProcess] = useDeleteProcessMutation();
+  const dispatch = useDispatch();
   const [process, setProcess] = useState<ProcessType>();
   const [value, setValue] = useState<string>("");
   const params = useParams();
@@ -25,32 +36,33 @@ export default function ProcessData() {
   }
 
   function handleDeleteProcess() {
-    deleteProcess(params.id).then(() => {
-      push("/process");
-      location.reload();
+    const processId = Array.from(params.id).join("");
+
+    deleteProcess({ id: processId }).then(() => {
+      location.replace("/process");
     });
   }
 
   async function handleGetProcess() {
-    let totalCount = 0;
+    const totalCount = data.totalCount;
 
-    await getAllProcess(1, 1).then(
-      ({ data }) => (totalCount = data.totalCount),
+    const { data: processesData } = await dispatch<any>(
+      fetchApi.endpoints.getAllProcess.initiate({ page: 1, size: totalCount }),
     );
 
-    await getAllProcess(1, totalCount).then(({ data }) => {
-      data.processes.map((process: ProcessType) => {
-        if (String(process.id) === params.id) {
-          setProcess(process);
-        }
-      });
+    processesData.processes.map((process: ProcessType) => {
+      if (String(process.id) === params.id) {
+        setProcess(process);
+      }
     });
   }
 
   useEffect(() => {
-    handleGetProcess();
+    if (isSuccess) {
+      handleGetProcess();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isSuccess]);
 
   if (!process) return;
 

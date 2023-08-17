@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { ClearAll, FilterList, Groups } from "@/assets/Icons";
 import styles from "./HomeData.module.scss";
-import { getAdminStatistics } from "@/utils/statistics";
+import { useGetAdminStatisticsQuery } from "@/services/api/fetchApi";
 
 interface StatisticsType {
   ongGoingProcess: number;
@@ -20,18 +20,19 @@ interface HomeDataProps {
 
 export function HomeData({ calendarDates }: HomeDataProps) {
   const [statistics, setStatistics] = useState<StatisticsType>();
+  const { data, isSuccess, refetch } = useGetAdminStatisticsQuery({
+    startDate: calendarDates?.startDate,
+    endDate: calendarDates?.endDate,
+  });
 
   useEffect(() => {
-    if (calendarDates) {
-      getAdminStatistics(calendarDates.startDate, calendarDates.endDate).then(
-        ({ data }) => {
-          setStatistics({
-            ongGoingProcess: data.onGoingProcesses,
-            registeredCandidates: data.registeredCandidates,
-            concludedProcesses: data.concludedProcesses,
-          });
-        },
-      );
+    refetch();
+    if (calendarDates && isSuccess) {
+      setStatistics({
+        ongGoingProcess: data.onGoingProcesses,
+        registeredCandidates: data.registeredCandidates,
+        concludedProcesses: data.concludedProcesses,
+      });
     } else {
       setStatistics({
         ongGoingProcess: 0,
@@ -40,7 +41,7 @@ export function HomeData({ calendarDates }: HomeDataProps) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarDates]);
+  }, [calendarDates, data]);
 
   if (!statistics) return;
 
