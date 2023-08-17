@@ -1,8 +1,9 @@
 import { useGetLoggedUserQuery } from "@/services/userApi";
-import { logout } from "@/features/user/userSlice";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export const useAuth = () => {
+  const { push } = useRouter();
+
   const {
     data: user,
     isLoading,
@@ -29,9 +30,8 @@ export const useAuth = () => {
   };
 
   const handleLogout = () => {
-    // Call the logout action directly
-    logout();
-    // Perform any additional logout logic (e.g., clearing tokens)
+    localStorage.removeItem("access_token");
+    push("/login");
   };
 
   return {
