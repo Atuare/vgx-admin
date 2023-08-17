@@ -71,6 +71,7 @@ export default function ProcessData() {
               text="Editar"
               buttonType="secondary"
               icon={<EditSquare />}
+              onClick={() => push(`/process/${process.id}/edit`)}
             />
           </div>
         </div>
