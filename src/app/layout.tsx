@@ -9,7 +9,6 @@ import { Sora, Roboto, Inter } from "next/font/google";
 import { Menu } from "@/components/Menu";
 import { store } from "@/store/store";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { ProfileEnum } from "@/enums/profile.enum";
 
 const sora = Sora({
   subsets: ["latin"],
