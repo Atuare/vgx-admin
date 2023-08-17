@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getAdminStatistics(startDate: string, endDate: string) {
   return await axios.get(
-    "https://6365-45-7-1-149.ngrok-free.app/api/admin-statistics",
+    `${process.env.NEXT_PUBLIC_BASE_URL}/admin-statistics`,
     {
       headers: {
         "ngrok-skip-browser-warning": true,
