@@ -28,6 +28,7 @@ export function Checkbox({
       className={`${styles.checkbox} ${
         iconType === "solid" ? styles.primaryOne : styles.primaryTwo
       }`}
+      style={{ padding: iconType === "solid" ? "4px" : "16px" }}
       onClick={onChange}
       {...props}
     >
