@@ -1,0 +1,211 @@
+.textEditor {
+  width: 100%;
+  height: 284px;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 2px solid var(--primary-2);
+  border-radius: 8px;
+
+  &__menu {
+    display: flex;
+    border-bottom: 2px solid var(--primary-2);
+    padding: 8px 16px;
+    gap: 8px;
+
+    &__iconContainer {
+      display: flex;
+      gap: 2px;
+    }
+  }
+}
+
+.editorContainer {
+  height: 224px;
+  width: 80vw;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  div {
+    width: 100%;
+    height: 100%;
+    padding: 8px 16px;
+    border: none;
+    outline: none;
+  }
+}
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  padding: 4px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg path {
+    fill: #212529;
+  }
+
+  &.active {
+    background: var(--neutral-2);
+  }
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+
+  &__trigger {
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    margin: 0 auto;
+
+    p {
+      font-weight: 400;
+      font-size: 14px;
+      color: #212529;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    svg {
+      transition: 0.5s all cubic-bezier(0.19, 1, 0.22, 1);
+
+      path {
+        fill: #212529;
+      }
+      g path {
+        fill: #212529;
+      }
+    }
+
+    &.active {
+      .chevrodown {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &__list {
+    position: absolute;
+    background: var(--neutral-3);
+    border-radius: 4px;
+    box-shadow: 0px 5px 20px 0px #00000033;
+    top: 32px;
+    z-index: 10;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column;
+
+    button {
+      cursor: pointer;
+      padding: 8px;
+      text-align: left;
+
+      display: flex;
+      align-items: center;
+
+      svg {
+        path {
+          fill: #212529;
+        }
+      }
+    }
+  }
+}
+
+.colorDropdown__list {
+  position: absolute;
+  background: var(--neutral-3);
+  border-radius: 4px;
+  box-shadow: 0px 5px 20px 0px #00000033;
+  top: 32px;
+  z-index: 10;
+  height: 70px;
+  padding: 8px;
+
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+
+  button {
+    cursor: pointer;
+  }
+}
+
+.color {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+
+  display: grid;
+  place-content: center;
+
+  border-width: 2px;
+  border-style: solid;
+
+  &.active {
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg path {
+        fill: var(--neutral-3);
+      }
+    }
+  }
+}
+
+.dialog {
+  position: relative;
+
+  &__list {
+    position: absolute;
+    background: var(--neutral-3);
+    border-radius: 8px;
+    box-shadow: 0px 5px 20px 0px #00000033;
+    top: 32px;
+    z-index: 10;
+    width: 350px;
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    input {
+      width: 100%;
+      height: 56px;
+      border-radius: 2px;
+      box-shadow: 0px 5px 20px 0px #00000033;
+      padding-inline: 8px;
+    }
+
+    button {
+      padding: 16px;
+    }
+
+    &__buttons {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+  }
+}
