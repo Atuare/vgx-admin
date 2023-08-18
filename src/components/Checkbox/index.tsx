@@ -7,7 +7,7 @@ import styles from "./Checkbox.module.scss";
 
 interface CheckboxProps {
   value: string;
-  onChangeCheckbox: (value: string, action: "add" | "remove") => void;
+  onChangeCheckbox: (value: string) => void;
   isActive: boolean;
   iconType: "solid" | "outline";
 }
@@ -20,7 +20,7 @@ export function Checkbox({
   ...props
 }: CheckboxProps) {
   function onChange() {
-    onChangeCheckbox(value, isActive ? "remove" : "add");
+    onChangeCheckbox(value);
   }
 
   return (
