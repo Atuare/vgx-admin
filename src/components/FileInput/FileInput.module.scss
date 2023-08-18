@@ -1,0 +1,62 @@
+.inputContainer {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  padding: 16px 8px;
+  border: 1px solid var(--neutral-2);
+
+  &__input {
+    display: none;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &__label {
+      height: 37px;
+      padding: 0 8px;
+      background: var(--primary-4);
+      border-radius: 8px;
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      p {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--neutral-4);
+      }
+    }
+
+    &__fileName {
+      width: 82px;
+
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--neutral-4);
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__uploadIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--primary-3);
+  }
+}
