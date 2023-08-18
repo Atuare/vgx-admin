@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { ProcessesType } from "@/@types/Process";
 import { ProcessesDataContext } from "@/contexts/ProcessesDataContext";
 import { useGetAllProcessQuery } from "@/services/api/fetchApi";
+import useUser from "@/hooks/useUser";
 
 const titles = {
   "/process": "Processos",
@@ -21,6 +22,7 @@ export default function ProcessLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useUser();
   const [processes, setProcesses] = useState<ProcessesType>();
   const { data, isSuccess } = useGetAllProcessQuery({ page: 1, size: 1 });
 
@@ -51,7 +53,11 @@ export default function ProcessLayout({
               {titles[pathname as keyof typeof titles] || "Dados do processo"}
             </h1>
           </div>
-          <AdmProfile image={Avatar} name="Nome perfil" role="Função" />
+          <AdmProfile
+            image={Avatar}
+            name={user?.employee?.name}
+            role={user?.profile}
+          />
         </header>
         {children}
       </div>
