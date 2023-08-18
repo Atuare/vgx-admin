@@ -1,0 +1,35 @@
+.inputContainer {
+  width: 100%;
+  height: 56px;
+  position: relative;
+
+  input {
+    width: 100%;
+  }
+
+  &__buttons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    border-left: 1px solid var(--primary-1);
+
+    hr {
+      border-top: 1px solid var(--primary-1);
+    }
+
+    button {
+      cursor: pointer;
+      height: 24px;
+      padding: 0 8px;
+
+      svg path {
+        fill: var(--primary-2);
+      }
+    }
+  }
+}
