@@ -1,0 +1,38 @@
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--neutral-4);
+
+    &[data-state="active"] {
+      .radio__thumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        div {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: var(--primary-1);
+        }
+      }
+    }
+  }
+
+  &__thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-1);
+  }
+}
