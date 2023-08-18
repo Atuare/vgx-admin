@@ -27,7 +27,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitSuccessful },
+    formState: { isSubmitSuccessful, errors },
     reset,
   } = methods;
 
@@ -70,11 +70,13 @@ export default function Login() {
             <label htmlFor="user">Usuário</label>
             <input {...register("username")} type="text" id="user" />
           </div>
+          <p>{errors.username?.message}</p>
 
           <div className={styles.form__inputContainer}>
             <label htmlFor="password">Senha</label>
             <input {...register("password")} type="password" id="password" />
           </div>
+          <p>{errors.password?.message}</p>
 
           <Button
             onClick={() => handleSubmit(onSubmitHandler)}
