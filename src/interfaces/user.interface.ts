@@ -2,7 +2,6 @@ import { ProfileEnum } from "@/enums/profile.enum";
 
 export interface IUser {
   id: string;
-  username: string;
   password: string;
   profile: ProfileEnum.EMPLOYEE;
   firstAccess: boolean;

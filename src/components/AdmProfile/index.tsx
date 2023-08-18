@@ -6,8 +6,8 @@ import { useState } from "react";
 import { ProfileSelect } from "../ProfileSelect";
 
 interface AdmProfileProps {
-  name: string;
-  role: string;
+  name?: string;
+  role?: string;
   image: StaticImageData;
 }
 
@@ -17,7 +17,7 @@ export function AdmProfile({ name, role, image }: AdmProfileProps) {
   return (
     <>
       <div className={styles.profile}>
-        <Image alt={name} src={image} width={48} height={48} />
+        <Image alt={name || ""} src={image} width={48} height={48} />
         <div className={styles.profile__info}>
           <h3>{name}</h3>
           <p>{role}</p>

@@ -7,9 +7,11 @@ import { HomeData } from "@/components/HomeData";
 import Avatar from "@/assets/avatar.png";
 import { Calendar } from "@/components/Calendar";
 import { SearchInput } from "@/components/SearchInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useUser from "@/hooks/useUser";
 
 export default function Home() {
+  const { user } = useUser();
   const [value, setValue] = useState<string>("");
   const [calendarDates, setCalendarDates] = useState<{
     startDate: string;
@@ -36,7 +38,11 @@ export default function Home() {
 
         <div className={styles.header__right}>
           <SearchInput handleChangeValue={handleInputValue} />
-          <AdmProfile image={Avatar} name="Nome perfil" role="Função" />
+          <AdmProfile
+            image={Avatar}
+            name={user?.employee?.name}
+            role={user?.profile}
+          />
         </div>
       </header>
 
