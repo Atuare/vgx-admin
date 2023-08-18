@@ -58,6 +58,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAllRoles: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/role/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -67,4 +76,5 @@ export const {
   useDeleteProcessMutation,
   useGetAdminStatisticsQuery,
   useGetAllUnitsQuery,
+  useGetAllRolesQuery,
 } = fetchApi;
