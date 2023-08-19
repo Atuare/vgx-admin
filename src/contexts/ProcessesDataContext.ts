@@ -1,4 +1,4 @@
-import { ProcessesType } from "@/@types/Process";
+import { ProcessesType } from "@/interfaces/process.interface";
 import { createContext } from "react";
 
 interface ProcessesDataContextType {

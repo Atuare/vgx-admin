@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnFiltersState,
   SortingState,
@@ -12,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
 import {
   Table,
@@ -30,19 +30,20 @@ dayjs.extend(utc);
 
 import { Switch } from "@/components/Switch";
 import { FilterButton } from "@/components/Table/FilterButton";
-import { ProcessType } from "@/@types/Process";
-import { DataTablePagination } from "./Pagination";
 import { useProcesses } from "@/hooks/useProcesses";
+import { ProcessType } from "@/interfaces/process.interface";
+import {
+  useGetAllRolesQuery,
+  useGetAllUnitsQuery,
+} from "@/services/api/fetchApi";
+import { useEffect } from "react";
+import { DataTablePagination } from "./Pagination";
 
 interface DataTableProps {
   data: ProcessType[];
   totalCount: number;
   handleClickCell: (row: number) => void;
 }
-
-const handleSwitchChange = () => {
-  // console.log("switch");
-};
 
 export function DataTable({
   data,
@@ -53,9 +54,20 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-  const { push } = useRouter();
+  const [unitsOptions, setUnitsOptions] = React.useState<string[]>([]);
+  const [rolesOptions, setRolesOptions] = React.useState<string[]>([]);
 
   const { defaultTableSize, processes } = useProcesses();
+  const { push } = useRouter();
+
+  const { data: units, isSuccess: unitsSuccess } = useGetAllUnitsQuery({
+    page: 1,
+    size: 9999,
+  });
+  const { data: roles, isSuccess: rolesSuccess } = useGetAllRolesQuery({
+    page: 1,
+    size: 9999,
+  });
   const columnHelper = createColumnHelper<ProcessType>();
 
   const handleGoDataPage = (rowIndex: number) => {
@@ -65,6 +77,15 @@ export function DataTable({
       }
     });
   };
+
+  const handleSwitchChange = (checked: boolean) => {};
+
+  useEffect(() => {
+    if (unitsSuccess && rolesSuccess) {
+      setRolesOptions(roles.roles.map(role => role.roleText));
+      setUnitsOptions(units.units.map(unit => unit.unitName));
+    }
+  }, [unitsSuccess, rolesSuccess]);
 
   const columns = [
     columnHelper.accessor("status", {
@@ -110,8 +131,14 @@ export function DataTable({
       ),
     }),
 
-    columnHelper.accessor("unit.unitName", {
-      header: () => <FilterButton title="Processo/Cargo" />,
+    columnHelper.accessor("role.roleText", {
+      header: () => (
+        <FilterButton
+          title="Processo/Cargo"
+          table={table}
+          options={rolesOptions}
+        />
+      ),
       cell: row => (
         <div
           style={{ cursor: "pointer" }}
@@ -122,8 +149,14 @@ export function DataTable({
       ),
     }),
 
-    columnHelper.accessor("role.roleText", {
-      header: () => <FilterButton title="Unidade/Site" />,
+    columnHelper.accessor("unit.unitName", {
+      header: () => (
+        <FilterButton
+          title="Unidade/Site"
+          table={table}
+          options={unitsOptions}
+        />
+      ),
       cell: row => <div>{row.getValue() ? row.getValue() : "-"}</div>,
     }),
   ];
