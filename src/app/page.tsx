@@ -9,14 +9,29 @@ import { Calendar } from "@/components/Calendar";
 import { SearchInput } from "@/components/SearchInput";
 import { useState } from "react";
 import useUser from "@/hooks/useUser";
+import { fetchApi } from "@/services/api/fetchApi";
+import { useDispatch } from "react-redux";
+
+export interface StatisticsType {
+  onGoingProcesses: number;
+  registeredCandidates: number;
+  concludedProcesses: number;
+}
+
+const defaultStatistics: StatisticsType = {
+  onGoingProcesses: 0,
+  registeredCandidates: 0,
+  concludedProcesses: 0,
+};
 
 export default function Home() {
   const { user } = useUser();
+  const dispatch = useDispatch();
+
   const [value, setValue] = useState<string>("");
-  const [calendarDates, setCalendarDates] = useState<{
-    startDate: string;
-    endDate: string;
-  } | null>(null);
+  const [statistics, setStatistics] =
+    useState<StatisticsType>(defaultStatistics);
+
   const date = dayjs(new Date()).format("dddd, DD MMM YYYY");
   const actualDate = date.charAt(0).toUpperCase() + date.slice(1);
 
@@ -24,8 +39,18 @@ export default function Home() {
     setValue(value);
   }
 
-  function handleToggleCalendarDate(startDate: string, endDate: string) {
-    setCalendarDates({ startDate, endDate });
+  async function handleToggleCalendarDate(startDate: string, endDate: string) {
+    if (startDate.trim() && endDate.trim()) {
+      const { data, isSuccess } = await dispatch<any>(
+        fetchApi.endpoints.getAdminStatistics.initiate({ startDate, endDate }),
+      );
+
+      if (isSuccess) {
+        setStatistics(data);
+      }
+    } else {
+      setStatistics(defaultStatistics);
+    }
   }
 
   return (
@@ -46,7 +71,7 @@ export default function Home() {
         </div>
       </header>
 
-      <HomeData calendarDates={calendarDates} />
+      <HomeData statistics={statistics} />
       <Calendar handleToggleCalendarDate={handleToggleCalendarDate} />
     </div>
   );

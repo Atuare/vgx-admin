@@ -1,55 +1,22 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import { ClearAll, FilterList, Groups } from "@/assets/Icons";
 import styles from "./HomeData.module.scss";
-import { useGetAdminStatisticsQuery } from "@/services/api/fetchApi";
-
-interface StatisticsType {
-  ongGoingProcess: number;
-  registeredCandidates: number;
-  concludedProcesses: number;
-}
+import { StatisticsType } from "@/app/page";
 
 interface HomeDataProps {
-  calendarDates: {
-    startDate: string;
-    endDate: string;
-  } | null;
+  statistics: StatisticsType;
 }
 
-export function HomeData({ calendarDates }: HomeDataProps) {
-  const [statistics, setStatistics] = useState<StatisticsType>();
-  const { data, isSuccess, refetch } = useGetAdminStatisticsQuery({
-    startDate: calendarDates?.startDate,
-    endDate: calendarDates?.endDate,
-  });
-
-  useEffect(() => {
-    refetch();
-    if (calendarDates && isSuccess) {
-      setStatistics({
-        ongGoingProcess: data.onGoingProcesses,
-        registeredCandidates: data.registeredCandidates,
-        concludedProcesses: data.concludedProcesses,
-      });
-    } else {
-      setStatistics({
-        ongGoingProcess: 0,
-        registeredCandidates: 0,
-        concludedProcesses: 0,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarDates, data]);
-
+export function HomeData({ statistics }: HomeDataProps) {
   if (!statistics) return;
 
   return (
     <div className={styles.data}>
       <HomeDataItem
         title="Processos em andamento"
-        value={statistics.ongGoingProcess}
+        value={statistics.onGoingProcesses}
         icon={<FilterList />}
       />
       <HomeDataItem

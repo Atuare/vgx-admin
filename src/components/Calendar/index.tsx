@@ -64,6 +64,8 @@ export function Calendar({ handleToggleCalendarDate }: CalendarProps) {
       const endDate = dayjs(`${year}-${month + 1}-${maxDay}`).toISOString();
 
       handleToggleCalendarDate(startDate, endDate);
+    } else {
+      handleToggleCalendarDate("", "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDays]);
