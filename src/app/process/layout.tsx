@@ -1,15 +1,15 @@
 "use client";
-import styles from "./Layout.module.scss";
-import "@/styles/scrollbar.scss";
-import { AdmProfile } from "@/components/AdmProfile";
-import Avatar from "@/assets/avatar.png";
-import { usePathname, useRouter } from "next/navigation";
 import { ArrowBack } from "@/assets/Icons";
-import { useEffect, useState } from "react";
-import { ProcessesType } from "@/@types/Process";
+import Avatar from "@/assets/avatar.png";
+import { AdmProfile } from "@/components/AdmProfile";
 import { ProcessesDataContext } from "@/contexts/ProcessesDataContext";
-import { useGetAllProcessQuery } from "@/services/api/fetchApi";
 import useUser from "@/hooks/useUser";
+import { ProcessesType } from "@/interfaces/process.interface";
+import { useGetAllProcessQuery } from "@/services/api/fetchApi";
+import "@/styles/scrollbar.scss";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import styles from "./Layout.module.scss";
 
 const titles = {
   "/process": "Processos",
@@ -24,7 +24,7 @@ export default function ProcessLayout({
 }) {
   const { user } = useUser();
   const [processes, setProcesses] = useState<ProcessesType>();
-  const { data, isSuccess } = useGetAllProcessQuery({ page: 1, size: 1 });
+  const { data, isSuccess } = useGetAllProcessQuery({ page: 1, size: 2 });
 
   const pathname = usePathname();
   const { back } = useRouter();
@@ -39,7 +39,7 @@ export default function ProcessLayout({
 
   return (
     <ProcessesDataContext.Provider
-      value={{ processes, setProcesses, defaultTableSize: 1 }}
+      value={{ processes, setProcesses, defaultTableSize: 2 }}
     >
       <div className={styles.process}>
         <header className={styles.process__header}>
