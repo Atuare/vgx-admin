@@ -9,7 +9,7 @@ import styles from "./Checkbox.module.scss";
 interface CheckboxProps {
   value: string;
   onChangeCheckbox: (value: boolean, name?: string) => void;
-  isActive: boolean;
+  isActive?: boolean;
   iconType: "solid" | "outline";
 }
 
