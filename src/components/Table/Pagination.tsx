@@ -18,7 +18,7 @@ interface DataTablePaginationProps {
 export function DataTablePagination({ totalCount }: DataTablePaginationProps) {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const { setProcesses, defaultTableSize } = useProcesses();
-  const totalPages = Math.round(totalCount / defaultTableSize);
+  const totalPages = Math.ceil(totalCount / defaultTableSize);
 
   async function handlePaginationChange(page: number) {
     const data = await getAllProcess(page + 1, defaultTableSize);
