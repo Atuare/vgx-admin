@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import styles from "./TipTap.module.scss";
 import "./tiptap.scss";
 
@@ -11,7 +12,6 @@ import Underline from "@tiptap/extension-underline";
 import { TextStyleExtended } from "@/utils/fontsize";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useMemo } from "react";
 import { TipTapMenu } from "./TipTapMenu";
 
 export function TipTap({
