@@ -27,7 +27,7 @@ export default function StepThree({ processData }: { processData: any }) {
   const { back } = useRouter();
   const [createProcess] = useCreateProcessMutation();
 
-  const observationsEditor = useEditor({
+  const editor = useEditor({
     extensions: [
       StarterKit,
       Color,
@@ -41,24 +41,6 @@ export default function StepThree({ processData }: { processData: any }) {
       Image,
     ],
     editable: false,
-    content: JSON.parse(processData?.observations) ?? "",
-  });
-
-  const registrationCompletionMessageEditor = useEditor({
-    extensions: [
-      StarterKit,
-      Color,
-      Underline,
-      FontFamily,
-      Link,
-      TextStyleExtended,
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Image,
-    ],
-    editable: false,
-    content: JSON.parse(processData?.registrationCompletionMessage) ?? "",
   });
 
   function handleCreateProcess() {
@@ -152,13 +134,15 @@ export default function StepThree({ processData }: { processData: any }) {
 
         <DataInput name="Observações" required>
           <EditorContent
-            editor={observationsEditor}
+            content={processData?.observations}
+            editor={editor}
             className={styles.container__editorContainer}
           />
         </DataInput>
         <DataInput name="Mensagem exibida ao final do cadastro" required>
           <EditorContent
-            editor={registrationCompletionMessageEditor}
+            content={processData?.registrationCompletionMessage}
+            editor={editor}
             className={styles.container__editorContainer}
           />
         </DataInput>
