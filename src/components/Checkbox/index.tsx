@@ -3,14 +3,14 @@ import {
   CheckboxFill,
   CheckboxFillOutlined,
 } from "@/assets/Icons";
+import { useState } from "react";
 import styles from "./Checkbox.module.scss";
 
 interface CheckboxProps {
   value: string;
-  onChangeCheckbox: (value: string) => void;
+  onChangeCheckbox: (value: boolean, name?: string) => void;
   isActive: boolean;
   iconType: "solid" | "outline";
-  disabled?: boolean;
 }
 
 export function Checkbox({
@@ -18,26 +18,23 @@ export function Checkbox({
   onChangeCheckbox,
   isActive,
   iconType,
-  disabled,
-  ...props
-}: CheckboxProps | any) {
-  function onChange() {
-    onChangeCheckbox(value);
-  }
+}: CheckboxProps) {
+  const [checked, setChecked] = useState(isActive ?? false);
 
   return (
     <button
       className={`${styles.checkbox} ${
         iconType === "solid" ? styles.primaryOne : styles.primaryTwo
-      } ${disabled ? styles.disabled : ""}`}
+      } `}
       style={{
         padding: iconType === "solid" ? "4px" : "16px",
-        cursor: disabled ? "default" : "pointer",
       }}
-      onClick={onChange}
-      {...props}
+      onClick={() => {
+        setChecked(prev => !prev);
+        onChangeCheckbox(!checked, value);
+      }}
     >
-      {isActive ? (
+      {checked ? (
         iconType === "solid" ? (
           <CheckboxFill />
         ) : (
