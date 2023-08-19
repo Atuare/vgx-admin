@@ -27,6 +27,7 @@
 
   &.disabled {
     color: var(--neutral-1);
+    cursor: pointer;
 
     svg path {
       fill: var(--neutral-1);

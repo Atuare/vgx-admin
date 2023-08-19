@@ -8,9 +8,10 @@ import styles from "./Checkbox.module.scss";
 
 interface CheckboxProps {
   value: string;
-  onChangeCheckbox: (value: boolean, name?: string) => void;
+  onChangeCheckbox?: (value: boolean, name?: string) => void;
   isActive?: boolean;
   iconType: "solid" | "outline";
+  disabled?: boolean;
 }
 
 export function Checkbox({
@@ -18,6 +19,7 @@ export function Checkbox({
   onChangeCheckbox,
   isActive,
   iconType,
+  disabled = false,
 }: CheckboxProps) {
   const [checked, setChecked] = useState(isActive ?? false);
 
@@ -25,13 +27,15 @@ export function Checkbox({
     <button
       className={`${styles.checkbox} ${
         iconType === "solid" ? styles.primaryOne : styles.primaryTwo
-      } `}
+      } ${disabled ? styles.disabled : ""}`}
       style={{
         padding: iconType === "solid" ? "4px" : "16px",
       }}
       onClick={() => {
-        setChecked(prev => !prev);
-        onChangeCheckbox(!checked, value);
+        if (!disabled) {
+          setChecked(prev => !prev);
+          onChangeCheckbox?.(!checked, value);
+        }
       }}
     >
       {checked ? (
