@@ -11,11 +11,12 @@ import {
   Underline,
   Undo,
 } from "@/assets/Icons";
-import styles from "./TipTap.module.scss";
 import { Editor } from "@tiptap/react";
-import { DropDown } from "./Dropdown";
+import { useEffect } from "react";
 import { ColorDropDown } from "./ColorDropdown";
 import { Dialog } from "./Dialog";
+import { DropDown } from "./Dropdown";
+import styles from "./TipTap.module.scss";
 
 interface ActionsProps extends React.ComponentPropsWithoutRef<"button"> {
   icon: React.ReactNode;
@@ -90,6 +91,11 @@ const colors = [
 ];
 
 export function TipTapMenu({ editor }: TipTapMenuProps) {
+  useEffect(() => {
+    editor?.commands.setFontFamily("Arial");
+    editor?.commands.setFontSize("16");
+  }, []);
+
   if (!editor) return;
 
   const handleFontChange = (value: string) => {
@@ -118,7 +124,7 @@ export function TipTapMenu({ editor }: TipTapMenuProps) {
 
   const handleAddImage = (value: string, action: "remove" | "add") => {
     if (action === "add") {
-      editor.commands.setImage({
+      editor?.commands.setImage({
         src: value,
         alt: "image",
         title: "image",
