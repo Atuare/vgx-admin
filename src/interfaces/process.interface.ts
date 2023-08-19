@@ -62,3 +62,24 @@ export interface ProcessesType {
   processes: ProcessType[];
   totalCount: number;
 }
+
+export interface UnitsType {
+  units: {
+    id: number;
+    unitName: string;
+    unitAcronym: string;
+    unitAddress: string;
+    status: "ATIVO" | "INATIVO";
+  }[];
+  totalCount: number;
+}
+
+export interface RolesType {
+  roles: {
+    id: string;
+    roleText: string;
+    roleDescription: string;
+    status: "ATIVO" | "INATIVO";
+  }[];
+  totalCount: number;
+}
