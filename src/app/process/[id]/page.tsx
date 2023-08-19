@@ -1,19 +1,19 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import {
   fetchApi,
   useDeleteProcessMutation,
   useGetAllProcessQuery,
 } from "@/services/api/fetchApi";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import { useParams, useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styles from "./ProcessData.module.scss";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import { Delete, EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
-import { ProcessType } from "@/@types/Process";
+import { ProcessType } from "@/interfaces/process.interface";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
