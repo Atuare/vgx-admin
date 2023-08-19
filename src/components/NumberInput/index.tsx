@@ -1,18 +1,13 @@
+import { ChevronRoundedDown, ChevronRoundedUp } from "@/assets/Icons";
 import { useEffect, useState } from "react";
 import styles from "./NumberInput.module.scss";
-import { ChevronRoundedDown, ChevronRoundedUp } from "@/assets/Icons";
 
 interface NumberInputProps {
   defaultValue?: number;
-  disabled?: boolean;
   onChange: (value: number) => void;
 }
 
-export function NumberInput({
-  defaultValue,
-  disabled,
-  onChange,
-}: NumberInputProps) {
+export function NumberInput({ defaultValue, onChange }: NumberInputProps) {
   const [value, setValue] = useState<number>(defaultValue ?? 0);
 
   function handleChangeValue(event: React.ChangeEvent<HTMLInputElement>) {
@@ -27,30 +22,24 @@ export function NumberInput({
   return (
     <div className={styles.inputContainer}>
       <input
-        type="number"
+        type="text"
         value={value}
         onChange={handleChangeValue}
-        disabled={!!disabled}
+        pattern="^[0-9]*$"
       />
-      {!disabled && (
-        <div className={styles.inputContainer__buttons}>
-          <button
-            onClick={() => setValue(prev => prev + 1)}
-            disabled={!!disabled}
-            style={disabled ? { cursor: "default" } : {}}
-          >
-            <ChevronRoundedUp />
-          </button>
-          <hr />
-          <button
-            onClick={() => setValue(prev => (prev > 0 ? prev - 1 : prev))}
-            disabled={!!disabled}
-            style={disabled ? { cursor: "default" } : {}}
-          >
-            <ChevronRoundedDown />
-          </button>
-        </div>
-      )}
+
+      <div className={styles.inputContainer__buttons}>
+        <button type="button" onClick={e => setValue(prev => prev + 1)}>
+          <ChevronRoundedUp />
+        </button>
+        <hr />
+        <button
+          type="button"
+          onClick={e => setValue(prev => (prev > 0 ? prev - 1 : prev))}
+        >
+          <ChevronRoundedDown />
+        </button>
+      </div>
     </div>
   );
 }

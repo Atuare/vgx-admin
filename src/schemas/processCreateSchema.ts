@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import * as yup from "yup";
+dayjs.extend(utc);
 
 const isAfterYesterday = (value?: Date | null) => {
   const currentDate = dayjs();
@@ -15,8 +17,7 @@ const isAfterYesterday = (value?: Date | null) => {
 };
 
 export const processCreateStepOneSchema = yup
-  .object()
-  .shape({
+  .object({
     unit: yup.object().required("A unidade é obrigatória"),
     role: yup.object().required("O cargo é obrigatório"),
     requestCv: yup.boolean().required("O pedido de curriculo é obrigatório"),
@@ -34,13 +35,32 @@ export const processCreateStepOneSchema = yup
       .min(yup.ref("startDate"), "A data final deve ser maior que a inicial")
       .optional()
       .required("A data final é obrigatória"),
-    limitCandidates: yup
-      .number()
-      .min(1, "O limite de candidatos deve ser maior que 0")
-      .required("O limite de candidatos é obrigatório"),
-    banner: yup.object().required("O banner é obrigatório"),
-    observations: yup.object().optional(),
-    registrationCompletionMessage: yup.object().optional(),
+    limitCandidates: yup.number().optional(),
+    banner: yup
+      .mixed()
+      .test(
+        "fileFormat",
+        "O banner deve ser uma imagem PNG, JPG ou JPEG",
+        (file: File | any) => {
+          if (!file) return true; // Permite valores vazios
+
+          const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
+          return allowedFormats.includes(file?.type);
+        },
+      )
+      .test(
+        "fileSize",
+        "O banner deve ter no máximo 5MB",
+        (file: File | any) => {
+          if (!file) return true; // Permite valores vazios
+
+          const maxSize = 5 * 1024 * 1024; // 5MB
+          return file?.size <= maxSize;
+        },
+      )
+      .test("required", "O banner é obrigatório", (file: File | any) => file),
+    observations: yup.string().optional(),
+    registrationCompletionMessage: yup.string().optional(),
   })
   .required();
 
@@ -48,12 +68,22 @@ export const processCreateStepTwoSchema = yup
   .object()
   .shape({
     type: yup.string().required("O tipo do processo é obrigatório"),
-    skills: yup.array().required("As habilidades são obrigatórias"),
+    skills: yup
+      .array()
+      .min(1, "As habilidades são obrigatórias")
+      .required("As habilidades são obrigatórias"),
     availabilities: yup
       .array()
+      .min(1, "As disponibilidades são obrigatórias")
       .required("As disponibilidades são obrigatórias"),
-    schoolings: yup.array().required("As escolaridades são obrigatórias"),
-    benefits: yup.array().required("Os benefícios são obrigatórios"),
+    schoolings: yup
+      .array()
+      .min(1, "As escolaridades são obrigatórias")
+      .required("As escolaridades são obrigatórias"),
+    benefits: yup
+      .array()
+      .min(1, "Os benefícios são obrigatórios")
+      .required("Os benefícios são obrigatórios"),
     availableForMinors: yup
       .boolean()
       .required("A disponibilidade para menores é obrigatória"),

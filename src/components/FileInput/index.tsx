@@ -1,6 +1,6 @@
+import { Upload } from "@/assets/Icons";
 import { useEffect, useRef, useState } from "react";
 import styles from "./FileInput.module.scss";
-import { Upload } from "@/assets/Icons";
 
 interface FileInputProps {
   onChange: (file: File) => void;

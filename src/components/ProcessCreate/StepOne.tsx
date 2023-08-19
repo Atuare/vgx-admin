@@ -1,18 +1,21 @@
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
-import { Select } from "../Select";
-import styles from "./StepOne.module.scss";
-import { TipTap } from "../TipTap";
+import { ArrowCircleRight } from "@/assets/Icons";
+import { processCreateStepOneSchema } from "@/schemas/processCreateSchema";
 import {
   useGetAllRolesQuery,
   useGetAllUnitsQuery,
 } from "@/services/api/fetchApi";
-import { Radio } from "../Radio";
-import { NumberInput } from "../NumberInput";
-import { FileInput } from "../FileInput";
-import { DataInput } from "../DataInput";
-import { Button } from "../Button";
-import { ArrowCircleRight } from "@/assets/Icons";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Button } from "../Button";
+import { DataInput } from "../DataInput";
+import { FileInput } from "../FileInput";
+import { NumberInput } from "../NumberInput";
+import { Radio } from "../Radio";
+import { Select } from "../Select";
+import { TipTap } from "../TipTap";
+import styles from "./StepOne.module.scss";
 
 export function StepOne({
   handleTogglePage,
@@ -22,17 +25,12 @@ export function StepOne({
   setProcessData: (data: any) => void;
 }) {
   const { back } = useRouter();
-
-  const [unit, setUnit] = useState<{ name: string; id: string }>();
-  const [role, setRole] = useState<{ name: string; id: string }>();
-  const [curriculum, setCurriculum] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [limitCandidates, setLimitCandidates] = useState<number>(0);
-  const [observations, setObservations] = useState<any>("");
-  const [registrationCompletionMessage, setRegistrationCompletionMessage] =
-    useState<any>();
-  const [file, setFile] = useState<File | null>(null);
+  const { control, handleSubmit } = useForm({
+    resolver: yupResolver(processCreateStepOneSchema),
+    defaultValues: {
+      limitCandidates: 1,
+    },
+  });
 
   const [unitOptions, setUnitOptions] = useState<
     { name: string; id: string }[] | []
@@ -46,50 +44,6 @@ export function StepOne({
     page: 1,
     size: 9999,
   });
-
-  function getObservations(content: any) {
-    setObservations(JSON.stringify(content));
-  }
-
-  function getLastMessage(content: any) {
-    setRegistrationCompletionMessage(JSON.stringify(content));
-  }
-
-  function handleChangeFile(file: File) {
-    setFile(file);
-  }
-
-  function handleChangeStartDate(e: ChangeEvent<HTMLInputElement>) {
-    if (e?.target?.value) setStartDate(new Date(e.target.value).toISOString());
-  }
-
-  function handleChangeEndDate(e: ChangeEvent<HTMLInputElement>) {
-    if (e?.target?.value) setEndDate(new Date(e.target.value).toISOString());
-  }
-
-  useEffect(() => {
-    setProcessData({
-      unit,
-      role,
-      curriculum,
-      startDate,
-      endDate,
-      limitCandidates,
-      file,
-      observations,
-      registrationCompletionMessage,
-    });
-  }, [
-    unit,
-    role,
-    curriculum,
-    startDate,
-    endDate,
-    limitCandidates,
-    file,
-    observations,
-    registrationCompletionMessage,
-  ]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -107,68 +61,186 @@ export function StepOne({
     }
   }, [isSuccess, RoleDataSucess]);
 
+  function onSubmit(data: any) {
+    setProcessData({
+      unit: data.unit,
+      role: data.role,
+      curriculum: data.requestCv,
+      startDate: new Date(data.startDate).toISOString(),
+      endDate: new Date(data.endDate).toISOString(),
+      limitCandidates: data.limitCandidates,
+      file: data.banner,
+      observations: data.observations,
+      registrationCompletionMessage: data.registrationCompletionMessage,
+    });
+    handleTogglePage(2);
+  }
+
   return (
-    <div className={styles.container}>
+    <form
+      id="process-create"
+      onSubmit={handleSubmit(onSubmit)}
+      className={styles.container}
+    >
       <section className={styles.container__form}>
         <div className={styles.container__form__first}>
-          <DataInput name="Unidade/Site" required width="296px">
-            <Select
-              placeholder="Selecione os locais"
-              options={unitOptions}
-              onChange={value => setUnit(value)}
-            />
-          </DataInput>
-          <DataInput name="Cargo" required width="448px">
-            <Select
-              placeholder="Selecione"
-              options={roleOptions}
-              onChange={value => setRole(value)}
-            />
-          </DataInput>
-          <DataInput name="Solicitar currículo" width="264px" required>
-            <Radio onChange={value => setCurriculum(value)} />
-          </DataInput>
+          <Controller
+            name="unit"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Unidade/Site"
+                required
+                width="296px"
+                error={error?.message}
+              >
+                <Select
+                  placeholder="Selecione os locais"
+                  options={unitOptions}
+                  onChange={onChange}
+                />
+              </DataInput>
+            )}
+          />
+
+          <Controller
+            name="role"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Cargo"
+                required
+                width="448px"
+                error={error?.message}
+              >
+                <Select
+                  placeholder="Selecione"
+                  options={roleOptions}
+                  onChange={onChange}
+                />
+              </DataInput>
+            )}
+          />
+
+          <Controller
+            name="requestCv"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput name="Solicitar currículo" width="264px" required>
+                <Radio onChange={onChange} />
+              </DataInput>
+            )}
+          />
         </div>
 
         <div className={styles.container__form__second}>
-          <DataInput name="Data inicial" width="224px" required>
-            <input type="date" onChange={handleChangeStartDate} />
-          </DataInput>
-          <DataInput name="Inscrições até" width="224px">
-            <input type="date" onChange={handleChangeEndDate} />
-          </DataInput>
-          <DataInput name="Limite de candidaturas" width="224px">
-            <NumberInput onChange={value => setLimitCandidates(value)} />
-          </DataInput>
-          <DataInput name="Upload banner vaga" width="301px" required>
-            <FileInput onChange={handleChangeFile} />
-          </DataInput>
+          <Controller
+            name="startDate"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Data inicial"
+                width="224px"
+                required
+                error={error?.message}
+              >
+                <input type="date" onChange={onChange} />
+              </DataInput>
+            )}
+          />
+
+          <Controller
+            name="endDate"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Inscrições até"
+                width="224px"
+                error={error?.message}
+              >
+                <input type="date" onChange={onChange} />
+              </DataInput>
+            )}
+          />
+
+          <Controller
+            name="limitCandidates"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Limite de candidaturas"
+                width="224px"
+                error={error?.message}
+              >
+                <NumberInput onChange={onChange} />
+              </DataInput>
+            )}
+          />
+
+          <Controller
+            name="banner"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <DataInput
+                name="Upload banner vaga"
+                width="301px"
+                error={error?.message}
+                required
+              >
+                <FileInput onChange={onChange} />
+              </DataInput>
+            )}
+          />
         </div>
       </section>
-
       <div className={styles.container__editor}>
         <h1>
           Observações <span>(opcional)</span>
         </h1>
-        <TipTap getContentFromEditor={getObservations} />
+        <Controller
+          name="observations"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <TipTap
+              getContentFromEditor={content =>
+                onChange(JSON.stringify(content))
+              }
+            />
+          )}
+        />
       </div>
 
       <div className={styles.container__editor}>
         <h1>
           Mensagem exibida ao final do cadastro <span>(opcional)</span>
         </h1>
-        <TipTap getContentFromEditor={getLastMessage} />
+        <Controller
+          name="registrationCompletionMessage"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <TipTap
+              getContentFromEditor={content =>
+                onChange(JSON.stringify(content))
+              }
+            />
+          )}
+        />
       </div>
 
       <div className={styles.container__buttons}>
-        <Button buttonType="default" text="Cancelar" onClick={() => back()} />
+        <Button
+          type="button"
+          buttonType="default"
+          text="Cancelar"
+          onClick={() => back()}
+        />
         <Button
           buttonType="primary"
           text="Próximo"
           icon={<ArrowCircleRight />}
-          onClick={() => handleTogglePage(2)}
+          form="process-create"
         />
       </div>
-    </div>
+    </form>
   );
 }

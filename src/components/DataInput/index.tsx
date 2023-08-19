@@ -6,11 +6,13 @@ export function DataInput({
   width,
   required = false,
   children,
+  error,
 }: {
   name: string;
   width?: string;
   required?: boolean;
   children: ReactNode;
+  error?: string;
 }) {
   return (
     <div className={styles.dataInput} style={{ width }}>
@@ -20,6 +22,7 @@ export function DataInput({
       </label>
       <label htmlFor={name}>{!required && <p>(opcional)</p>}</label>
       {children}
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 }

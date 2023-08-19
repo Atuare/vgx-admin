@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import styles from "./TipTap.module.scss";
 import { CheckRounded, ChevronDown } from "@/assets/Icons";
 import { hexToRGB } from "@/utils/hexToRgba";
+import { useEffect, useState } from "react";
+import styles from "./TipTap.module.scss";
 
 interface ColorDropdownProps {
   options: { name: string; value: string }[];
@@ -26,8 +26,9 @@ export function ColorDropDown({
   return (
     <div className={styles.dropdown}>
       <button
+        type="button"
         className={`${styles.dropdown__trigger} ${open ? styles.active : ""}`}
-        onClick={() => setOpen(prev => !prev)}
+        onClick={e => setOpen(prev => !prev)}
       >
         <Color color={selected} />
         <ChevronDown className={styles.chevrodown} />
@@ -36,10 +37,9 @@ export function ColorDropDown({
         <div className={styles.colorDropdown__list}>
           {options.map(option => (
             <button
+              type="button"
               key={crypto.randomUUID()}
-              onClick={() => {
-                setSelected(option.value);
-              }}
+              onClick={e => setSelected(option.value)}
             >
               <Color
                 color={option.value}

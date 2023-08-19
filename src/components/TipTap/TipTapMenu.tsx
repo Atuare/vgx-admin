@@ -184,6 +184,7 @@ export function TipTapMenu({ editor }: TipTapMenuProps) {
 function ActionButton({ icon, isActive = false, ...props }: ActionsProps) {
   return (
     <button
+      type="button"
       {...props}
       className={`${styles.actionButton} ${isActive ? styles.active : ""}`}
     >

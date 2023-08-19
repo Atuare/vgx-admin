@@ -1,7 +1,7 @@
-import { ReactNode, useState } from "react";
-import styles from "./TipTap.module.scss";
 import { Editor } from "@tiptap/react";
+import { ReactNode, useState } from "react";
 import { Button } from "../Button";
+import styles from "./TipTap.module.scss";
 
 interface ActionsProps extends React.ComponentPropsWithoutRef<"button"> {
   icon: React.ReactNode;
@@ -38,6 +38,7 @@ export function Dialog({ onChange, editor, icon, type }: DialogProps) {
           <div className={styles.dialog__list__buttons}>
             {type !== "image" && (
               <Button
+                type="button"
                 buttonType="error"
                 text="Remover"
                 onClick={() => {
@@ -47,6 +48,7 @@ export function Dialog({ onChange, editor, icon, type }: DialogProps) {
               />
             )}
             <Button
+              type="button"
               buttonType="primary"
               text="Adicionar"
               onClick={() => {
@@ -64,6 +66,7 @@ export function Dialog({ onChange, editor, icon, type }: DialogProps) {
 function ActionButton({ icon, isActive = false, ...props }: ActionsProps) {
   return (
     <button
+      type="button"
       {...props}
       className={`${styles.actionButton} ${isActive ? styles.active : ""}`}
     >

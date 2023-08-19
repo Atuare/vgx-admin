@@ -4,6 +4,11 @@
   justify-content: space-between;
   gap: 8px;
 
+  .error {
+    color: red;
+    font-weight: 700;
+  }
+
   label {
     font-size: 17px;
     font-weight: 700;

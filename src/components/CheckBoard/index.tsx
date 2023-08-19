@@ -1,16 +1,22 @@
+import { Close } from "@/assets/Icons";
+import { deepEqual, includesDeep } from "@/utils/lodash";
 import { useEffect, useState } from "react";
 import { Checkbox } from "../Checkbox";
-import { Close } from "@/assets/Icons";
 import styles from "./CheckBoard.module.scss";
-import { includesDeep, deepEqual } from "@/utils/lodash";
 
 interface CheckBoardProps {
   title: string;
   options: { name: string; id: string }[];
   onChange: (value: { name: string; id: string }[]) => void;
+  error?: string;
 }
 
-export function CheckBoard({ title, options, onChange }: CheckBoardProps) {
+export function CheckBoard({
+  title,
+  options,
+  onChange,
+  error,
+}: CheckBoardProps) {
   const [select, setSelect] = useState<{ name: string; id: string }[]>([]);
 
   const handleChangeCheckBox: any = (value: { name: string; id: string }) => {
@@ -62,6 +68,7 @@ export function CheckBoard({ title, options, onChange }: CheckBoardProps) {
           ))}
         </div>
       </div>
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 }

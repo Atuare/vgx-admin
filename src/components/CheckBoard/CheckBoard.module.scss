@@ -5,6 +5,11 @@
 
   gap: 16px;
 
+  .error {
+    color: red;
+    font-weight: 700;
+  }
+
   &__header p {
     font-weight: 700;
     font-size: 17px;

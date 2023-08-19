@@ -17,7 +17,6 @@ import { Button } from "../Button";
 import { Checkbox } from "../Checkbox";
 import { DataInput } from "../DataInput";
 import { FileInput } from "../FileInput";
-import { NumberInput } from "../NumberInput";
 import { Radio } from "../Radio";
 import stylesStepOne from "./StepOne.module.scss";
 import styles from "./StepThree.module.scss";
@@ -134,10 +133,10 @@ export default function StepThree({ processData }: { processData: any }) {
               />
             </DataInput>
             <DataInput name="Limite de candidaturas" width="224px" required>
-              <NumberInput
-                defaultValue={processData?.limitCandidates}
-                onChange={() => {}}
+              <input
+                type="number"
                 disabled
+                value={processData?.limitCandidates}
               />
             </DataInput>
             <DataInput name="Upload banner vaga" width="301px" required>
@@ -198,8 +197,6 @@ export default function StepThree({ processData }: { processData: any }) {
               iconType="solid"
               isActive={processData?.availableForMinors}
               value="Processo disponível para menores de 18 anos"
-              onChangeCheckbox={() => {}}
-              style={{ padding: 0, cursor: "default" }}
               disabled
             />
           </div>

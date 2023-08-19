@@ -1,5 +1,3 @@
-import { ReactNode, useEffect, useState } from "react";
-import styles from "./TipTap.module.scss";
 import {
   AlignCenter,
   AlignLeft,
@@ -8,6 +6,8 @@ import {
   Justify,
 } from "@/assets/Icons";
 import { Editor } from "@tiptap/react";
+import { ReactNode, useEffect, useState } from "react";
+import styles from "./TipTap.module.scss";
 
 interface DropdownProps {
   options: { name: string; value: string; icon?: ReactNode }[];
@@ -70,6 +70,7 @@ export function DropDown({
   return (
     <div className={styles.dropdown}>
       <button
+        type="button"
         className={`${styles.dropdown__trigger} ${open ? styles.active : ""}`}
         onClick={() => setOpen(prev => !prev)}
         style={{
@@ -86,6 +87,7 @@ export function DropDown({
         >
           {options.map(option => (
             <button
+              type="button"
               key={crypto.randomUUID()}
               onClick={() => {
                 setSelected(option.value);

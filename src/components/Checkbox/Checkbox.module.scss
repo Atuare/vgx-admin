@@ -26,6 +26,7 @@
   }
 
   &.disabled {
+    cursor: default;
     color: var(--neutral-1);
 
     svg path {
