@@ -1,0 +1,28 @@
+.dataInput {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+
+  label {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--neutral-4);
+
+    span {
+      color: var(--error);
+    }
+
+    p {
+      font-weight: 400;
+    }
+  }
+
+  input {
+    height: 56px;
+    padding-inline: 16px;
+    color: var(--neutral-4);
+    border-radius: 8px;
+    box-shadow: 0px 5px 20px 0px #00000033;
+  }
+}

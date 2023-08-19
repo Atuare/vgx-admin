@@ -24,4 +24,12 @@
       fill: var(--primary-2);
     }
   }
+
+  &.disabled {
+    color: var(--neutral-1);
+
+    svg path {
+      fill: var(--neutral-1);
+    }
+  }
 }

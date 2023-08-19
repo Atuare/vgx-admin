@@ -10,6 +10,7 @@ interface CheckboxProps {
   onChangeCheckbox: (value: string) => void;
   isActive: boolean;
   iconType: "solid" | "outline";
+  disabled?: boolean;
 }
 
 export function Checkbox({
@@ -17,8 +18,9 @@ export function Checkbox({
   onChangeCheckbox,
   isActive,
   iconType,
+  disabled,
   ...props
-}: CheckboxProps) {
+}: CheckboxProps | any) {
   function onChange() {
     onChangeCheckbox(value);
   }
@@ -27,8 +29,11 @@ export function Checkbox({
     <button
       className={`${styles.checkbox} ${
         iconType === "solid" ? styles.primaryOne : styles.primaryTwo
-      }`}
-      style={{ padding: iconType === "solid" ? "4px" : "16px" }}
+      } ${disabled ? styles.disabled : ""}`}
+      style={{
+        padding: iconType === "solid" ? "4px" : "16px",
+        cursor: disabled ? "default" : "pointer",
+      }}
       onClick={onChange}
       {...props}
     >

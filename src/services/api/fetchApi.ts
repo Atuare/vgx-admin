@@ -1,5 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IAvailability } from "@/interfaces/availability.interface";
+import { IBenefit } from "@/interfaces/benefit.interface";
+import { IRole } from "@/interfaces/role.interface";
+import { ISchooling } from "@/interfaces/schooling.interface";
+import { ISkill } from "@/interfaces/skill.interface";
+import { IUnit } from "@/interfaces/unit.interface";
 import { BASE_URL } from "@/utils/config";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { redirect } from "next/navigation";
 
 const getAccessToken = () => {
@@ -31,6 +37,19 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    createProcess: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        const formData = new FormData();
+        formData.append("body", JSON.stringify(data));
+        formData.append("banner", data.file);
+
+        return {
+          url: "/process",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
     deleteProcess: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
         url: `/process/${id}`,
@@ -49,7 +68,10 @@ export const fetchApi = createApi({
         },
       }),
     }),
-    getAllUnits: builder.query<any, { page: number; size: number }>({
+    getAllUnits: builder.query<
+      { units: IUnit[] },
+      { page: number; size: number }
+    >({
       query: ({ page, size }) => ({
         url: "/unit/findAll",
         params: {
@@ -58,9 +80,60 @@ export const fetchApi = createApi({
         },
       }),
     }),
-    getAllRoles: builder.query<any, { page: number; size: number }>({
+    getAllRoles: builder.query<
+      { roles: IRole[] },
+      { page: number; size: number }
+    >({
       query: ({ page, size }) => ({
         url: "/role/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    getAllAvailabilities: builder.query<
+      { availabilities: IAvailability[] },
+      { page: number; size: number }
+    >({
+      query: ({ page, size }) => ({
+        url: "/availability/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    getAllSchoolings: builder.query<
+      { schoolings: ISchooling[] },
+      { page: number; size: number }
+    >({
+      query: ({ page, size }) => ({
+        url: "/schooling/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    getAllSkills: builder.query<
+      { skills: ISkill[] },
+      { page: number; size: number }
+    >({
+      query: ({ page, size }) => ({
+        url: "/skill/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    getAllBenefits: builder.query<
+      { benefits: IBenefit[] },
+      { page: number; size: number }
+    >({
+      query: ({ page, size }) => ({
+        url: "/benefit/findAll",
         params: {
           page,
           size,
@@ -73,8 +146,13 @@ export const fetchApi = createApi({
 // Export hooks for usage in components
 export const {
   useGetAllProcessQuery,
+  useCreateProcessMutation,
   useDeleteProcessMutation,
   useGetAdminStatisticsQuery,
   useGetAllUnitsQuery,
   useGetAllRolesQuery,
+  useGetAllAvailabilitiesQuery,
+  useGetAllSchoolingsQuery,
+  useGetAllSkillsQuery,
+  useGetAllBenefitsQuery,
 } = fetchApi;

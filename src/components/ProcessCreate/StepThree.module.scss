@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  &__title {
+    font-size: 27px;
+    font-weight: 700;
+  }
+
+  &__editorContainer {
+    min-height: 56px;
+    max-height: 224px;
+    padding-inline: 16px;
+    color: var(--neutral-4);
+    border-radius: 8px;
+    box-shadow: 0px 5px 20px 0px #00000033;
+
+    width: 80vw;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+}

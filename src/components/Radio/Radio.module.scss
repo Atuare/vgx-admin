@@ -27,6 +27,14 @@
         }
       }
     }
+
+    &[disabled] {
+      color: var(--neutral-1);
+
+      .radio__thumb {
+        border: 2px solid var(--neutral-1);
+      }
+    }
   }
 
   &__thumb {

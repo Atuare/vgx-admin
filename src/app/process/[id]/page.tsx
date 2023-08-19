@@ -127,7 +127,11 @@ export default function ProcessData() {
           value={process.limitCandidates.toString()}
           width="192px"
         />
-        <DataInput name="Currículo*" value={process.requestCv} width="399px" />
+        <DataInput
+          name="Solicitar Currículo*"
+          value={process.requestCv}
+          width="399px"
+        />
         <DataInput name="Banner vaga" value={process.banner} width="224px" />
       </section>
 

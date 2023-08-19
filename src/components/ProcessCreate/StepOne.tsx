@@ -1,8 +1,7 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 import { Select } from "../Select";
 import styles from "./StepOne.module.scss";
 import { TipTap } from "../TipTap";
-import { LocalSelect } from "../LocalSelect";
 import {
   useGetAllRolesQuery,
   useGetAllUnitsQuery,
@@ -10,19 +9,37 @@ import {
 import { Radio } from "../Radio";
 import { NumberInput } from "../NumberInput";
 import { FileInput } from "../FileInput";
+import { DataInput } from "../DataInput";
 import { Button } from "../Button";
 import { ArrowCircleRight } from "@/assets/Icons";
 import { useRouter } from "next/navigation";
 
 export function StepOne({
   handleTogglePage,
+  setProcessData,
 }: {
   handleTogglePage: (page: number) => void;
+  setProcessData: (data: any) => void;
 }) {
   const { back } = useRouter();
 
-  const [unitOptions, setUnitOptions] = useState<string[]>([]);
-  const [roleOptions, setRoleOptions] = useState<string[]>([]);
+  const [unit, setUnit] = useState<{ name: string; id: string }>();
+  const [role, setRole] = useState<{ name: string; id: string }>();
+  const [curriculum, setCurriculum] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [limitCandidates, setLimitCandidates] = useState<number>(0);
+  const [observations, setObservations] = useState<any>("");
+  const [registrationCompletionMessage, setRegistrationCompletionMessage] =
+    useState<any>();
+  const [file, setFile] = useState<File | null>(null);
+
+  const [unitOptions, setUnitOptions] = useState<
+    { name: string; id: string }[] | []
+  >([]);
+  const [roleOptions, setRoleOptions] = useState<
+    { name: string; id: string }[] | []
+  >([]);
 
   const { data, isSuccess } = useGetAllUnitsQuery({ page: 1, size: 9999 });
   const { data: RoleData, isSuccess: RoleDataSucess } = useGetAllRolesQuery({
@@ -31,41 +48,61 @@ export function StepOne({
   });
 
   function getObservations(content: any) {
-    // console.log(content);
+    setObservations(JSON.stringify(content));
   }
 
   function getLastMessage(content: any) {
-    // console.log(content);
+    setRegistrationCompletionMessage(JSON.stringify(content));
   }
 
-  function getUnit(value: string) {
-    // console.log(value);
+  function handleChangeFile(file: File) {
+    setFile(file);
   }
 
-  function getRole(value: string) {
-    // console.log(value);
+  function handleChangeStartDate(e: ChangeEvent<HTMLInputElement>) {
+    if (e?.target?.value) setStartDate(new Date(e.target.value).toISOString());
   }
 
-  function onChangeRadio(value: boolean) {
-    // console.log(value);
-  }
-
-  function onChangeCandidates(value: number) {
-    // console.log(value);
-  }
-
-  function onChangeFile(file: File) {
-    // console.log(event.target.files[0]);
+  function handleChangeEndDate(e: ChangeEvent<HTMLInputElement>) {
+    if (e?.target?.value) setEndDate(new Date(e.target.value).toISOString());
   }
 
   useEffect(() => {
+    setProcessData({
+      unit,
+      role,
+      curriculum,
+      startDate,
+      endDate,
+      limitCandidates,
+      file,
+      observations,
+      registrationCompletionMessage,
+    });
+  }, [
+    unit,
+    role,
+    curriculum,
+    startDate,
+    endDate,
+    limitCandidates,
+    file,
+    observations,
+    registrationCompletionMessage,
+  ]);
+
+  useEffect(() => {
     if (isSuccess) {
-      const units = data?.units.map(unit => unit.unitName);
+      const units = data?.units.map(unit => {
+        return { name: unit.unitName, id: unit.id };
+      });
       setUnitOptions(units ?? []);
     }
 
     if (RoleDataSucess) {
-      const roles = RoleData?.roles.map(role => role.roleText);
+      const roles = RoleData?.roles.map(role => {
+        return { name: role.roleText, id: role.id };
+      });
       setRoleOptions(roles ?? []);
     }
   }, [isSuccess, RoleDataSucess]);
@@ -78,33 +115,33 @@ export function StepOne({
             <Select
               placeholder="Selecione os locais"
               options={unitOptions}
-              onChange={getUnit}
+              onChange={value => setUnit(value)}
             />
           </DataInput>
           <DataInput name="Cargo" required width="448px">
-            <LocalSelect
-              placeholder="Selecione os locais"
+            <Select
+              placeholder="Selecione"
               options={roleOptions}
-              onChange={getRole}
+              onChange={value => setRole(value)}
             />
           </DataInput>
-          <DataInput name="Currículo" width="264px" required>
-            <Radio onChange={onChangeRadio} />
+          <DataInput name="Solicitar currículo" width="264px" required>
+            <Radio onChange={value => setCurriculum(value)} />
           </DataInput>
         </div>
 
         <div className={styles.container__form__second}>
           <DataInput name="Data inicial" width="224px" required>
-            <input type="date" />
+            <input type="date" onChange={handleChangeStartDate} />
           </DataInput>
           <DataInput name="Inscrições até" width="224px">
-            <input type="date" />
+            <input type="date" onChange={handleChangeEndDate} />
           </DataInput>
           <DataInput name="Limite de candidaturas" width="224px">
-            <NumberInput onChange={onChangeCandidates} />
+            <NumberInput onChange={value => setLimitCandidates(value)} />
           </DataInput>
           <DataInput name="Upload banner vaga" width="301px" required>
-            <FileInput onChange={onChangeFile} />
+            <FileInput onChange={handleChangeFile} />
           </DataInput>
         </div>
       </section>
@@ -132,29 +169,6 @@ export function StepOne({
           onClick={() => handleTogglePage(2)}
         />
       </div>
-    </div>
-  );
-}
-
-function DataInput({
-  name,
-  width,
-  required = false,
-  children,
-}: {
-  name: string;
-  width?: string;
-  required?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div className={styles.dataInput} style={{ width }}>
-      <label htmlFor={name}>
-        {name}
-        {required && <span>*</span>}
-      </label>
-      <label htmlFor={name}>{!required && <p>(opcional)</p>}</label>
-      {children}
     </div>
   );
 }

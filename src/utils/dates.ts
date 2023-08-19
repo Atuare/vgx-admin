@@ -99,3 +99,8 @@ export function getFirstDayOfMonth(month: number, year: number) {
   const date = new Date(year, month, 1);
   return date.getDay();
 }
+
+export function formatDateTime(dateTimeValue: Date) {
+  const formattedDate = dayjs(dateTimeValue).format("YYYY-MM-DD");
+  return formattedDate;
+}

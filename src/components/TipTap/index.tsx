@@ -38,7 +38,7 @@ export function TipTap({
   });
 
   useMemo(() => {
-    if (editor?.getHTML()) getContentFromEditor(editor?.getJSON());
+    if (editor?.getJSON()) getContentFromEditor(editor?.getJSON());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor?.getJSON()]);
 

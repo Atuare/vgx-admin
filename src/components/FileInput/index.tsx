@@ -4,10 +4,12 @@ import { Upload } from "@/assets/Icons";
 
 interface FileInputProps {
   onChange: (file: File) => void;
+  defaultFile?: File;
+  disabled?: boolean;
 }
 
-export function FileInput({ onChange }: FileInputProps) {
-  const [file, setFile] = useState<File | null>(null);
+export function FileInput({ onChange, defaultFile, disabled }: FileInputProps) {
+  const [file, setFile] = useState<File | null>(defaultFile ?? null);
 
   const input = useRef<HTMLInputElement>(null);
 
@@ -25,9 +27,14 @@ export function FileInput({ onChange }: FileInputProps) {
         onChange={event => {
           setFile(event.target.files?.[0] ?? null);
         }}
+        disabled={!!disabled}
       />
       <div className={styles.inputContainer__left}>
-        <label htmlFor="file" className={styles.inputContainer__left__label}>
+        <label
+          htmlFor="file"
+          className={styles.inputContainer__left__label}
+          style={disabled ? { cursor: "default" } : {}}
+        >
           <p>Escolher arquivo...</p>
         </label>
 

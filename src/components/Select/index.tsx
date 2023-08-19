@@ -3,9 +3,9 @@ import styles from "./Select.module.scss";
 import { ChevronDown } from "@/assets/Icons";
 
 interface SelectProps {
-  options: string[];
+  options: { name: string; id: string }[];
   defaultValue?: string;
-  onChange: (value: string) => void;
+  onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
 }
 
@@ -45,15 +45,15 @@ export function Select({
                     ? "0 0 8px 8px"
                     : "",
               }}
-              className={`${option === select ? styles.active : ""}`}
+              className={`${option.id === select ? styles.active : ""}`}
               key={crypto.randomUUID()}
               onClick={() => {
-                setSelect(option);
+                setSelect(option.name);
                 onChange(option);
                 setOpenSelect(false);
               }}
             >
-              {option}
+              {option.name}
             </button>
           ))}
         </div>

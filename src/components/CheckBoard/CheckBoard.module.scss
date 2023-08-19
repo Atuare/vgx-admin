@@ -1,0 +1,71 @@
+.checkBoard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  gap: 16px;
+
+  &__header p {
+    font-weight: 700;
+    font-size: 17px;
+
+    span {
+      color: var(--error);
+    }
+  }
+
+  &__body {
+    display: flex;
+    border: 2px solid var(--neutral-2);
+    border-radius: 8px;
+    flex-direction: column;
+
+    &__itemPreview {
+      display: flex;
+      height: 56px;
+      padding: 8px;
+      border-bottom: 2px solid var(--neutral-2);
+      gap: 8px;
+      align-items: center;
+      overflow-y: auto;
+      flex-wrap: wrap;
+
+      div {
+        display: flex;
+        background: var(--sucess);
+        border-radius: 8px;
+        padding: 4px;
+        height: 34px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+
+        button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 5px;
+          cursor: pointer;
+
+          svg path {
+            fill: #1c1b1f;
+          }
+        }
+
+        p {
+          color: var(--neutral-4);
+        }
+      }
+    }
+
+    &__item {
+      display: flex;
+      height: 226px;
+      overflow-y: auto;
+      padding: 8px;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+}
