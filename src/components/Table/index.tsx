@@ -218,7 +218,7 @@ export function DataTable({
           )}
         </TableBody>
       </Table>
-      <DataTablePagination table={table} totalCount={totalCount} />
+      <DataTablePagination totalCount={totalCount} />
     </>
   );
 }
