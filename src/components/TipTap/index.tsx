@@ -2,17 +2,17 @@ import styles from "./TipTap.module.scss";
 import "./tiptap.scss";
 
 import { Color } from "@tiptap/extension-color";
-import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
 import FontFamily from "@tiptap/extension-font-family";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
 
+import { TextStyleExtended } from "@/utils/fontsize";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { TipTapMenu } from "./TipTapMenu";
-import { TextStyleExtended } from "@/utils/fontsize";
 
 export function TipTap({
   content,
