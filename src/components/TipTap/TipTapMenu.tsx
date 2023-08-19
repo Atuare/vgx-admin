@@ -13,7 +13,6 @@ import {
 } from "@/assets/Icons";
 import { colors, fontSizes, fonts, textAlign } from "@/utils/tiptap";
 import { Editor } from "@tiptap/react";
-import { useEffect } from "react";
 import { ColorDropDown } from "./ColorDropdown";
 import { Dialog } from "./Dialog";
 import { DropDown } from "./Dropdown";
@@ -29,11 +28,6 @@ interface TipTapMenuProps {
 }
 
 export function TipTapMenu({ editor }: TipTapMenuProps) {
-  useEffect(() => {
-    editor?.commands.setFontFamily("Arial");
-    editor?.commands.setFontSize("16");
-  }, []);
-
   if (!editor) return;
 
   const handleFontChange = (value: string) => {

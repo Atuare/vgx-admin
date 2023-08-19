@@ -1,5 +1,3 @@
-import { ReactNode, useEffect, useState } from "react";
-import styles from "./TipTap.module.scss";
 import {
   AlignCenter,
   AlignLeft,
@@ -8,6 +6,8 @@ import {
   Justify,
 } from "@/assets/Icons";
 import { Editor } from "@tiptap/react";
+import { ReactNode, useEffect, useState } from "react";
+import styles from "./TipTap.module.scss";
 
 interface DropdownProps {
   options: { name: string; value: string; icon?: ReactNode }[];
