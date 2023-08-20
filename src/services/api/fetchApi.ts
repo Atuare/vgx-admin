@@ -56,6 +56,18 @@ export const fetchApi = createApi({
         method: "DELETE",
       }),
     }),
+    updateProcess: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        const formData = new FormData();
+        formData.append("body", JSON.stringify(data));
+
+        return {
+          url: "/process",
+          method: "PUT",
+          body: formData,
+        };
+      },
+    }),
     getAdminStatistics: builder.query<
       any,
       { startDate?: string; endDate?: string }
@@ -148,6 +160,7 @@ export const {
   useGetAllProcessQuery,
   useCreateProcessMutation,
   useDeleteProcessMutation,
+  useUpdateProcessMutation,
   useGetAdminStatisticsQuery,
   useGetAllUnitsQuery,
   useGetAllRolesQuery,

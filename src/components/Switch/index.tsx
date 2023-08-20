@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { CheckSmall, MinusSmall } from "@/assets/Icons";
+import { useState } from "react";
 import styles from "./Switch.module.scss";
 
 interface SwitchProps {
@@ -8,11 +8,11 @@ interface SwitchProps {
 }
 
 export function Switch({ handleSwitchChange, checked }: SwitchProps) {
-  const [checkedState, setCheckedState] = useState(checked);
+  const [checkedState, setCheckedState] = useState(checked ?? false);
 
   const handleChangeValue = () => {
     setCheckedState(prev => !prev);
-    handleSwitchChange(checkedState);
+    handleSwitchChange(!checkedState);
   };
 
   return (
@@ -23,6 +23,7 @@ export function Switch({ handleSwitchChange, checked }: SwitchProps) {
     >
       <div className={styles.switch__thumb} />
       {checkedState ? <CheckSmall /> : <MinusSmall />}
+      <label>{checked ? "ATIVO" : "INATIVO"}</label>
     </button>
   );
 }

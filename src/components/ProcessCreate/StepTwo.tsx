@@ -8,7 +8,6 @@ import {
 } from "@/services/api/fetchApi";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../Button";
 import { CheckBoard } from "../CheckBoard";
@@ -21,12 +20,13 @@ export function StepTwo({
   handleTogglePage,
   currentProcessData,
   setProcessData,
+  setStep,
 }: {
   handleTogglePage: (page: number) => void;
   currentProcessData: any;
   setProcessData: (data: any) => void;
+  setStep: (step: number) => void;
 }) {
-  const { back } = useRouter();
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processCreateStepTwoSchema),
     defaultValues: {
@@ -171,6 +171,7 @@ export function StepTwo({
                 iconType="solid"
                 value="Processo disponível para menores de 18 anos"
                 onChangeCheckbox={value => onChange(value)}
+                type="button"
               />
             </div>
           )}
@@ -179,8 +180,8 @@ export function StepTwo({
           <Button
             type="button"
             buttonType="default"
-            text="Cancelar"
-            onClick={() => back()}
+            text="Voltar"
+            onClick={() => setStep(1)}
           >
             Cancelar
           </Button>

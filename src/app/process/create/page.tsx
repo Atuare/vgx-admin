@@ -24,6 +24,7 @@ export default function ProcessCreate() {
       {step === 1 && (
         <StepOne
           handleTogglePage={handleTogglePage}
+          currentProcessData={processData}
           setProcessData={handleSetProcessData}
         />
       )}
@@ -32,9 +33,10 @@ export default function ProcessCreate() {
           handleTogglePage={handleTogglePage}
           currentProcessData={processData}
           setProcessData={handleSetProcessData}
+          setStep={setStep}
         />
       )}
-      {step === 3 && <StepThree processData={processData} />}
+      {step === 3 && <StepThree processData={processData} setStep={setStep} />}
     </div>
   );
 }
