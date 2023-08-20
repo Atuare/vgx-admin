@@ -10,10 +10,7 @@ const isAfterYesterday = (value?: Date | null) => {
   if (!value) {
     return true; // Permite valores undefined ou null
   }
-  return (
-    dayjs(value).isAfter(yesterday) ||
-    new yup.ValidationError("A data deve ser maior que um dia atrás.")
-  );
+  return dayjs(value).isAfter(yesterday);
 };
 
 export const processCreateStepOneSchema = yup
@@ -33,8 +30,7 @@ export const processCreateStepOneSchema = yup
     endDate: yup
       .date()
       .min(yup.ref("startDate"), "A data final deve ser maior que a inicial")
-      .optional()
-      .required("A data final é obrigatória"),
+      .optional(),
     limitCandidates: yup.number().optional(),
     banner: yup
       .mixed()
