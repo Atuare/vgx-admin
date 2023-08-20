@@ -1,8 +1,8 @@
 export interface ProcessType {
-  id: number;
+  id: string;
   type: "PRESENCIAL" | "REMOTO";
   unit: {
-    id: number;
+    id: string;
     unitName: string;
     unitAcronym: string;
     unitAddress: string;
@@ -17,7 +17,7 @@ export interface ProcessType {
   status: "ATIVO" | "INATIVO";
   skills: [
     {
-      id: number;
+      id: string;
       skillText: string;
       status: "ATIVO" | "INATIVO";
     },
@@ -34,7 +34,7 @@ export interface ProcessType {
   ];
   schoolings: [
     {
-      id: number;
+      id: string;
       status: "ATIVO" | "INATIVO";
       schoolingName: string;
       informCourse: boolean;
@@ -65,7 +65,7 @@ export interface ProcessesType {
 
 export interface UnitsType {
   units: {
-    id: number;
+    id: string;
     unitName: string;
     unitAcronym: string;
     unitAddress: string;
