@@ -5,6 +5,7 @@ import {
   useGetAllUnitsQuery,
 } from "@/services/api/fetchApi";
 import { yupResolver } from "@hookform/resolvers/yup";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,15 +21,32 @@ import styles from "./StepOne.module.scss";
 export function StepOne({
   handleTogglePage,
   setProcessData,
+  currentProcessData,
 }: {
   handleTogglePage: (page: number) => void;
   setProcessData: (data: any) => void;
+  currentProcessData: any;
 }) {
   const { back } = useRouter();
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processCreateStepOneSchema),
     defaultValues: {
-      limitCandidates: 1,
+      unit: {
+        name: currentProcessData?.unit?.name,
+        id: currentProcessData?.unit?.id,
+      },
+      role: {
+        name: currentProcessData?.role?.name,
+        id: currentProcessData?.role?.id,
+      },
+      requestCv: currentProcessData?.curriculum,
+      startDate: dayjs(currentProcessData?.startDate).toDate(),
+      endDate: dayjs(currentProcessData?.endDate).toDate(),
+      limitCandidates: currentProcessData?.limitCandidates ?? 1,
+      banner: currentProcessData?.file,
+      observations: currentProcessData?.observations,
+      registrationCompletionMessage:
+        currentProcessData?.registrationCompletionMessage,
     },
   });
 
@@ -76,6 +94,10 @@ export function StepOne({
     handleTogglePage(2);
   }
 
+  useEffect(() => {
+    console.log(dayjs(undefined).format("YYYY-MM-DD"));
+  }, [currentProcessData]);
+
   return (
     <form
       id="process-create"
@@ -98,6 +120,7 @@ export function StepOne({
                   placeholder="Selecione os locais"
                   options={unitOptions}
                   onChange={onChange}
+                  defaultValue={currentProcessData?.unit?.name}
                 />
               </DataInput>
             )}
@@ -117,6 +140,7 @@ export function StepOne({
                   placeholder="Selecione"
                   options={roleOptions}
                   onChange={onChange}
+                  defaultValue={currentProcessData?.role?.name}
                 />
               </DataInput>
             )}
@@ -127,7 +151,10 @@ export function StepOne({
             control={control}
             render={({ field: { onChange }, fieldState: { error } }) => (
               <DataInput name="Solicitar currículo" width="264px" required>
-                <Radio onChange={onChange} />
+                <Radio
+                  onChange={onChange}
+                  defaultValue={currentProcessData?.curriculum}
+                />
               </DataInput>
             )}
           />
@@ -144,7 +171,14 @@ export function StepOne({
                 required
                 error={error?.message}
               >
-                <input type="date" onChange={onChange} />
+                <input
+                  type="date"
+                  onChange={onChange}
+                  defaultValue={
+                    currentProcessData?.startDate &&
+                    dayjs(currentProcessData?.startDate).format("YYYY-MM-DD")
+                  }
+                />
               </DataInput>
             )}
           />
@@ -158,7 +192,14 @@ export function StepOne({
                 width="224px"
                 error={error?.message}
               >
-                <input type="date" onChange={onChange} />
+                <input
+                  type="date"
+                  onChange={onChange}
+                  defaultValue={
+                    currentProcessData?.endDate &&
+                    dayjs(currentProcessData?.endDate).format("YYYY-MM-DD")
+                  }
+                />
               </DataInput>
             )}
           />
@@ -172,7 +213,10 @@ export function StepOne({
                 width="224px"
                 error={error?.message}
               >
-                <NumberInput onChange={onChange} />
+                <NumberInput
+                  onChange={onChange}
+                  defaultValue={currentProcessData?.limitCandidates ?? 1}
+                />
               </DataInput>
             )}
           />
@@ -187,7 +231,10 @@ export function StepOne({
                 error={error?.message}
                 required
               >
-                <FileInput onChange={onChange} />
+                <FileInput
+                  onChange={onChange}
+                  defaultFile={currentProcessData?.file}
+                />
               </DataInput>
             )}
           />
@@ -205,6 +252,10 @@ export function StepOne({
               getContentFromEditor={content =>
                 onChange(JSON.stringify(content))
               }
+              content={
+                currentProcessData?.observations &&
+                JSON.parse(currentProcessData?.observations)
+              }
             />
           )}
         />
@@ -221,6 +272,10 @@ export function StepOne({
             <TipTap
               getContentFromEditor={content =>
                 onChange(JSON.stringify(content))
+              }
+              content={
+                currentProcessData?.registrationCompletionMessage &&
+                JSON.parse(currentProcessData?.registrationCompletionMessage)
               }
             />
           )}

@@ -3,10 +3,10 @@ import {
   CheckboxFill,
   CheckboxFillOutlined,
 } from "@/assets/Icons";
-import { useState } from "react";
+import { ButtonHTMLAttributes, useState } from "react";
 import styles from "./Checkbox.module.scss";
 
-interface CheckboxProps {
+interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
   onChangeCheckbox?: (value: boolean, name?: string) => void;
   isActive?: boolean;
@@ -20,6 +20,7 @@ export function Checkbox({
   isActive,
   iconType,
   disabled = false,
+  ...props
 }: CheckboxProps) {
   const [checked, setChecked] = useState(isActive ?? false);
 
@@ -37,6 +38,7 @@ export function Checkbox({
           onChangeCheckbox?.(!checked, value);
         }
       }}
+      {...props}
     >
       {checked ? (
         iconType === "solid" ? (

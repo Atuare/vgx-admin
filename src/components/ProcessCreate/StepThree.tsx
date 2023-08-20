@@ -22,7 +22,13 @@ import stylesStepOne from "./StepOne.module.scss";
 import styles from "./StepThree.module.scss";
 import stylesStepTwo from "./StepTwo.module.scss";
 
-export default function StepThree({ processData }: { processData: any }) {
+export default function StepThree({
+  processData,
+  setStep,
+}: {
+  processData: any;
+  setStep: (step: number) => void;
+}) {
   const { back } = useRouter();
   const [createProcess] = useCreateProcessMutation();
 
@@ -182,12 +188,13 @@ export default function StepThree({ processData }: { processData: any }) {
               isActive={processData?.availableForMinors}
               value="Processo disponível para menores de 18 anos"
               disabled
+              type="button"
             />
           </div>
         </section>
       </div>
       <div className={stylesStepOne.container__buttons}>
-        <Button buttonType="default" text="Cancelar" onClick={() => back()} />
+        <Button buttonType="default" text="Voltar" onClick={() => setStep(2)} />
         <Button
           buttonType="primary"
           text="Finalizar"
