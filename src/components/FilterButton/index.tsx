@@ -11,7 +11,7 @@ import styles from "./FilterButton.module.scss";
 
 interface FilterButtonProps {
   title: string;
-  table: Table<any>;
+  table: Table<any> | undefined;
   options: string[];
   column: string;
 }
@@ -61,7 +61,7 @@ export function PopoverFilter({
   children: ReactNode;
   handleOpenFilter: (value: boolean) => void;
   options: string[];
-  table: Table<any>;
+  table: Table<any> | undefined;
   column: string;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
@@ -83,7 +83,7 @@ export function PopoverFilter({
   };
 
   const handleToggleFilter = () => {
-    table.getColumn(column)?.setFilterValue(selected);
+    table?.getColumn(column)?.setFilterValue(selected);
 
     setParams(column, selected.join(","));
   };

@@ -1,25 +1,22 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDownloadExcel } from "react-export-table-to-excel";
 
 import styles from "./Process.module.scss";
 
 import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { ProcessTable } from "@/components/ProcessTable";
 import { SearchInput } from "@/components/SearchInput";
-import { DataTable } from "@/components/Table";
-import { useProcessTable } from "@/hooks/useProcessTable";
-import { useProcesses } from "@/hooks/useProcesses";
-import { useTableParams } from "@/hooks/useTableParams";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function Process() {
   const [value, setValue] = useState<string>("");
   const tableRef = useRef(null);
 
-  const { processes } = useProcesses();
-  const { currentPage } = useProcessTable();
-  const { setParams } = useTableParams();
+  const { get } = useSearchParams();
+  const page = get("page") ? Number(get("page")) : 1;
 
   function handleInputValue(value: string) {
     setValue(value);
@@ -27,13 +24,9 @@ export default function Process() {
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
-    filename: `Processos pag. ${currentPage}`,
-    sheet: `Processos pag. ${currentPage}`,
+    filename: `Processos pag. ${page}`,
+    sheet: `Processos pag. ${page}`,
   });
-
-  useEffect(() => {
-    setParams("page", String(currentPage));
-  }, [currentPage]);
 
   return (
     <div className={styles.process}>
@@ -54,15 +47,7 @@ export default function Process() {
           />
         </Link>
       </div>
-
-      <section className={styles.process__list}>
-        <DataTable
-          data={processes.processes}
-          size={processes.totalCount}
-          tableName="processes"
-          ref={tableRef}
-        />
-      </section>
+      <ProcessTable tableRef={tableRef} globalFilter={value} />
     </div>
   );
 }
