@@ -1,14 +1,14 @@
 "use client";
 
+import { Menu } from "@/components/Menu";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { store } from "@/store/store";
+import type { Metadata } from "next";
+import { Inter, Roboto, Sora } from "next/font/google";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { Provider } from "react-redux";
-import { usePathname } from "next/navigation";
 import "./globals.scss";
-import type { Metadata } from "next";
-import { Sora, Roboto, Inter } from "next/font/google";
-import { Menu } from "@/components/Menu";
-import { store } from "@/store/store";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
 const sora = Sora({
   subsets: ["latin"],
