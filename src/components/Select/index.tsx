@@ -1,6 +1,6 @@
+import { ChevronDown } from "@/assets/Icons";
 import { useState } from "react";
 import styles from "./Select.module.scss";
-import { ChevronDown } from "@/assets/Icons";
 
 interface SelectProps {
   options: { name: string; id: string }[];
@@ -26,9 +26,7 @@ export function Select({
         }`}
         onClick={() => setOpenSelect(prev => !prev)}
       >
-        <span>
-          {defaultValue ? defaultValue : select ? select : placeholder}
-        </span>
+        <span>{select ? select : placeholder}</span>
         <ChevronDown />
       </div>
       {openSelect && (

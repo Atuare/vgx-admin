@@ -13,6 +13,7 @@ import styles from "./ProcessData.module.scss";
 import { Delete, EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
+import { setProcessEdit } from "@/features/process/processEditSlice";
 import { ProcessType } from "@/interfaces/process.interface";
 
 import dayjs from "dayjs";
@@ -53,8 +54,13 @@ export default function ProcessData() {
     processesData.processes.map((process: ProcessType) => {
       if (String(process.id) === params.id) {
         setProcess(process);
+        dispatch(setProcessEdit(process));
       }
     });
+  }
+
+  function handleEditProcess() {
+    push(`/process/${process?.id}/edit`);
   }
 
   useEffect(() => {
@@ -83,7 +89,7 @@ export default function ProcessData() {
               text="Editar"
               buttonType="secondary"
               icon={<EditSquare />}
-              onClick={() => push(`/process/${process.id}/edit`)}
+              onClick={handleEditProcess}
             />
           </div>
         </div>

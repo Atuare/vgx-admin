@@ -37,6 +37,11 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getProcessBanner: builder.query<any, { bannerName: string }>({
+      query: ({ bannerName }) => ({
+        url: `/process/banner/${bannerName}`,
+      }),
+    }),
     createProcess: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         const formData = new FormData();
@@ -60,6 +65,9 @@ export const fetchApi = createApi({
       query: (data: Record<string, string>) => {
         const formData = new FormData();
         formData.append("body", JSON.stringify(data));
+        if (data.file) {
+          formData.append("banner", data.file);
+        }
 
         return {
           url: "/process",
@@ -158,6 +166,7 @@ export const fetchApi = createApi({
 // Export hooks for usage in components
 export const {
   useGetAllProcessQuery,
+  useGetProcessBannerQuery,
   useCreateProcessMutation,
   useDeleteProcessMutation,
   useUpdateProcessMutation,

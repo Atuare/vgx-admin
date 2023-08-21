@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    &__checkBox {
+      span {
+        gap: 0px;
+        font-weight: 700;
+      }
+
+      button {
+        padding: 0 !important;
+      }
+    }
+
+    &__buttons {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+
+      button {
+        padding: 16px;
+      }
+    }
+  }
+}

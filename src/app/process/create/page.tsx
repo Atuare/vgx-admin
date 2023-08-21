@@ -1,7 +1,7 @@
 "use client";
-import { StepOne } from "@/components/ProcessCreate/StepOne";
-import StepThree from "@/components/ProcessCreate/StepThree";
-import { StepTwo } from "@/components/ProcessCreate/StepTwo";
+import { StepOneProcessCreate } from "@/components/ProcessCreate/StepOneProcessCreate";
+import { StepThreeProcessCreate } from "@/components/ProcessCreate/StepThreeProcessCreate";
+import { StepTwoProcessCreate } from "@/components/ProcessCreate/StepTwoProcessCreate";
 import { Stepper } from "@/components/Stepper";
 import { useState } from "react";
 import styles from "./ProcessCreate.module.scss";
@@ -22,21 +22,23 @@ export default function ProcessCreate() {
     <div className={styles.process}>
       <Stepper step={step} />
       {step === 1 && (
-        <StepOne
+        <StepOneProcessCreate
           handleTogglePage={handleTogglePage}
           currentProcessData={processData}
           setProcessData={handleSetProcessData}
         />
       )}
       {step === 2 && (
-        <StepTwo
+        <StepTwoProcessCreate
           handleTogglePage={handleTogglePage}
           currentProcessData={processData}
           setProcessData={handleSetProcessData}
           setStep={setStep}
         />
       )}
-      {step === 3 && <StepThree processData={processData} setStep={setStep} />}
+      {step === 3 && (
+        <StepThreeProcessCreate processData={processData} setStep={setStep} />
+      )}
     </div>
   );
 }

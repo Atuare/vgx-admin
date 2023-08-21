@@ -1,9 +1,9 @@
 import { TaskAlt } from "@/assets/Icons";
 import stylesCheckBoard from "@/components/CheckBoard/CheckBoard.module.scss";
-import { StatusEnum } from "@/enums/status.enum";
-import { useCreateProcessMutation } from "@/services/api/fetchApi";
+import { useUpdateProcessMutation } from "@/services/api/fetchApi";
 import { formatDateTime } from "@/utils/dates";
 import { TextStyleExtended } from "@/utils/fontsize";
+import { cleanObjectEmptyProperties } from "@/utils/lodash";
 import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Image from "@tiptap/extension-image";
@@ -18,11 +18,11 @@ import { Checkbox } from "../Checkbox";
 import { DataInput } from "../DataInput";
 import { FileInput } from "../FileInput";
 import { Radio } from "../Radio";
-import stylesStepOne from "./StepOne.module.scss";
-import styles from "./StepThree.module.scss";
-import stylesStepTwo from "./StepTwo.module.scss";
+import stylesStepOne from "./StepOneProcessEdit.module.scss";
+import styles from "./StepThreeProcessEdit.module.scss";
+import stylesStepTwo from "./StepTwoProcessEdit.module.scss";
 
-export default function StepThree({
+export function StepThreeProcessEdit({
   processData,
   setStep,
 }: {
@@ -30,9 +30,9 @@ export default function StepThree({
   setStep: (step: number) => void;
 }) {
   const { back } = useRouter();
-  const [createProcess] = useCreateProcessMutation();
+  const [updateProcess] = useUpdateProcessMutation();
 
-  const editor = useEditor({
+  const observationsEditor = useEditor({
     extensions: [
       StarterKit,
       Color,
@@ -45,12 +45,32 @@ export default function StepThree({
       }),
       Image,
     ],
+    content: processData?.observations && JSON.parse(processData?.observations),
     editable: false,
   });
 
-  function handleCreateProcess() {
-    const createProcessData = {
-      status: StatusEnum.ATIVO,
+  const registrationCompletionMessageEditor = useEditor({
+    extensions: [
+      StarterKit,
+      Color,
+      Underline,
+      FontFamily,
+      Link,
+      TextStyleExtended,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      Image,
+    ],
+    content:
+      processData?.registrationCompletionMessage &&
+      JSON.parse(processData?.registrationCompletionMessage),
+    editable: false,
+  });
+
+  function handleUpdateProcess() {
+    const updateProcessData = cleanObjectEmptyProperties({
+      id: processData?.id,
       type: processData?.type,
       unitId: processData?.unit?.id,
       roleId: processData?.role?.id,
@@ -74,10 +94,10 @@ export default function StepThree({
         registrationCompletionMessage:
           processData?.registrationCompletionMessage,
       }),
-      file: processData?.file,
-    };
+      ...(typeof processData?.file === "object" && { file: processData?.file }),
+    });
 
-    createProcess(createProcessData).then(() => {
+    updateProcess(updateProcessData).then(() => {
       location.replace("/process");
     });
   }
@@ -89,10 +109,10 @@ export default function StepThree({
         <section className={stylesStepOne.container__form}>
           <div className={stylesStepOne.container__form__first}>
             <DataInput name="Unidade/Site" width="296px" required>
-              <input type="text" value={processData?.unit?.name} disabled />
+              <input type="text" value={processData?.unit?.unitName} disabled />
             </DataInput>
             <DataInput name="Cargo" width="448px" required>
-              <input type="text" value={processData?.role?.name} disabled />
+              <input type="text" value={processData?.role?.roleText} disabled />
             </DataInput>
             <DataInput name="Solicitar currículo" width="264px" required>
               <Radio
@@ -139,15 +159,13 @@ export default function StepThree({
 
         <DataInput name="Observações" required>
           <EditorContent
-            content={processData?.observations}
-            editor={editor}
+            editor={observationsEditor}
             className={styles.container__editorContainer}
           />
         </DataInput>
         <DataInput name="Mensagem exibida ao final do cadastro" required>
           <EditorContent
-            content={processData?.registrationCompletionMessage}
-            editor={editor}
+            editor={registrationCompletionMessageEditor}
             className={styles.container__editorContainer}
           />
         </DataInput>
@@ -199,7 +217,7 @@ export default function StepThree({
           buttonType="primary"
           text="Finalizar"
           icon={<TaskAlt />}
-          onClick={handleCreateProcess}
+          onClick={handleUpdateProcess}
         />
       </div>
     </div>
