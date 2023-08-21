@@ -1,17 +1,5 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import { isAfterYesterday } from "@/utils/dates";
 import * as yup from "yup";
-dayjs.extend(utc);
-
-const isAfterYesterday = (value?: Date | null) => {
-  const currentDate = dayjs();
-  const yesterday = currentDate.subtract(1, "day").endOf("day").utc();
-
-  if (!value) {
-    return true; // Permite valores undefined ou null
-  }
-  return dayjs(value).isAfter(yesterday);
-};
 
 export const processCreateStepOneSchema = yup
   .object({

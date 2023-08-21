@@ -1,5 +1,50 @@
+"use client";
+import { StepOneProcessEdit } from "@/components/ProcessEdit/StepOneProcessEdit";
+import { StepThreeProcessEdit } from "@/components/ProcessEdit/StepThreeProcessEdit";
+import { StepTwoProcessEdit } from "@/components/ProcessEdit/StepTwoProcessEdit";
+import { Stepper } from "@/components/Stepper";
+import { useProcessEdit } from "@/hooks/useProcess";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import styles from "./ProcessEdit.module.scss";
 
 export default function ProcessEdit() {
-  return <div className={styles.process}>Edit</div>;
+  const [step, setStep] = useState(1);
+  const { push } = useRouter();
+  const { processEdit } = useProcessEdit();
+  const [processData, setProcessData] = useState<any>(processEdit);
+
+  const handleSetProcessData = (data: any) => {
+    setProcessData(data);
+  };
+
+  const handleTogglePage = (page: number) => {
+    setStep(page);
+  };
+
+  if (!processEdit) return push("/process");
+
+  return (
+    <div className={styles.process}>
+      <Stepper step={step} />
+      {step === 1 && (
+        <StepOneProcessEdit
+          handleTogglePage={handleTogglePage}
+          currentProcessData={processData}
+          setProcessData={handleSetProcessData}
+        />
+      )}
+      {step === 2 && (
+        <StepTwoProcessEdit
+          handleTogglePage={handleTogglePage}
+          currentProcessData={processData}
+          setProcessData={handleSetProcessData}
+          setStep={setStep}
+        />
+      )}
+      {step === 3 && (
+        <StepThreeProcessEdit processData={processData} setStep={setStep} />
+      )}
+    </div>
+  );
 }

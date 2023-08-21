@@ -24,6 +24,7 @@ export function Radio({
     <div className={styles.radio}>
       {[true, false].map(item => (
         <button
+          type="button"
           className={styles.radio__item}
           key={crypto.randomUUID()}
           data-state={item === value ? "active" : "inactive"}

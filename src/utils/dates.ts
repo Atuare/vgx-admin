@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 export const months = [
   "Janeiro",
@@ -104,3 +106,13 @@ export function formatDateTime(dateTimeValue: Date) {
   const formattedDate = dayjs(dateTimeValue).format("YYYY-MM-DD");
   return formattedDate;
 }
+
+export const isAfterYesterday = (value?: Date | null) => {
+  const currentDate = dayjs();
+  const yesterday = currentDate.subtract(1, "day").endOf("day").utc();
+
+  if (!value) {
+    return true; // Permite valores undefined ou null
+  }
+  return dayjs(value).isAfter(yesterday);
+};

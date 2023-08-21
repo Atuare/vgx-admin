@@ -1,8 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { authApi } from "@/services/api/authApi";
-import { userApi } from "@/services/api/userApi";
-import { fetchApi } from "@/services/api/fetchApi";
+import processEditReducer from "@/features/process/processEditSlice";
 import userReducer from "@/features/user/userSlice";
+import { authApi } from "@/services/api/authApi";
+import { fetchApi } from "@/services/api/fetchApi";
+import { userApi } from "@/services/api/userApi";
+import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [fetchApi.reducerPath]: fetchApi.reducer,
     userState: userReducer,
+    processEditState: processEditReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(

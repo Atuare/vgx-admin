@@ -8,6 +8,7 @@ interface CheckBoardProps {
   title: string;
   options: { name: string; id: string }[];
   onChange: (value: { name: string; id: string }[]) => void;
+  defaultValue?: { name: string; id: string }[];
   error?: string;
 }
 
@@ -15,9 +16,12 @@ export function CheckBoard({
   title,
   options,
   onChange,
+  defaultValue,
   error,
 }: CheckBoardProps) {
-  const [select, setSelect] = useState<{ name: string; id: string }[]>([]);
+  const [select, setSelect] = useState<{ name: string; id: string }[]>(
+    defaultValue ?? [],
+  );
 
   const handleChangeCheckBox: any = (value: { name: string; id: string }) => {
     if (includesDeep(select, value)) {

@@ -16,9 +16,9 @@ import { NumberInput } from "../NumberInput";
 import { Radio } from "../Radio";
 import { Select } from "../Select";
 import { TipTap } from "../TipTap";
-import styles from "./StepOne.module.scss";
+import styles from "./StepOneProcessCreate.module.scss";
 
-export function StepOne({
+export function StepOneProcessCreate({
   handleTogglePage,
   setProcessData,
   currentProcessData,
@@ -93,10 +93,6 @@ export function StepOne({
     });
     handleTogglePage(2);
   }
-
-  useEffect(() => {
-    console.log(dayjs(undefined).format("YYYY-MM-DD"));
-  }, [currentProcessData]);
 
   return (
     <form

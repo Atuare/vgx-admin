@@ -14,9 +14,9 @@ import { CheckBoard } from "../CheckBoard";
 import { Checkbox } from "../Checkbox";
 import { DataInput } from "../DataInput";
 import { Radio } from "../Radio";
-import styles from "./StepTwo.module.scss";
+import styles from "./StepTwoProcessCreate.module.scss";
 
-export function StepTwo({
+export function StepTwoProcessCreate({
   handleTogglePage,
   currentProcessData,
   setProcessData,
@@ -163,9 +163,9 @@ export function StepTwo({
         />
 
         <Controller
-          name="type"
+          name="availableForMinors"
           control={control}
-          render={({ field: { onChange }, fieldState: { error } }) => (
+          render={({ field: { onChange } }) => (
             <div className={styles.container__form__checkBox}>
               <Checkbox
                 iconType="solid"
