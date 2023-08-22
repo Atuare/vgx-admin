@@ -106,6 +106,7 @@ export function TipTapMenu({ editor }: TipTapMenuProps) {
       />
       <ColorDropDown
         defaultValue="#212529"
+        editor={editor}
         onChange={handleColorChange}
         options={colors}
       />
