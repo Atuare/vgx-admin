@@ -94,10 +94,7 @@ export default function ProcessData() {
           </div>
         </div>
         <p>
-          Criado em{" "}
-          {dayjs(process?.createdAt)
-            .utc()
-            .format("DD/MM/YYYY HH:mm:ss")}
+          Criado em {dayjs(process?.createdAt).format("DD/MM/YYYY HH:mm:ss")}
         </p>
       </section>
 
