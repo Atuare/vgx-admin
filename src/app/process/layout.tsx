@@ -30,7 +30,9 @@ export default function ProcessLayout({ children }: { children: ReactNode }) {
             </button>
           )}
           <h1>
-            {titles[pathname as keyof typeof titles] || "Dados do processo"}
+            {(pathname.endsWith("/edit") && "Editar processo") ||
+              titles[pathname as keyof typeof titles] ||
+              "Dados do processo"}
           </h1>
         </div>
         <AdmProfile
