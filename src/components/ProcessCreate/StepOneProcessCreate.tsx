@@ -31,22 +31,7 @@ export function StepOneProcessCreate({
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processCreateStepOneSchema),
     defaultValues: {
-      unit: {
-        name: currentProcessData?.unit?.name,
-        id: currentProcessData?.unit?.id,
-      },
-      role: {
-        name: currentProcessData?.role?.name,
-        id: currentProcessData?.role?.id,
-      },
-      requestCv: currentProcessData?.curriculum,
-      startDate: dayjs(currentProcessData?.startDate).toDate(),
-      endDate: dayjs(currentProcessData?.endDate).toDate(),
-      limitCandidates: currentProcessData?.limitCandidates ?? 1,
-      banner: currentProcessData?.file,
-      observations: currentProcessData?.observations,
-      registrationCompletionMessage:
-        currentProcessData?.registrationCompletionMessage,
+      ...currentProcessData,
     },
   });
 
@@ -81,6 +66,7 @@ export function StepOneProcessCreate({
 
   function onSubmit(data: any) {
     setProcessData({
+      ...currentProcessData,
       unit: data.unit,
       role: data.role,
       curriculum: data.requestCv,

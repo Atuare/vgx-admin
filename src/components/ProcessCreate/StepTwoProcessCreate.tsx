@@ -8,6 +8,7 @@ import {
 } from "@/services/api/fetchApi";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../Button";
 import { CheckBoard } from "../CheckBoard";
@@ -31,8 +32,11 @@ export function StepTwoProcessCreate({
     resolver: yupResolver(processCreateStepTwoSchema),
     defaultValues: {
       availableForMinors: false,
+      ...currentProcessData,
     },
   });
+
+  useEffect(() => {}, [currentProcessData]);
 
   const { data: avaiabilitiesData } = useGetAllAvailabilitiesQuery({
     page: 1,
@@ -72,6 +76,7 @@ export function StepTwoProcessCreate({
           render={({ field: { onChange }, fieldState: { error } }) => (
             <CheckBoard
               title="Disponibilidade de horários / Turnos"
+              defaultValue={currentProcessData?.availabilities}
               options={
                 avaiabilitiesData?.availabilities.map(item => ({
                   name: formatTimeRange(item),
@@ -90,6 +95,7 @@ export function StepTwoProcessCreate({
           render={({ field: { onChange }, fieldState: { error } }) => (
             <CheckBoard
               title="Escolaridade"
+              defaultValue={currentProcessData?.schoolings}
               options={
                 schoolingsData?.schoolings.map(item => ({
                   name: item.schoolingName,
@@ -108,6 +114,7 @@ export function StepTwoProcessCreate({
           render={({ field: { onChange }, fieldState: { error } }) => (
             <CheckBoard
               title="Habilidades"
+              defaultValue={currentProcessData?.skills}
               options={
                 skillsData?.skills.map(item => ({
                   name: item.skillText,
@@ -126,6 +133,7 @@ export function StepTwoProcessCreate({
           render={({ field: { onChange }, fieldState: { error } }) => (
             <CheckBoard
               title="Benefícios"
+              defaultValue={currentProcessData?.benefits}
               options={
                 benefitsData?.benefits.map(item => ({
                   name: item.benefitName,
@@ -149,6 +157,7 @@ export function StepTwoProcessCreate({
               error={error?.message}
             >
               <Radio
+                defaultValue={currentProcessData?.type === "PRESENCIAL"}
                 options={["Presencial", "Remoto"]}
                 onChange={value => {
                   if (value) {
@@ -168,6 +177,7 @@ export function StepTwoProcessCreate({
           render={({ field: { onChange } }) => (
             <div className={styles.container__form__checkBox}>
               <Checkbox
+                isActive={currentProcessData?.availableForMinors}
                 iconType="solid"
                 value="Processo disponível para menores de 18 anos"
                 onChangeCheckbox={value => onChange(value)}

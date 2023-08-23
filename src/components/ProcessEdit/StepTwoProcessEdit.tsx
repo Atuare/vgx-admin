@@ -29,6 +29,9 @@ export function StepTwoProcessEdit({
 }) {
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processEditStepTwoSchema),
+    defaultValues: {
+      ...currentProcessData,
+    },
   });
 
   const { data: avaiabilitiesData } = useGetAllAvailabilitiesQuery({
@@ -77,12 +80,12 @@ export function StepTwoProcessEdit({
                   id: item.id,
                 })) || []
               }
-              defaultValue={currentProcessData?.availabilities.map(
-                (item: any) => ({
-                  name: formatTimeRange(item),
-                  id: item.id,
-                }),
-              )}
+              defaultValue={
+                currentProcessData?.availabilities?.map((item: any) => ({
+                  name: item?.name || formatTimeRange(item),
+                  id: item?.id,
+                })) || currentProcessData?.availabilities
+              }
               error={error?.message}
               onChange={value => onChange(value)}
             />
@@ -101,10 +104,12 @@ export function StepTwoProcessEdit({
                   id: item.id,
                 })) || []
               }
-              defaultValue={currentProcessData?.schoolings.map((item: any) => ({
-                name: item.schoolingName,
-                id: item.id,
-              }))}
+              defaultValue={
+                currentProcessData?.schoolings?.map((item: any) => ({
+                  name: item?.schoolingName || item?.name,
+                  id: item?.id,
+                })) || currentProcessData?.schoolings
+              }
               error={error?.message}
               onChange={value => onChange(value)}
             />
@@ -123,10 +128,12 @@ export function StepTwoProcessEdit({
                   id: item.id,
                 })) || []
               }
-              defaultValue={currentProcessData?.skills.map((item: any) => ({
-                name: item.skillText,
-                id: item.id,
-              }))}
+              defaultValue={
+                currentProcessData?.skills?.map((item: any) => ({
+                  name: item?.skillText || item?.name,
+                  id: item?.id,
+                })) || currentProcessData?.skills
+              }
               error={error?.message}
               onChange={value => onChange(value)}
             />
@@ -139,16 +146,18 @@ export function StepTwoProcessEdit({
           render={({ field: { onChange }, fieldState: { error } }) => (
             <CheckBoard
               title="Benefícios"
+              defaultValue={
+                currentProcessData?.benefits.map((item: any) => ({
+                  name: item?.benefitName || item?.name,
+                  id: item?.id,
+                })) || currentProcessData?.benefits
+              }
               options={
                 benefitsData?.benefits.map(item => ({
                   name: item.benefitName,
                   id: item.id,
                 })) || []
               }
-              defaultValue={currentProcessData?.benefits.map((item: any) => ({
-                name: item.benefitName,
-                id: item.id,
-              }))}
               error={error?.message}
               onChange={value => onChange(value)}
             />
@@ -186,7 +195,7 @@ export function StepTwoProcessEdit({
           render={({ field: { onChange } }) => (
             <div className={styles.container__form__checkBox}>
               <Checkbox
-                defaultValue={currentProcessData?.availableForMinors}
+                isActive={currentProcessData?.availableForMinors}
                 iconType="solid"
                 value="Processo disponível para menores de 18 anos"
                 onChangeCheckbox={value => onChange(value)}

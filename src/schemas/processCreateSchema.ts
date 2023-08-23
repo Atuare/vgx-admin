@@ -18,7 +18,7 @@ export const processCreateStepOneSchema = yup
     endDate: yup
       .date()
       .min(yup.ref("startDate"), "A data final deve ser maior que a inicial")
-      .optional(),
+      .required("A data final é obrigatória"),
     limitCandidates: yup.number().optional(),
     banner: yup
       .mixed()

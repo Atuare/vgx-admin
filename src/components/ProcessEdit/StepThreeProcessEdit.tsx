@@ -109,10 +109,18 @@ export function StepThreeProcessEdit({
         <section className={stylesStepOne.container__form}>
           <div className={stylesStepOne.container__form__first}>
             <DataInput name="Unidade/Site" width="296px" required>
-              <input type="text" value={processData?.unit?.unitName} disabled />
+              <input
+                type="text"
+                value={processData?.unit?.unitName || processData?.unit?.name}
+                disabled
+              />
             </DataInput>
             <DataInput name="Cargo" width="448px" required>
-              <input type="text" value={processData?.role?.roleText} disabled />
+              <input
+                type="text"
+                value={processData?.role?.roleText || processData?.role?.name}
+                disabled
+              />
             </DataInput>
             <DataInput name="Solicitar currículo" width="264px" required>
               <Radio

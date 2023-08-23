@@ -31,8 +31,9 @@ export function StepOneProcessEdit({
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processEditStepOneSchema),
     defaultValues: {
+      ...currentProcessData,
       startDate: undefined,
-      endDate: currentProcessData?.endDate,
+      endDate: undefined,
     },
   });
 
@@ -107,7 +108,10 @@ export function StepOneProcessEdit({
                   placeholder="Selecione os locais"
                   options={unitOptions}
                   onChange={onChange}
-                  defaultValue={currentProcessData?.unit?.unitName}
+                  defaultValue={
+                    currentProcessData?.unit?.unitName ||
+                    currentProcessData?.unit?.name
+                  }
                 />
               </DataInput>
             )}
@@ -127,7 +131,10 @@ export function StepOneProcessEdit({
                   placeholder="Selecione"
                   options={roleOptions}
                   onChange={onChange}
-                  defaultValue={currentProcessData?.role?.roleText}
+                  defaultValue={
+                    currentProcessData?.role?.roleText ||
+                    currentProcessData?.role?.name
+                  }
                 />
               </DataInput>
             )}
