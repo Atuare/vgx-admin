@@ -1,16 +1,16 @@
 "use client";
-import dayjs from "dayjs";
-import "../lib/dayjs";
-import styles from "./Home.module.scss";
-import { AdmProfile } from "@/components/AdmProfile";
-import { HomeData } from "@/components/HomeData";
 import Avatar from "@/assets/avatar.png";
+import { AdmProfile } from "@/components/AdmProfile";
 import { Calendar } from "@/components/Calendar";
+import { HomeData } from "@/components/HomeData";
 import { SearchInput } from "@/components/SearchInput";
-import { useState } from "react";
 import useUser from "@/hooks/useUser";
 import { fetchApi } from "@/services/api/fetchApi";
+import dayjs from "dayjs";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
+import "../lib/dayjs";
+import styles from "./Home.module.scss";
 
 export interface StatisticsType {
   onGoingProcesses: number;

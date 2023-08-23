@@ -6,18 +6,14 @@ import styles from "@/styles/layout.module.scss";
 import "@/styles/scrollbar.scss";
 import { ReactNode } from "react";
 
-export default function InterviewsLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ProfileLayout({ children }: { children: ReactNode }) {
   const { user } = useUser();
 
   return (
     <div className={styles.container}>
       <header className={styles.container__header}>
         <div className={styles.header__title}>
-          <h1>Entrevistas</h1>
+          <h1>Configurações - Dados perfil</h1>
         </div>
         <AdmProfile
           image={Avatar}

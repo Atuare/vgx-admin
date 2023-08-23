@@ -21,7 +21,7 @@ export const configItems = [
   },
   {
     name: "Atualização de dados",
-    path: "/config/update-data",
+    path: "/config/update",
   },
   {
     name: "Contrato",
@@ -29,6 +29,6 @@ export const configItems = [
   },
   {
     name: "Dados perfil",
-    path: "/config/profile-data",
+    path: "/config/profile",
   },
 ];

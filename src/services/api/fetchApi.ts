@@ -37,6 +37,11 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getProcessCandidates: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/process/${id}/candidates`,
+      }),
+    }),
     getProcessBanner: builder.query<any, { bannerName: string }>({
       query: ({ bannerName }) => ({
         url: `/process/banner/${bannerName}`,
@@ -160,16 +165,27 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    updateUser: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/employee",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
 // Export hooks for usage in components
 export const {
   useGetAllProcessQuery,
+  useGetProcessCandidatesQuery,
   useGetProcessBannerQuery,
   useCreateProcessMutation,
   useDeleteProcessMutation,
   useUpdateProcessMutation,
+  useUpdateUserMutation,
   useGetAdminStatisticsQuery,
   useGetAllUnitsQuery,
   useGetAllRolesQuery,

@@ -1,8 +1,8 @@
-import { ReactNode, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ChevronDown } from "@/assets/Icons";
 import { configItems } from "@/utils/sidebar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ReactNode, useState } from "react";
 import styles from "./SettingsMenu.module.scss";
 
 interface SettingsMenuProps {
@@ -16,7 +16,7 @@ export function SettingsMenu({
   active = false,
   icon,
 }: SettingsMenuProps) {
-  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState<boolean>(active);
   const pathname = usePathname();
 
   return (

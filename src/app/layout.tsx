@@ -3,6 +3,7 @@
 import { Menu } from "@/components/Menu";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { store } from "@/store/store";
+import "@/styles/scrollbar.scss";
 import type { Metadata } from "next";
 import { Inter, Roboto, Sora } from "next/font/google";
 import { usePathname } from "next/navigation";
