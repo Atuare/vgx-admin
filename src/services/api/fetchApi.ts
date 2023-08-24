@@ -174,6 +174,15 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllInterviews: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/interview/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -193,4 +202,5 @@ export const {
   useGetAllSchoolingsQuery,
   useGetAllSkillsQuery,
   useGetAllBenefitsQuery,
+  useGetAllInterviewsQuery,
 } = fetchApi;
