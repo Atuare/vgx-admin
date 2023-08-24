@@ -1,0 +1,43 @@
+.records {
+  width: 100%;
+  padding: 24px 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    button {
+      padding: 16px;
+    }
+  }
+}
+
+.loading {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton {
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  svg path {
+    fill: var(--neutral-3);
+  }
+
+  &__delete {
+    background: var(--error);
+  }
+
+  &__edit {
+    background: var(--primary-3);
+  }
+}

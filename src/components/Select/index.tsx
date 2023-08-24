@@ -7,6 +7,7 @@ interface SelectProps {
   defaultValue?: string;
   onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
+  width?: string;
 }
 
 export function Select({
@@ -14,12 +15,13 @@ export function Select({
   options,
   placeholder,
   defaultValue,
+  width,
 }: SelectProps) {
   const [openSelect, setOpenSelect] = useState(false);
   const [select, setSelect] = useState<string>(defaultValue ?? "");
 
   return (
-    <div className={styles.select}>
+    <div className={styles.select} style={{ width }}>
       <div
         className={`${styles.select__trigger} ${
           openSelect ? styles.active : ""
