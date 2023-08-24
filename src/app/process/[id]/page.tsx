@@ -4,9 +4,8 @@ import {
   useDeleteProcessMutation,
   useGetAllProcessQuery,
 } from "@/services/api/fetchApi";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useParams, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styles from "./ProcessData.module.scss";
 
@@ -16,6 +15,7 @@ import { SearchInput } from "@/components/SearchInput";
 import { setProcessEdit } from "@/features/process/processEditSlice";
 import { ProcessType } from "@/interfaces/process.interface";
 
+import { DeleteModal } from "@/components/DeleteModal";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
@@ -78,7 +78,10 @@ export default function ProcessData() {
         <div>
           <h1>{process?.role.roleText}</h1>
           <div className={styles.buttonContainer}>
-            <DeleteModal handleDeleteProcess={handleDeleteProcess}>
+            <DeleteModal
+              handleOnDelete={handleDeleteProcess}
+              name="este processo"
+            >
               <Button
                 text="Excluir processo"
                 buttonType="error"
@@ -184,51 +187,5 @@ function DataInput({
         </div>
       )}
     </div>
-  );
-}
-
-function DeleteModal({
-  children,
-  handleDeleteProcess,
-}: {
-  children: ReactNode;
-  handleDeleteProcess: () => void;
-}) {
-  return (
-    <AlertDialog.Root>
-      <AlertDialog.Trigger asChild>
-        <span>{children}</span>
-      </AlertDialog.Trigger>
-      <AlertDialog.Portal className={styles.modal}>
-        <AlertDialog.Overlay className={styles.modal__overlay} />
-        <AlertDialog.Content className={styles.modal__content}>
-          <AlertDialog.Title className={styles.modal__title}>
-            Deseja excluir este processo?
-          </AlertDialog.Title>
-          <AlertDialog.Description className={styles.modal__description}>
-            Após a exclusão não será possível recuperar estas informações.
-          </AlertDialog.Description>
-          <div
-            style={{
-              display: "flex",
-              gap: 10,
-              justifyContent: "flex-end",
-              padding: 10,
-            }}
-          >
-            <AlertDialog.Cancel asChild>
-              <span>
-                <Button text="Cancelar" buttonType="default" />
-              </span>
-            </AlertDialog.Cancel>
-            <AlertDialog.Action asChild onClick={handleDeleteProcess}>
-              <span>
-                <Button text="Excluir" buttonType="error" icon={<Delete />} />
-              </span>
-            </AlertDialog.Action>
-          </div>
-        </AlertDialog.Content>
-      </AlertDialog.Portal>
-    </AlertDialog.Root>
   );
 }

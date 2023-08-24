@@ -1,6 +1,7 @@
 import { IAvailability } from "@/interfaces/availability.interface";
 import { IBenefit } from "@/interfaces/benefit.interface";
 import { IRole } from "@/interfaces/role.interface";
+import { ISalaryClaim } from "@/interfaces/salaryClaim.interface";
 import { ISchooling } from "@/interfaces/schooling.interface";
 import { ISkill } from "@/interfaces/skill.interface";
 import { IUnit } from "@/interfaces/unit.interface";
@@ -94,7 +95,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllUnits: builder.query<
-      { units: IUnit[] },
+      { units: IUnit[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -106,7 +107,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllRoles: builder.query<
-      { roles: IRole[] },
+      { roles: IRole[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -118,7 +119,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllAvailabilities: builder.query<
-      { availabilities: IAvailability[] },
+      { availabilities: IAvailability[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -130,7 +131,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllSchoolings: builder.query<
-      { schoolings: ISchooling[] },
+      { schoolings: ISchooling[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -142,7 +143,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllSkills: builder.query<
-      { skills: ISkill[] },
+      { skills: ISkill[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -154,7 +155,7 @@ export const fetchApi = createApi({
       }),
     }),
     getAllBenefits: builder.query<
-      { benefits: IBenefit[] },
+      { benefits: IBenefit[]; totalCount: number },
       { page: number; size: number }
     >({
       query: ({ page, size }) => ({
@@ -164,6 +165,72 @@ export const fetchApi = createApi({
           size,
         },
       }),
+    }),
+    getAllSalaryClaim: builder.query<
+      { benefits: ISalaryClaim[]; totalCount: number },
+      { page: number; size: number }
+    >({
+      query: ({ page, size }) => ({
+        url: "/salary-claim/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    updateUnit: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/unit",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    updateRole: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/role",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    updateSkill: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/skill",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    updateSalaryClaim: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/salary-claim",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    updateAvailability: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/availability",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    updateSchooling: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/schooling",
+          method: "PUT",
+          body: data,
+        };
+      },
     }),
     updateUser: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
@@ -203,4 +270,11 @@ export const {
   useGetAllSkillsQuery,
   useGetAllBenefitsQuery,
   useGetAllInterviewsQuery,
+  useGetAllSalaryClaimQuery,
+  useUpdateUnitMutation,
+  useUpdateRoleMutation,
+  useUpdateSkillMutation,
+  useUpdateSalaryClaimMutation,
+  useUpdateAvailabilityMutation,
+  useUpdateSchoolingMutation,
 } = fetchApi;

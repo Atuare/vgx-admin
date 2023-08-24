@@ -36,6 +36,18 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   control: Control<any>;
 }
 
+interface YupDataType {
+  phone: string;
+  whatsapp: string;
+  emailPersonal: string;
+  linkedin: string;
+  facebook: string;
+  instagram: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export default function Profile() {
   const [picture, setPicture] = useState<File>();
   const [base64Picture, setBase64Picture] = useState<string>();
@@ -47,8 +59,27 @@ export default function Profile() {
     resolver: yupResolver(editProfileSchema),
   });
 
-  const handleEditProfile = async (data: any) => {
-    updateUser({ ...data }).then(() => {
+  const handleEditProfile = async (data: Partial<YupDataType>) => {
+    console.log(data);
+
+    const newUser = {
+      name: user?.employee.name,
+      birthdate: user?.employee.birthdate
+        ? dayjs(user?.employee.birthdate).format("YYYY-MM-DD")
+        : "2023-08-23",
+      emailCompany: user?.employee.emailCompany ?? "",
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      emailPersonal: data.emailPersonal,
+      linkedin: null,
+      facebook: null,
+      instagram: null,
+      image: base64Picture ?? user?.employee.image,
+    };
+
+    console.log(newUser);
+
+    updateUser(newUser).then(() => {
       // location.replace("/config/profile");
     });
   };
@@ -282,7 +313,9 @@ function PhoneInput({
   control: Control<any>;
   id: string;
 }) {
-  const [phoneNumber, setPhoneNumber] = useState(defaultValue ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(
+    defaultValue ? formatPhoneNumber(defaultValue) : "",
+  );
 
   const handleInputChange = (value: string) => {
     const number = formatPhoneNumber(value);
@@ -307,6 +340,7 @@ function PhoneInput({
                   : event.target.value.replace(/\D/g, ""),
               );
               handleInputChange(event.target.value);
+              console.log(event.target.value);
             }}
           />
           <span className={styles.error}>{error?.message}</span>
