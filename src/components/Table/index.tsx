@@ -40,6 +40,8 @@ export const DataTable = forwardRef<HTMLTableElement, DataTableProps>(
       props.globalFilterValue ?? "",
     );
 
+    const [rowSelection, setRowSelection] = useState<any>({});
+
     const data = props.data;
     const columns = props.columns;
 
@@ -49,7 +51,10 @@ export const DataTable = forwardRef<HTMLTableElement, DataTableProps>(
       pageCount: Math.round(props.size / props.defaultTableSize),
       state: {
         globalFilter,
+        rowSelection,
       },
+      onRowSelectionChange: setRowSelection,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       getFilteredRowModel: getFilteredRowModel(),

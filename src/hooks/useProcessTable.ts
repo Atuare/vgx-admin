@@ -1,6 +1,6 @@
-import { ProcessTableContext } from "@/contexts/ProcessTableContext";
-import { useContext } from "react";
+// import { ProcessTableContext } from "@/contexts/ProcessTableContext";
+// import { useContext } from "react";
 
-export function useProcessTable() {
-  return useContext(ProcessTableContext);
-}
+// export function useProcessTable() {
+//   return useContext(ProcessTableContext);
+// }

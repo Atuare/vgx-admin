@@ -122,7 +122,7 @@ export default function Profile() {
       return;
     }
 
-    const base64File = await getBase64(file);
+    const base64File: any = await getBase64(file);
 
     setBase64Picture(base64File);
     setPicture(file);

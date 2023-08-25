@@ -7,9 +7,9 @@ import { ButtonHTMLAttributes, useState } from "react";
 import styles from "./Checkbox.module.scss";
 
 interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  value: string;
+  value?: string;
   onChangeCheckbox?: (value: boolean, name?: string) => void;
-  isActive?: boolean;
+  isActive?: boolean | "indeterminate";
   iconType: "solid" | "outline";
   disabled?: boolean;
 }
@@ -24,6 +24,9 @@ export function Checkbox({
 }: CheckboxProps) {
   const [checked, setChecked] = useState(isActive ?? false);
 
+  // Calculate whether the checkbox is indeterminate
+  const isIndeterminate = checked === "indeterminate";
+
   return (
     <button
       className={`${styles.checkbox} ${
@@ -34,13 +37,18 @@ export function Checkbox({
       }}
       onClick={() => {
         if (!disabled) {
-          setChecked(prev => !prev);
-          onChangeCheckbox?.(!checked, value);
+          if (!isIndeterminate) {
+            const newChecked = !checked;
+            setChecked(newChecked);
+            onChangeCheckbox?.(newChecked, value);
+          }
         }
       }}
       {...props}
     >
-      {checked ? (
+      {isIndeterminate ? (
+        <CheckboxFillOutlined /> // Use the indeterminate icon
+      ) : checked ? (
         iconType === "solid" ? (
           <CheckboxFill />
         ) : (
@@ -49,7 +57,7 @@ export function Checkbox({
       ) : (
         <CheckboxBlank />
       )}
-      <span>{value}</span>
+      {value && <span>{value}</span>}
     </button>
   );
 }
