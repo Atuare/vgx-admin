@@ -108,9 +108,8 @@ export function RoleModal({
               <Dialog.Close asChild>
                 <Button text="Cancelar" buttonType="default" type="button" />
               </Dialog.Close>
-              <Dialog.Close asChild onClick={handleOnSubmit}>
-                <Button text="Salvar" buttonType="primary" type="submit" />
-              </Dialog.Close>
+
+              <Button text="Salvar" buttonType="primary" type="submit" />
             </div>
           </form>
         </Dialog.Content>

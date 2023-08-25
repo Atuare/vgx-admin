@@ -20,7 +20,12 @@ import { ISchooling } from "@/interfaces/schooling.interface";
 import { ISkill } from "@/interfaces/skill.interface";
 import { IUnit } from "@/interfaces/unit.interface";
 import {
+  useCreateAvailabilityMutation,
+  useCreateRoleMutation,
+  useCreateSalaryClaimMutation,
+  useCreateSchoolingMutation,
   useCreateSkillMutation,
+  useCreateUnitMutation,
   useDeleteAvaliabilitiesMutation,
   useDeleteRoleMutation,
   useDeleteSalaryClaimMutation,
@@ -98,11 +103,16 @@ export default function Records() {
   const [deleteAvailability] = useDeleteAvaliabilitiesMutation();
   const [deleteSchooling] = useDeleteSchoolingMutation();
 
+  const [createUnit] = useCreateUnitMutation();
+  const [createRole] = useCreateRoleMutation();
   const [createSkill] = useCreateSkillMutation();
+  const [createSalaryClaim] = useCreateSalaryClaimMutation();
+  const [createAvailability] = useCreateAvailabilityMutation();
+  const [createSchooling] = useCreateSchoolingMutation();
 
   const { setParams } = useTableParams();
   const { get } = useSearchParams();
-  const { replace, refresh } = useRouter();
+  const { replace } = useRouter();
 
   const [currentPage, setCurrentPage] = useState<number>(
     get("page") ? Number(get("page")) : 1,
@@ -163,8 +173,18 @@ export default function Records() {
 
   const handleCreateData = (body: any) => {
     switch (type) {
+      case 0:
+        return createUnit(body);
+      case 1:
+        return createRole(body);
       case 2:
         return createSkill(body);
+      case 3:
+        return createSalaryClaim(body);
+      case 4:
+        return createAvailability(body);
+      case 5:
+        return createSchooling(body);
     }
   };
 
@@ -244,12 +264,23 @@ export default function Records() {
 
             const handleDeleteRow = () => {
               handleDeleteData(id);
+
               location.replace(
                 `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
               );
             };
 
-            const handleEditRow = () => {};
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
 
             return (
               <Actions
@@ -308,7 +339,17 @@ export default function Records() {
               );
             };
 
-            const handleEditRow = () => {};
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
 
             return (
               <Actions
@@ -370,7 +411,9 @@ export default function Records() {
                 status: row.row.original.status,
               });
 
-              location.replace("/config/records");
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
             };
 
             return (
@@ -445,7 +488,17 @@ export default function Records() {
               );
             };
 
-            const handleEditRow = () => {};
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
 
             return (
               <Actions
@@ -579,7 +632,17 @@ export default function Records() {
               );
             };
 
-            const handleEditRow = () => {};
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
 
             return (
               <Actions

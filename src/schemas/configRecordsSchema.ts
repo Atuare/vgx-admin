@@ -4,7 +4,7 @@ export const unitModalConfigSchema = yup
   .object({
     unitAcronym: yup.string().required("Campo obrigatório"),
     unitName: yup.string().required("Campo obrigatório"),
-    unitDescription: yup.string().required("Campo obrigatório"),
+    unitAddress: yup.string().required("Campo obrigatório"),
   })
   .required();
 

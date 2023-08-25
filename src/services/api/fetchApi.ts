@@ -252,9 +252,8 @@ export const fetchApi = createApi({
     }),
     deleteUnit: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
-        url: `/unit`,
+        url: `/unit/${id}`,
         method: "DELETE",
-        body: { id },
       }),
     }),
     deleteRole: builder.mutation<any, { id: string }>({
@@ -273,29 +272,71 @@ export const fetchApi = createApi({
     }),
     deleteSalaryClaim: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
-        url: `/salary-claim`,
+        url: `/salary-claim/${id}`,
         method: "DELETE",
-        body: { id },
       }),
     }),
     deleteAvaliabilities: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
-        url: `/avaliabilities`,
+        url: `/avaliabilities/${id}`,
         method: "DELETE",
-        body: { id },
       }),
     }),
     deleteSchooling: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
-        url: `/schooling`,
+        url: `/schooling/${id}`,
         method: "DELETE",
-        body: { id },
       }),
+    }),
+    createUnit: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/unit",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    createRole: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/role",
+          method: "POST",
+          body: data,
+        };
+      },
     }),
     createSkill: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         return {
           url: "/skill",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    createSalaryClaim: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/salary-claim",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    createAvailability: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/availability",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    createSchooling: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/schooling",
           method: "POST",
           body: data,
         };
@@ -334,5 +375,10 @@ export const {
   useDeleteSalaryClaimMutation,
   useDeleteAvaliabilitiesMutation,
   useDeleteSchoolingMutation,
+  useCreateUnitMutation,
+  useCreateRoleMutation,
   useCreateSkillMutation,
+  useCreateSalaryClaimMutation,
+  useCreateAvailabilityMutation,
+  useCreateSchoolingMutation,
 } = fetchApi;
