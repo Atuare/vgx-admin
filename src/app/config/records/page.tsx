@@ -1,6 +1,13 @@
 "use client";
 import { AddCircle, Delete, EditSquare, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { DeleteModal } from "@/components/DeleteModal";
+import { AvailabilityModal } from "@/components/Modals/AvailabilityCreate";
+import { RoleModal } from "@/components/Modals/RoleCreate";
+import { SalaryClaimModal } from "@/components/Modals/SalaryClaimCreate";
+import { SchoolingModal } from "@/components/Modals/SchoolingCreate";
+import { SkillModal } from "@/components/Modals/SkillCreate";
+import { UnitModal } from "@/components/Modals/UnitCreate";
 import { Select } from "@/components/Select";
 import { Switch } from "@/components/Switch";
 import { DataTable } from "@/components/Table";
@@ -13,6 +20,13 @@ import { ISchooling } from "@/interfaces/schooling.interface";
 import { ISkill } from "@/interfaces/skill.interface";
 import { IUnit } from "@/interfaces/unit.interface";
 import {
+  useCreateSkillMutation,
+  useDeleteAvaliabilitiesMutation,
+  useDeleteRoleMutation,
+  useDeleteSalaryClaimMutation,
+  useDeleteSchoolingMutation,
+  useDeleteSkillMutation,
+  useDeleteUnitMutation,
   useUpdateAvailabilityMutation,
   useUpdateRoleMutation,
   useUpdateSalaryClaimMutation,
@@ -33,7 +47,7 @@ import {
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { HTMLAttributes, ReactNode, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import styles from "./Records.module.scss";
@@ -44,12 +58,20 @@ interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
   buttonType: "delete" | "edit";
 }
 
+interface ActionsProps {
+  handleDelete: () => void;
+  handleEdit: (data: any) => void;
+  value: string;
+  type: number;
+  defaultValue: any;
+}
+
 const unitColumn = createColumnHelper<IUnit>();
 const roleColumn = createColumnHelper<IRole>();
 const skillColumn = createColumnHelper<ISkill>();
 const salaryClaimColumn = createColumnHelper<ISalaryClaim>();
 const availabilityColumn = createColumnHelper<IAvailability>();
-const schoolingtColumn = createColumnHelper<ISchooling>();
+const schoolingColumn = createColumnHelper<ISchooling>();
 
 const size = 5;
 
@@ -60,6 +82,7 @@ export default function Records() {
     data: any[];
     totalCount: number;
   }>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [updateUnit] = useUpdateUnitMutation();
   const [updateRole] = useUpdateRoleMutation();
@@ -68,8 +91,18 @@ export default function Records() {
   const [updateAvailability] = useUpdateAvailabilityMutation();
   const [updateSchooling] = useUpdateSchoolingMutation();
 
+  const [deleteUnit] = useDeleteUnitMutation();
+  const [deleteRole] = useDeleteRoleMutation();
+  const [deleteSkill] = useDeleteSkillMutation();
+  const [deleteSalaryClaim] = useDeleteSalaryClaimMutation();
+  const [deleteAvailability] = useDeleteAvaliabilitiesMutation();
+  const [deleteSchooling] = useDeleteSchoolingMutation();
+
+  const [createSkill] = useCreateSkillMutation();
+
   const { setParams } = useTableParams();
   const { get } = useSearchParams();
+  const { replace, refresh } = useRouter();
 
   const [currentPage, setCurrentPage] = useState<number>(
     get("page") ? Number(get("page")) : 1,
@@ -94,6 +127,23 @@ export default function Records() {
     }
   };
 
+  const handleDeleteData = (id: string) => {
+    switch (type) {
+      case 0:
+        return deleteUnit({ id });
+      case 1:
+        return deleteRole({ id });
+      case 2:
+        return deleteSkill({ id });
+      case 3:
+        return deleteSalaryClaim({ id });
+      case 4:
+        return deleteAvailability({ id });
+      case 5:
+        return deleteSchooling({ id });
+    }
+  };
+
   const handleUpdateData = () => {
     switch (type) {
       case 0:
@@ -108,6 +158,13 @@ export default function Records() {
         return updateAvailability;
       case 5:
         return updateSchooling;
+    }
+  };
+
+  const handleCreateData = (body: any) => {
+    switch (type) {
+      case 2:
+        return createSkill(body);
     }
   };
 
@@ -182,7 +239,28 @@ export default function Records() {
         }),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = () => {};
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value={String(row.row.original.unitName)}
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
         unitColumn.accessor("updatedAt", {
           header: "Atualizado em",
@@ -220,7 +298,28 @@ export default function Records() {
         }),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = () => {};
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value={String(row.row.original.roleText)}
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
         roleColumn.accessor("updatedAt", {
           header: "Atualizado em",
@@ -254,12 +353,48 @@ export default function Records() {
         }),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace("/config/records");
+            };
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value={String(row.row.original.skillText)}
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
         skillColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
+            <div>
+              {dayjs(row.getValue()).format("DD/MM/YYYY")}{" "}
+              {dayjs(row.getValue()).toDate().toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+              })}
+            </div>
           ),
         }),
       ],
@@ -300,7 +435,28 @@ export default function Records() {
         }),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = () => {};
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value="Prentensão Salarial"
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
         salaryClaimColumn.accessor("createdAt", {
           header: "Atualizado em",
@@ -354,7 +510,28 @@ export default function Records() {
         ),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = () => {};
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value="Disponibilidade"
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
         availabilityColumn.accessor("updatedAt", {
           header: "Atualizado em",
@@ -369,7 +546,7 @@ export default function Records() {
       id: "Escolaridade",
       buttonText: "Nova Escolaridade",
       columns: [
-        schoolingtColumn.accessor("status", {
+        schoolingColumn.accessor("status", {
           header: "Status",
           cell: row => {
             return (
@@ -382,19 +559,40 @@ export default function Records() {
             );
           },
         }),
-        schoolingtColumn.accessor("schoolingName", {
+        schoolingColumn.accessor("schoolingName", {
           header: "Escolaridade",
           cell: row => <div>{row.getValue()}</div>,
         }),
-        schoolingtColumn.accessor("informCourse", {
+        schoolingColumn.accessor("informCourse", {
           header: "Escolaridade",
           cell: row => <div>{row.getValue() ? "Sim" : "Não"}</div>,
         }),
         {
           header: "Ações",
-          cell: () => <Actions />,
+          cell: (row: any) => {
+            const id = String(row.row.original.id);
+
+            const handleDeleteRow = () => {
+              handleDeleteData(id);
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
+
+            const handleEditRow = () => {};
+
+            return (
+              <Actions
+                handleDelete={handleDeleteRow}
+                handleEdit={handleEditRow}
+                value="Escolaridade"
+                type={type}
+                defaultValue={row.row.original}
+              />
+            );
+          },
         },
-        schoolingtColumn.accessor("updatedAt", {
+        schoolingColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
             <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
@@ -417,23 +615,37 @@ export default function Records() {
     setCurrentPage(page + 1);
   };
 
+  const handleCreate = (data: any) => {
+    handleCreateData({ ...data, status: "ATIVO" });
+    location.replace(
+      `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+    );
+  };
+
   useEffect(() => {
     handleGetData()?.then(data => {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+
       setTableData({
         data: data[dataPropertys[type]],
         totalCount: data.totalCount,
       });
     });
+
+    setParams("screen", dataPropertys[type]);
   }, [type]);
 
   useEffect(() => {
-    setParams("page", String(currentPage));
     handleGetData()?.then(data => {
       setTableData({
         data: data[dataPropertys[type]],
         totalCount: data.totalCount,
       });
     });
+    setParams("page", String(currentPage));
   }, [currentPage]);
 
   useEffect(() => {
@@ -442,6 +654,14 @@ export default function Records() {
         data: data[dataPropertys[type]],
         totalCount: data.totalCount,
       });
+
+      const screen = get("screen");
+      screen && setType(dataPropertys.indexOf(screen));
+      replace(
+        `/config/records?page=${currentPage}&screen=${
+          screen ?? dataPropertys[type]
+        }`,
+      );
     });
   }, []);
 
@@ -462,14 +682,10 @@ export default function Records() {
           buttonType="secondary"
           icon={<SystemUpdate />}
         />
-        <Button
-          buttonType="primary"
-          text={items[type].buttonText}
-          icon={<AddCircle />}
-        />
+        <CreateModal handleOnSubmit={handleCreate} type={type} />
       </div>
 
-      {tableData ? (
+      {tableData && !loading ? (
         <DataTable
           currentPage={currentPage}
           handleTogglePage={handleTogglePage}
@@ -493,7 +709,13 @@ export default function Records() {
   );
 }
 
-function Actions() {
+function Actions({
+  handleDelete,
+  handleEdit,
+  value,
+  type,
+  defaultValue,
+}: ActionsProps) {
   return (
     <div
       style={{
@@ -503,10 +725,165 @@ function Actions() {
         gap: "8px",
       }}
     >
-      <IconButton buttonType="delete" icon={<Delete />} />
-      <IconButton buttonType="edit" icon={<EditSquare />} />
+      <DeleteModal handleOnDelete={handleDelete} name={value}>
+        <IconButton buttonType="delete" icon={<Delete />} />
+      </DeleteModal>
+
+      <EditModal
+        handleOnSubmit={handleEdit}
+        title={value}
+        type={type}
+        defaultValue={defaultValue}
+      />
     </div>
   );
+}
+
+function EditModal({
+  type,
+  handleOnSubmit,
+  title,
+  defaultValue,
+}: {
+  type: number;
+  handleOnSubmit: (data: any) => void;
+  title: string;
+  defaultValue: any;
+}) {
+  switch (type) {
+    case 0:
+      return (
+        <UnitModal
+          handleOnSubmit={handleOnSubmit}
+          title={title}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </UnitModal>
+      );
+    case 1:
+      return (
+        <RoleModal
+          handleOnSubmit={handleOnSubmit}
+          title={title}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </RoleModal>
+      );
+    case 2:
+      return (
+        <SkillModal
+          handleOnSubmit={handleOnSubmit}
+          title={title}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </SkillModal>
+      );
+    case 3:
+      return (
+        <SalaryClaimModal
+          handleOnSubmit={handleOnSubmit}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </SalaryClaimModal>
+      );
+    case 4:
+      return (
+        <AvailabilityModal
+          handleOnSubmit={handleOnSubmit}
+          title={title}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </AvailabilityModal>
+      );
+    case 5:
+      return (
+        <SchoolingModal
+          handleOnSubmit={handleOnSubmit}
+          title={title}
+          defaultValue={defaultValue}
+        >
+          <IconButton buttonType="edit" icon={<EditSquare />} />
+        </SchoolingModal>
+      );
+  }
+}
+
+function CreateModal({
+  type,
+  handleOnSubmit,
+}: {
+  type: number;
+  handleOnSubmit: (data: any) => void;
+}) {
+  switch (type) {
+    case 0:
+      return (
+        <UnitModal handleOnSubmit={handleOnSubmit} title="Nova Unidade">
+          <Button
+            buttonType="primary"
+            text="Nova Unidade"
+            icon={<AddCircle />}
+          />
+        </UnitModal>
+      );
+    case 1:
+      return (
+        <RoleModal handleOnSubmit={handleOnSubmit} title="Novo Cargo">
+          <Button buttonType="primary" text="Novo Cargo" icon={<AddCircle />} />
+        </RoleModal>
+      );
+    case 2:
+      return (
+        <SkillModal handleOnSubmit={handleOnSubmit} title="Nova Habilidade">
+          <Button
+            buttonType="primary"
+            text="Nova Habilidade"
+            icon={<AddCircle />}
+          />
+        </SkillModal>
+      );
+    case 3:
+      return (
+        <SalaryClaimModal handleOnSubmit={handleOnSubmit}>
+          <Button
+            buttonType="primary"
+            text="Nova Pretensão Salarial"
+            icon={<AddCircle />}
+          />
+        </SalaryClaimModal>
+      );
+    case 4:
+      return (
+        <AvailabilityModal
+          handleOnSubmit={handleOnSubmit}
+          title="Nova Disponibilidade"
+        >
+          <Button
+            buttonType="primary"
+            text="Nova Disponibilidade"
+            icon={<AddCircle />}
+          />
+        </AvailabilityModal>
+      );
+    case 5:
+      return (
+        <SchoolingModal
+          handleOnSubmit={handleOnSubmit}
+          title="Nova Escolaridade"
+        >
+          <Button
+            buttonType="primary"
+            text="Nova Escolaridade"
+            icon={<AddCircle />}
+          />
+        </SchoolingModal>
+      );
+  }
 }
 
 function IconButton({ icon, buttonType, ...props }: IconButtonProps) {

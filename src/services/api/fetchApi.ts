@@ -250,6 +250,57 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    deleteUnit: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/unit`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    deleteRole: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/role`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    deleteSkill: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/skill`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    deleteSalaryClaim: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/salary-claim`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    deleteAvaliabilities: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/avaliabilities`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    deleteSchooling: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/schooling`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    createSkill: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/skill",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -277,4 +328,11 @@ export const {
   useUpdateSalaryClaimMutation,
   useUpdateAvailabilityMutation,
   useUpdateSchoolingMutation,
+  useDeleteUnitMutation,
+  useDeleteRoleMutation,
+  useDeleteSkillMutation,
+  useDeleteSalaryClaimMutation,
+  useDeleteAvaliabilitiesMutation,
+  useDeleteSchoolingMutation,
+  useCreateSkillMutation,
 } = fetchApi;
