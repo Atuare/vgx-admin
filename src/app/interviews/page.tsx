@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Interviews.module.scss";
 dayjs.extend(utc);
 
@@ -47,22 +48,37 @@ export default function Interviews() {
 
   const columnHelper = createColumnHelper<InterviewType>();
   const columns = [
-    {
+    // {
+    //   id: "select",
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       {...{
+    //         isActive: row.getIsSelected(),
+    //         disabled: !row.getCanSelect(),
+    //         onChangeCheckbox: () => console.log(row),
+    //       }}
+    //       iconType="outline"
+    //       style={{ padding: 0, transform: "translateY(-2px)" }}
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
+    columnHelper.accessor("id", {
       id: "select",
-      cell: ({ row }: any) => (
+      header: "",
+      cell: ({ row }) => (
         <Checkbox
           {...{
             isActive: row.getIsSelected(),
             disabled: !row.getCanSelect(),
-            onChangeCheckbox: () => row.getToggleSelectedHandler(),
+            onChangeCheckbox: () => row?.toggleSelected(),
           }}
           iconType="outline"
           style={{ padding: 0, transform: "translateY(-2px)" }}
         />
       ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    }),
     columnHelper.accessor("candidacy.candidate.cpf", {
       header: "CPF",
       cell: row => (
@@ -111,18 +127,60 @@ export default function Interviews() {
   ];
 
   function downloadTableExcelHandler() {
-    console.log(table);
-    const selectedRows = table?.getSelectedRowModel();
-    console.log("selectedRows", selectedRows);
+    const selectedRows = table
+      ?.getSelectedRowModel()
+      .flatRows.map(row => row.original);
 
-    // downloadExcel({
-    //   filename: `Entrevistas pag. ${currentPage}`,
-    //   sheet: `Entrevistas pag. ${currentPage}`,
-    //   tablePayload: {
-    //     columns: columns,
-    //     data: interviewTableData?.interviews,
-    //   },
-    // });
+    const columnHeaders = [
+      "CPF",
+      "Nome",
+      "Link",
+      "Unidade/Site",
+      "Data",
+      "Hora",
+    ];
+
+    if (selectedRows && selectedRows.length > 0) {
+      const excelData = selectedRows.map(row => ({
+        cpf: formatCpf(row.candidacy.candidate.cpf),
+        name: row.candidacy.candidate.name,
+        link: row.link,
+        unit: row.candidacy.process.unit.unitName,
+        date: dayjs(row.date).utc().format("DD/MM/YYYY"),
+        hour: dayjs(row.date).utc().format("hh:mm"),
+      }));
+
+      downloadExcel({
+        fileName: `Entrevistas`,
+        sheet: `Entrevistas pag. ${currentPage}`,
+        tablePayload: {
+          header: columnHeaders,
+          body: excelData,
+        },
+      });
+    } else {
+      const rows = table?.getRowModel().flatRows.map(row => row.original);
+
+      if (rows && rows.length > 0) {
+        const excelData = rows.map(row => ({
+          cpf: formatCpf(row.candidacy.candidate.cpf),
+          name: row.candidacy.candidate.name,
+          link: row.link,
+          unit: row.candidacy.process.unit.unitName,
+          date: dayjs(row.date).utc().format("DD/MM/YYYY"),
+          hour: dayjs(row.date).utc().format("hh:mm"),
+        }));
+
+        downloadExcel({
+          fileName: `Entrevistas`,
+          sheet: `Entrevistas pag. ${currentPage}`,
+          tablePayload: {
+            header: columnHeaders,
+            body: excelData,
+          },
+        });
+      }
+    }
   }
 
   const handleInputValue = (value: string) => {
