@@ -4,7 +4,7 @@ import styles from "./Select.module.scss";
 
 interface SelectProps {
   options: { name: string; id: string }[];
-  defaultValue?: string;
+  defaultValue?: string | undefined;
   onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
   width?: string;
@@ -45,13 +45,18 @@ export function Select({
                     ? "0 0 8px 8px"
                     : "",
               }}
-              className={`${option.id === select ? styles.active : ""}`}
+              className={`${
+                option.id === select || option.name === select
+                  ? styles.active
+                  : ""
+              }`}
               key={crypto.randomUUID()}
               onClick={() => {
                 setSelect(option.name);
                 onChange(option);
                 setOpenSelect(false);
               }}
+              type="button"
             >
               {option.name}
             </button>

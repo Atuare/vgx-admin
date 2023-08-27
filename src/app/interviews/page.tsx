@@ -48,22 +48,6 @@ export default function Interviews() {
 
   const columnHelper = createColumnHelper<InterviewType>();
   const columns = [
-    // {
-    //   id: "select",
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       {...{
-    //         isActive: row.getIsSelected(),
-    //         disabled: !row.getCanSelect(),
-    //         onChangeCheckbox: () => console.log(row),
-    //       }}
-    //       iconType="outline"
-    //       style={{ padding: 0, transform: "translateY(-2px)" }}
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     columnHelper.accessor("id", {
       id: "select",
       header: "",
@@ -244,6 +228,7 @@ export default function Interviews() {
         data={interviewTableData?.interviews}
         size={interviewTableData?.totalCount}
         globalFilterValue={globalFilter}
+        tableName="Entrevistas"
       />
     </div>
   );

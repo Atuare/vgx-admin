@@ -1,5 +1,6 @@
-import { Close } from "@/assets/Icons";
+import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { IconButton } from "@/components/IconButton";
 import { salaryClaimModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -15,13 +16,13 @@ interface ISalaryClaim {
 interface SalaryClaimModalProps {
   defaultValue?: ISalaryClaim;
   handleOnSubmit: (data: any) => void;
-  children?: React.ReactNode;
+  create?: boolean;
 }
 
 export function SalaryClaimModal({
   defaultValue,
   handleOnSubmit,
-  children,
+  create,
 }: SalaryClaimModalProps) {
   const [data, setData] = useState<ISalaryClaim | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
@@ -29,19 +30,34 @@ export function SalaryClaimModal({
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(salaryClaimModalConfigSchema),
     defaultValues: {
-      fromAmount: data?.fromAmount ?? 0,
-      toAmount: data?.toAmount ?? 0,
+      fromAmount: data?.fromAmount ? String(data?.fromAmount) : "",
+      toAmount: data?.toAmount ? String(data?.toAmount) : "",
     },
   });
 
   function handleOnSave(data: any) {
     setOpen(false);
-    handleOnSubmit(data);
+    handleOnSubmit({
+      fromAmount: Number(data.fromAmount),
+      toAmount: Number(data.toAmount),
+    });
   }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild>
+        <span>
+          {create ? (
+            <Button
+              buttonType="primary"
+              text="Nova Pretensão Salarial"
+              icon={<AddCircle />}
+            />
+          ) : (
+            <IconButton buttonType="edit" icon={<EditSquare />} />
+          )}
+        </span>
+      </Dialog.Trigger>
       <Dialog.Portal className={styles.modal}>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>
@@ -66,7 +82,7 @@ export function SalaryClaimModal({
                       id="fromAmount"
                       type="number"
                       defaultValue={data?.fromAmount}
-                      onChange={onChange}
+                      onChange={e => onChange(String(e.target.value))}
                     />
                     <span className={styles.error}>
                       {error?.message && error.message}
@@ -80,12 +96,12 @@ export function SalaryClaimModal({
                 control={control}
                 render={({ field: { onChange }, fieldState: { error } }) => (
                   <div className={styles.modal__content__form__item}>
-                    <label htmlFor="toAmount">Para</label>
+                    <label htmlFor="toAmount">Até</label>
                     <input
                       id="toAmount"
                       type="number"
                       defaultValue={data?.toAmount}
-                      onChange={onChange}
+                      onChange={e => onChange(String(e.target.value))}
                     />
                     <span className={styles.error}>
                       {error?.message && error.message}

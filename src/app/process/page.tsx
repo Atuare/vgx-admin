@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState } from "react";
-import { useDownloadExcel } from "react-export-table-to-excel";
 
 import styles from "./Process.module.scss";
 
@@ -9,24 +8,18 @@ import { Button } from "@/components/Button";
 import { ProcessTable } from "@/components/ProcessTable";
 import { SearchInput } from "@/components/SearchInput";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
 export default function Process() {
   const [value, setValue] = useState<string>("");
-  const tableRef = useRef(null);
-
-  const { get } = useSearchParams();
-  const page = get("page") ? Number(get("page")) : 1;
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   function handleInputValue(value: string) {
     setValue(value);
   }
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableRef.current,
-    filename: `Processos pag. ${page}`,
-    sheet: `Processos pag. ${page}`,
-  });
+  function handleExportData() {
+    if (buttonRef.current) buttonRef.current.click();
+  }
 
   return (
     <div className={styles.process}>
@@ -35,7 +28,7 @@ export default function Process() {
           text="Exportar dados"
           buttonType="secondary"
           icon={<SystemUpdate />}
-          onClick={onDownload}
+          onClick={handleExportData}
         />
 
         <SearchInput handleChangeValue={handleInputValue} icon={<Search />} />
@@ -47,7 +40,7 @@ export default function Process() {
           />
         </Link>
       </div>
-      <ProcessTable tableRef={tableRef} globalFilter={value} />
+      <ProcessTable globalFilter={value} ref={buttonRef} />
     </div>
   );
 }

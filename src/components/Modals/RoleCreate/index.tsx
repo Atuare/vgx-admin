@@ -1,5 +1,6 @@
-import { Close } from "@/assets/Icons";
+import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { IconButton } from "@/components/IconButton";
 import { roleModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -13,17 +14,15 @@ interface IRole {
 }
 
 interface RoleModalProps {
-  title?: string;
   defaultValue?: IRole;
   handleOnSubmit: (data: any) => void;
-  children?: React.ReactNode;
+  create?: boolean;
 }
 
 export function RoleModal({
   defaultValue,
   handleOnSubmit,
-  title,
-  children,
+  create,
 }: RoleModalProps) {
   const [data, setData] = useState<IRole | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
@@ -43,7 +42,19 @@ export function RoleModal({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild>
+        <span>
+          {create ? (
+            <Button
+              buttonType="primary"
+              text="Novo Cargo"
+              icon={<AddCircle />}
+            />
+          ) : (
+            <IconButton buttonType="edit" icon={<EditSquare />} />
+          )}
+        </span>
+      </Dialog.Trigger>
       <Dialog.Portal className={styles.modal}>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>

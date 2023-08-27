@@ -19,7 +19,9 @@ import {
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
+import { DownloadTableExcel } from "react-export-table-to-excel";
+import ReactLoading from "react-loading";
 import { DataTablePagination } from "./Pagination";
 dayjs.extend(utc);
 
@@ -32,15 +34,18 @@ interface DataTableProps {
   setTable: (table: any) => void;
   defaultTableSize: number;
   globalFilterValue?: string;
+  loading?: boolean;
+  tableName: string;
 }
 
-export const DataTable = forwardRef<HTMLTableElement, DataTableProps>(
+export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
   function DataTable(props, ref) {
     const [globalFilter, setGlobalFilter] = useState<string>(
       props.globalFilterValue ?? "",
     );
-
     const [rowSelection, setRowSelection] = useState<any>({});
+    const tableRef = useRef<HTMLTableElement>(null);
+    const [canExport, setCanExport] = useState<boolean>(false);
 
     const data = props.data;
     const columns = props.columns;
@@ -82,9 +87,34 @@ export const DataTable = forwardRef<HTMLTableElement, DataTableProps>(
       setGlobalFilter(props.globalFilterValue ?? globalFilter);
     }, [props.globalFilterValue]);
 
+    useEffect(() => {
+      setTimeout(() => {
+        setCanExport(true);
+      }, 456);
+    }, []);
+
+    if (props.loading)
+      return (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ReactLoading
+            type="spin"
+            color="#001866"
+            height={"3%"}
+            width={"3%"}
+          />
+        </div>
+      );
+
     return (
       <>
-        <Table ref={ref}>
+        <Table ref={tableRef}>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
@@ -130,6 +160,16 @@ export const DataTable = forwardRef<HTMLTableElement, DataTableProps>(
           currentPage={props.currentPage}
           totalPages={Math.ceil(props.size / props.defaultTableSize)}
         />
+
+        {canExport && (
+          <DownloadTableExcel
+            filename={`${props.tableName} pág: ${props.currentPage}`}
+            sheet={`${props.tableName} pág: ${props.currentPage}`}
+            currentTableRef={tableRef.current}
+          >
+            <button style={{ display: "none" }} ref={ref} />
+          </DownloadTableExcel>
+        )}
       </>
     );
   },

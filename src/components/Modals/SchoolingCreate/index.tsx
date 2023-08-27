@@ -1,6 +1,7 @@
-import { Close } from "@/assets/Icons";
+import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
+import { IconButton } from "@/components/IconButton";
 import { schoolingModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -14,17 +15,15 @@ interface ISchooling {
 }
 
 interface SchoolingModalProps {
-  title?: string;
   defaultValue?: ISchooling;
   handleOnSubmit: (data: any) => void;
-  children?: React.ReactNode;
+  create?: boolean;
 }
 
 export function SchoolingModal({
   defaultValue,
   handleOnSubmit,
-  title,
-  children,
+  create,
 }: SchoolingModalProps) {
   const [data, setData] = useState<ISchooling | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
@@ -44,7 +43,19 @@ export function SchoolingModal({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild>
+        <span>
+          {create ? (
+            <Button
+              buttonType="primary"
+              text="Nova Escolaridade"
+              icon={<AddCircle />}
+            />
+          ) : (
+            <IconButton buttonType="edit" icon={<EditSquare />} />
+          )}
+        </span>
+      </Dialog.Trigger>
       <Dialog.Portal className={styles.modal}>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>

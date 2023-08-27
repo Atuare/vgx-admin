@@ -1,5 +1,6 @@
-import { Close } from "@/assets/Icons";
+import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { IconButton } from "@/components/IconButton";
 import { skillModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -12,17 +13,15 @@ interface ISkill {
 }
 
 interface SkillModalProps {
-  title?: string;
   defaultValue?: ISkill;
   handleOnSubmit: (data: any) => void;
-  children?: React.ReactNode;
+  create?: boolean;
 }
 
 export function SkillModal({
   defaultValue,
   handleOnSubmit,
-  title,
-  children,
+  create,
 }: SkillModalProps) {
   const [skillData, setSkillData] = useState<ISkill | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
@@ -40,7 +39,19 @@ export function SkillModal({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild>
+        <span>
+          {create ? (
+            <Button
+              buttonType="primary"
+              text="Nova Habilidade"
+              icon={<AddCircle />}
+            />
+          ) : (
+            <IconButton buttonType="edit" icon={<EditSquare />} />
+          )}
+        </span>
+      </Dialog.Trigger>
       <Dialog.Portal className={styles.modal}>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>

@@ -278,7 +278,7 @@ export const fetchApi = createApi({
     }),
     deleteAvaliabilities: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
-        url: `/avaliabilities/${id}`,
+        url: `/availability/${id}`,
         method: "DELETE",
       }),
     }),

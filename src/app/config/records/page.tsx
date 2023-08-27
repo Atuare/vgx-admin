@@ -1,7 +1,8 @@
 "use client";
-import { AddCircle, Delete, EditSquare, SystemUpdate } from "@/assets/Icons";
+import { Delete, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { DeleteModal } from "@/components/DeleteModal";
+import { IconButton } from "@/components/IconButton";
 import { AvailabilityModal } from "@/components/Modals/AvailabilityCreate";
 import { RoleModal } from "@/components/Modals/RoleCreate";
 import { SalaryClaimModal } from "@/components/Modals/SalaryClaimCreate";
@@ -53,15 +54,9 @@ import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useRouter, useSearchParams } from "next/navigation";
-import { HTMLAttributes, ReactNode, useEffect, useState } from "react";
-import ReactLoading from "react-loading";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Records.module.scss";
 dayjs.extend(utc);
-
-interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  icon: ReactNode;
-  buttonType: "delete" | "edit";
-}
 
 interface ActionsProps {
   handleDelete: () => void;
@@ -82,6 +77,7 @@ const size = 5;
 
 export default function Records() {
   const [table, setTable] = useState<Table<any>>();
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [type, setType] = useState(0);
   const [tableData, setTableData] = useState<{
     data: any[];
@@ -117,6 +113,10 @@ export default function Records() {
   const [currentPage, setCurrentPage] = useState<number>(
     get("page") ? Number(get("page")) : 1,
   );
+
+  function handleExportData() {
+    if (buttonRef.current) buttonRef.current.click();
+  }
 
   const handleGetData = () => {
     switch (type) {
@@ -296,7 +296,7 @@ export default function Records() {
         unitColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
+            <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm:ss")}</div>
           ),
         }),
       ],
@@ -365,7 +365,7 @@ export default function Records() {
         roleColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
+            <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm:ss")}</div>
           ),
         }),
       ],
@@ -430,14 +430,7 @@ export default function Records() {
         skillColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>
-              {dayjs(row.getValue()).format("DD/MM/YYYY")}{" "}
-              {dayjs(row.getValue()).toDate().toLocaleTimeString(undefined, {
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-              })}
-            </div>
+            <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm:ss")}</div>
           ),
         }),
       ],
@@ -514,7 +507,7 @@ export default function Records() {
         salaryClaimColumn.accessor("createdAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
+            <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm:ss")}</div>
           ),
         }),
       ],
@@ -573,13 +566,23 @@ export default function Records() {
               );
             };
 
-            const handleEditRow = () => {};
+            const handleEditRow = (data: any) => {
+              handleUpdateData()?.({
+                ...data,
+                id: row.row.original.id,
+                status: row.row.original.status,
+              });
+
+              location.replace(
+                `/config/records?page=${currentPage}&screen=${dataPropertys[type]}`,
+              );
+            };
 
             return (
               <Actions
                 handleDelete={handleDeleteRow}
                 handleEdit={handleEditRow}
-                value="Disponibilidade"
+                value={formatTimeRange(row.row.original)}
                 type={type}
                 defaultValue={row.row.original}
               />
@@ -589,7 +592,7 @@ export default function Records() {
         availabilityColumn.accessor("updatedAt", {
           header: "Atualizado em",
           cell: row => (
-            <div>{dayjs(row.getValue()).format("DD/MM/YYYY hh:mm:ss")}</div>
+            <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm:ss")}</div>
           ),
         }),
       ],
@@ -703,6 +706,11 @@ export default function Records() {
 
   useEffect(() => {
     handleGetData()?.then(data => {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+
       setTableData({
         data: data[dataPropertys[type]],
         totalCount: data.totalCount,
@@ -713,6 +721,11 @@ export default function Records() {
 
   useEffect(() => {
     handleGetData()?.then(data => {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+
       setTableData({
         data: data[dataPropertys[type]],
         totalCount: data.totalCount,
@@ -744,30 +757,23 @@ export default function Records() {
           text="Exportar dados"
           buttonType="secondary"
           icon={<SystemUpdate />}
+          onClick={handleExportData}
         />
         <CreateModal handleOnSubmit={handleCreate} type={type} />
       </div>
 
-      {tableData && !loading ? (
-        <DataTable
-          currentPage={currentPage}
-          handleTogglePage={handleTogglePage}
-          defaultTableSize={5}
-          setTable={setTable}
-          size={tableData.totalCount}
-          data={tableData.data}
-          columns={items[type].columns}
-        />
-      ) : (
-        <div className={styles.loading}>
-          <ReactLoading
-            type="spin"
-            color="#001866"
-            height={"3%"}
-            width={"3%"}
-          />
-        </div>
-      )}
+      <DataTable
+        currentPage={currentPage}
+        handleTogglePage={handleTogglePage}
+        defaultTableSize={5}
+        setTable={setTable}
+        size={tableData.totalCount}
+        data={tableData.data}
+        columns={items[type].columns}
+        loading={loading}
+        ref={buttonRef}
+        tableName={items[type].id}
+      />
     </div>
   );
 }
@@ -794,7 +800,6 @@ function Actions({
 
       <EditModal
         handleOnSubmit={handleEdit}
-        title={value}
         type={type}
         defaultValue={defaultValue}
       />
@@ -805,12 +810,10 @@ function Actions({
 function EditModal({
   type,
   handleOnSubmit,
-  title,
   defaultValue,
 }: {
   type: number;
   handleOnSubmit: (data: any) => void;
-  title: string;
   defaultValue: any;
 }) {
   switch (type) {
@@ -818,60 +821,43 @@ function EditModal({
       return (
         <UnitModal
           handleOnSubmit={handleOnSubmit}
-          title={title}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </UnitModal>
+        />
       );
     case 1:
       return (
         <RoleModal
           handleOnSubmit={handleOnSubmit}
-          title={title}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </RoleModal>
+        />
       );
     case 2:
       return (
         <SkillModal
           handleOnSubmit={handleOnSubmit}
-          title={title}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </SkillModal>
+        />
       );
     case 3:
       return (
         <SalaryClaimModal
           handleOnSubmit={handleOnSubmit}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </SalaryClaimModal>
+        />
       );
     case 4:
       return (
         <AvailabilityModal
           handleOnSubmit={handleOnSubmit}
-          title={title}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </AvailabilityModal>
+        />
       );
     case 5:
       return (
         <SchoolingModal
           handleOnSubmit={handleOnSubmit}
-          title={title}
           defaultValue={defaultValue}
-        >
-          <IconButton buttonType="edit" icon={<EditSquare />} />
-        </SchoolingModal>
+        />
       );
   }
 }
@@ -885,81 +871,16 @@ function CreateModal({
 }) {
   switch (type) {
     case 0:
-      return (
-        <UnitModal handleOnSubmit={handleOnSubmit} title="Nova Unidade">
-          <Button
-            buttonType="primary"
-            text="Nova Unidade"
-            icon={<AddCircle />}
-          />
-        </UnitModal>
-      );
+      return <UnitModal handleOnSubmit={handleOnSubmit} create />;
     case 1:
-      return (
-        <RoleModal handleOnSubmit={handleOnSubmit} title="Novo Cargo">
-          <Button buttonType="primary" text="Novo Cargo" icon={<AddCircle />} />
-        </RoleModal>
-      );
+      return <RoleModal handleOnSubmit={handleOnSubmit} create />;
     case 2:
-      return (
-        <SkillModal handleOnSubmit={handleOnSubmit} title="Nova Habilidade">
-          <Button
-            buttonType="primary"
-            text="Nova Habilidade"
-            icon={<AddCircle />}
-          />
-        </SkillModal>
-      );
+      return <SkillModal handleOnSubmit={handleOnSubmit} create />;
     case 3:
-      return (
-        <SalaryClaimModal handleOnSubmit={handleOnSubmit}>
-          <Button
-            buttonType="primary"
-            text="Nova Pretensão Salarial"
-            icon={<AddCircle />}
-          />
-        </SalaryClaimModal>
-      );
+      return <SalaryClaimModal handleOnSubmit={handleOnSubmit} create />;
     case 4:
-      return (
-        <AvailabilityModal
-          handleOnSubmit={handleOnSubmit}
-          title="Nova Disponibilidade"
-        >
-          <Button
-            buttonType="primary"
-            text="Nova Disponibilidade"
-            icon={<AddCircle />}
-          />
-        </AvailabilityModal>
-      );
+      return <AvailabilityModal handleOnSubmit={handleOnSubmit} create />;
     case 5:
-      return (
-        <SchoolingModal
-          handleOnSubmit={handleOnSubmit}
-          title="Nova Escolaridade"
-        >
-          <Button
-            buttonType="primary"
-            text="Nova Escolaridade"
-            icon={<AddCircle />}
-          />
-        </SchoolingModal>
-      );
+      return <SchoolingModal handleOnSubmit={handleOnSubmit} create />;
   }
-}
-
-function IconButton({ icon, buttonType, ...props }: IconButtonProps) {
-  return (
-    <button
-      className={`${styles.iconButton} ${
-        buttonType === "delete"
-          ? styles.iconButton__delete
-          : styles.iconButton__edit
-      }`}
-      {...props}
-    >
-      {icon}
-    </button>
-  );
 }

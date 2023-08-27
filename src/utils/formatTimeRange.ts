@@ -24,9 +24,9 @@ export function formatTimeRange(input: TimeRangeInput): string {
   const endDayName = dayOfWeek[input.endDay];
 
   const startHourInt = Math.floor(input.startHour);
-  const startHourDec = Math.floor((input.startHour - startHourInt) * 60);
+  const startHourDec = Math.round((input.startHour - startHourInt) * 60);
   const endHourInt = Math.floor(input.endHour);
-  const endHourDec = Math.floor((input.endHour - endHourInt) * 60);
+  const endHourDec = Math.round((input.endHour - endHourInt) * 60);
 
   const formattedStartHour = `${startHourInt
     .toString()
@@ -45,4 +45,22 @@ export function formatTimeRange(input: TimeRangeInput): string {
   })`;
 
   return formattedString;
+}
+
+export function hourToDecimal(input: string) {
+  const hoursMinutes = input.split(/[.:]/);
+  const hours = parseInt(hoursMinutes[0], 10);
+  const minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+  return (hours + minutes / 60).toFixed(2);
+}
+
+export function decimalToTime(decimalTime: number): string {
+  const hours = Math.floor(decimalTime);
+  const minutes = Math.round((decimalTime - hours) * 60);
+
+  const hoursStr = hours.toString().padStart(2, "0");
+  const minutesStr = minutes.toString().padStart(2, "0");
+
+  const timeString = `${hoursStr}:${minutesStr}`;
+  return timeString;
 }
