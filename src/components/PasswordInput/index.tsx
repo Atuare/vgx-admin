@@ -5,9 +5,14 @@ import styles from "./PasswordInput.module.scss";
 interface PasswordInputProps {
   name: string;
   onChangePassword: (value: string) => void;
+  error?: string;
 }
 
-export function PasswordInput({ name, onChangePassword }: PasswordInputProps) {
+export function PasswordInput({
+  name,
+  onChangePassword,
+  error,
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -29,6 +34,7 @@ export function PasswordInput({ name, onChangePassword }: PasswordInputProps) {
           </button>
         )}
       </div>
+      <span className={styles.error}>{error}</span>
     </div>
   );
 }

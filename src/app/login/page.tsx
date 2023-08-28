@@ -98,10 +98,11 @@ export default function Login() {
             name="password"
             control={methods.control}
             render={({ field: { onChange }, fieldState: { error } }) => (
-              <>
-                <PasswordInput name="Senha" onChangePassword={onChange} />
-                <span className={styles.error}>{error?.message}</span>
-              </>
+              <PasswordInput
+                name="Senha"
+                onChangePassword={onChange}
+                error={error?.message}
+              />
             )}
           />
 
