@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect } from "react";
 import styles from "./TipTap.module.scss";
 import "./tiptap.scss";
 
@@ -37,7 +37,7 @@ export function TipTap({
     content: content ? content : "",
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (editor?.getJSON()) getContentFromEditor(editor?.getJSON());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor?.getJSON()]);
