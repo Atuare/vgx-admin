@@ -1,25 +1,39 @@
 "use client";
 
-import Image from "next/image";
-import { SubmitHandler, FormProvider, useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { redirect } from "next/navigation";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/schemas/loginSchema";
 import { useLoginMutation } from "@/services/api/authApi";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 
+import "react-toastify/dist/ReactToastify.css";
 import styles from "./Login.module.scss";
 
-import Logo from "@/assets/logo.png";
 import Background from "@/assets/background.png";
+import Logo from "@/assets/logo.png";
 
+import { TaskAlt } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { PasswordInput } from "@/components/PasswordInput";
+import { useRouter } from "next/navigation";
+import ReactLoading from "react-loading";
+import { ToastContainer, toast } from "react-toastify";
 export type LoginInput = {
   username: string;
   password: string;
 };
 
 export default function Login() {
+  const [loading, setLoading] = useState(false);
+
+  const { push } = useRouter();
+
   const methods = useForm<LoginInput>({
     resolver: yupResolver(loginSchema),
   });
@@ -27,33 +41,41 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitSuccessful, errors },
-    reset,
+    formState: { errors },
   } = methods;
 
   const [loginUser, { isLoading, isError, error, isSuccess }] =
     useLoginMutation();
 
   useEffect(() => {
+    if (isLoading) setLoading(true);
+
     if (isSuccess) {
-      redirect("/");
+      setLoading(false);
+
+      setTimeout(() => {
+        push("/");
+      }, 300);
     }
 
-    if (isError) {
-      console.error(error);
+    if (isError && error && "status" in error) {
+      toast.error(error.data.data.error[0], {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubmitSuccessful]);
-
-  const onSubmitHandler: SubmitHandler<LoginInput> = (data, event) => {
-    event?.preventDefault();
+  const onSubmitHandler: SubmitHandler<LoginInput> = data => {
     loginUser(data);
   };
 
@@ -70,21 +92,45 @@ export default function Login() {
             <label htmlFor="user">Usuário</label>
             <input {...register("username")} type="text" id="user" />
           </div>
-          <p>{errors.username?.message}</p>
+          <span className={styles.error}>{errors.username?.message}</span>
 
-          <div className={styles.form__inputContainer}>
-            <label htmlFor="password">Senha</label>
-            <input {...register("password")} type="password" id="password" />
-          </div>
-          <p>{errors.password?.message}</p>
-
-          <Button
-            onClick={() => handleSubmit(onSubmitHandler)}
-            text="ENTRAR"
-            buttonType="primary"
-            type="submit"
+          <Controller
+            name="password"
+            control={methods.control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <>
+                <PasswordInput name="Senha" onChangePassword={onChange} />
+                <span className={styles.error}>{error?.message}</span>
+              </>
+            )}
           />
+
+          {isSuccess ? (
+            <Button text="" buttonType="primary" disabled icon={<TaskAlt />} />
+          ) : loading ? (
+            <Button
+              text=""
+              buttonType="primary"
+              disabled
+              icon={
+                <ReactLoading
+                  type="spin"
+                  color="#001866"
+                  height={"5%"}
+                  width={"5%"}
+                />
+              }
+            />
+          ) : (
+            <Button
+              onClick={() => handleSubmit(onSubmitHandler)}
+              text="ENTRAR"
+              buttonType="primary"
+              type="submit"
+            />
+          )}
         </form>
+        <ToastContainer />
       </FormProvider>
     </div>
   );
