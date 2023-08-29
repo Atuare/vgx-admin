@@ -1,15 +1,9 @@
 "use client";
 
-import Avatar from "@/assets/AvatarLG.png";
-import {
-  Facebook,
-  Instagram,
-  LinkedIn,
-  TaskAlt,
-  VisibilityOff,
-  VisibilityOn,
-} from "@/assets/Icons";
+import { Facebook, Instagram, LinkedIn, TaskAlt } from "@/assets/Icons";
+import Placeholder from "@/assets/placeholder.png";
 import { Button } from "@/components/Button";
+import { PasswordInput } from "@/components/PasswordInput";
 import useUser from "@/hooks/useUser";
 import { editProfileSchema } from "@/schemas/editProfileSchema";
 import { useUpdateUserMutation } from "@/services/api/fetchApi";
@@ -60,27 +54,8 @@ export default function Profile() {
   });
 
   const handleEditProfile = async (data: Partial<YupDataType>) => {
-    console.log(data);
-
-    const newUser = {
-      name: user?.employee.name,
-      birthdate: user?.employee.birthdate
-        ? dayjs(user?.employee.birthdate).format("YYYY-MM-DD")
-        : "2023-08-23",
-      emailCompany: user?.employee.emailCompany ?? "",
-      phone: data.phone,
-      whatsapp: data.whatsapp,
-      emailPersonal: data.emailPersonal,
-      linkedin: null,
-      facebook: null,
-      instagram: null,
-      image: base64Picture ?? user?.employee.image,
-    };
-
-    console.log(newUser);
-
-    updateUser(newUser).then(() => {
-      // location.replace("/config/profile");
+    updateUser({ ...data, image: base64Picture }).then(() => {
+      location.replace("/config/profile");
     });
   };
 
@@ -135,7 +110,13 @@ export default function Profile() {
       <section className={styles.profile__hero}>
         <div className={styles.profile__hero__left}>
           <Image
-            src={picture ? URL.createObjectURL(picture) : Avatar}
+            src={
+              picture
+                ? URL.createObjectURL(picture)
+                : user?.employee?.image
+                ? user?.employee.image
+                : Placeholder
+            }
             alt="Avatar"
             width={133}
             height={133}
@@ -226,16 +207,40 @@ export default function Profile() {
       <section className={styles.profile__password}>
         <h1>Alterar senha</h1>
         <div className={styles.profile__password__list}>
-          <PasswordInput
-            name="Senha atual"
-            id="currentPassword"
+          <Controller
+            name="currentPassword"
             control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <PasswordInput
+                name="Senha atual"
+                onChangePassword={onChange}
+                error={error?.message}
+              />
+            )}
           />
-          <PasswordInput name="Nova senha" id="newPassword" control={control} />
-          <PasswordInput
-            name="Confirmar nova senha"
-            id="confirmPassword"
+
+          <Controller
+            name="newPassword"
             control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <PasswordInput
+                name="Nova senha"
+                onChangePassword={onChange}
+                error={error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+              <PasswordInput
+                name="Confirmar nova senha"
+                onChangePassword={onChange}
+                error={error?.message}
+              />
+            )}
           />
         </div>
       </section>
@@ -340,50 +345,8 @@ function PhoneInput({
                   : event.target.value.replace(/\D/g, ""),
               );
               handleInputChange(event.target.value);
-              console.log(event.target.value);
             }}
           />
-          <span className={styles.error}>{error?.message}</span>
-        </div>
-      )}
-    />
-  );
-}
-
-function PasswordInput({
-  id,
-  control,
-  name,
-}: {
-  id: string;
-  control: Control<any>;
-  name: string;
-}) {
-  const [showPassword, setShowPassword] = useState(false);
-
-  return (
-    <Controller
-      name={id}
-      control={control}
-      render={({ field: { onChange }, fieldState: { error } }) => (
-        <div className={styles.input}>
-          <label htmlFor={id}>{name}</label>
-          <div className={styles.inputContainer}>
-            <input
-              id={id}
-              onChange={onChange}
-              type={showPassword ? "text" : "password"}
-            />
-            {showPassword ? (
-              <button onClick={() => setShowPassword(false)} type="button">
-                <VisibilityOn />
-              </button>
-            ) : (
-              <button onClick={() => setShowPassword(true)} type="button">
-                <VisibilityOff />
-              </button>
-            )}
-          </div>
           <span className={styles.error}>{error?.message}</span>
         </div>
       )}

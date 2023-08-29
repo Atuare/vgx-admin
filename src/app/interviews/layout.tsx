@@ -1,5 +1,5 @@
 "use client";
-import Avatar from "@/assets/avatar.png";
+import Placeholder from "@/assets/placeholder.png";
 import { AdmProfile } from "@/components/AdmProfile";
 import useUser from "@/hooks/useUser";
 import styles from "@/styles/layout.module.scss";
@@ -20,7 +20,7 @@ export default function InterviewsLayout({
           <h1>Entrevistas</h1>
         </div>
         <AdmProfile
-          image={Avatar}
+          image={user?.employee?.image ? user?.employee.image : Placeholder}
           name={user?.employee?.name}
           role={user?.profile}
         />

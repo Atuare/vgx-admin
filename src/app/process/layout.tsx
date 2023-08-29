@@ -1,8 +1,6 @@
 "use client";
 import { ArrowBack } from "@/assets/Icons";
-import Avatar from "@/assets/avatar.png";
 import { AdmProfile } from "@/components/AdmProfile";
-import useUser from "@/hooks/useUser";
 import "@/styles/scrollbar.scss";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode } from "react";
@@ -17,8 +15,6 @@ const titles = {
 export default function ProcessLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { back } = useRouter();
-
-  const { user } = useUser();
 
   return (
     <div className={styles.process}>
@@ -35,11 +31,7 @@ export default function ProcessLayout({ children }: { children: ReactNode }) {
               "Dados do processo"}
           </h1>
         </div>
-        <AdmProfile
-          image={Avatar}
-          name={user?.employee?.name}
-          role={user?.profile}
-        />
+        <AdmProfile />
       </header>
       {children}
     </div>

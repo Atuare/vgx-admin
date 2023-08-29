@@ -1,10 +1,8 @@
 "use client";
-import Avatar from "@/assets/avatar.png";
 import { AdmProfile } from "@/components/AdmProfile";
 import { Calendar } from "@/components/Calendar";
 import { HomeData } from "@/components/HomeData";
 import { SearchInput } from "@/components/SearchInput";
-import useUser from "@/hooks/useUser";
 import { fetchApi } from "@/services/api/fetchApi";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -25,7 +23,6 @@ const defaultStatistics: StatisticsType = {
 };
 
 export default function Home() {
-  const { user } = useUser();
   const dispatch = useDispatch();
 
   const [value, setValue] = useState<string>("");
@@ -63,11 +60,7 @@ export default function Home() {
 
         <div className={styles.header__right}>
           <SearchInput handleChangeValue={handleInputValue} />
-          <AdmProfile
-            image={Avatar}
-            name={user?.employee?.name}
-            role={user?.profile}
-          />
+          <AdmProfile />
         </div>
       </header>
 
