@@ -1,6 +1,6 @@
+import { getFirstDayOfMonth } from "@/utils/dates";
 import dayjs from "dayjs";
 import styles from "./CalendarItem.module.scss";
-import { getFirstDayOfMonth } from "@/utils/dates";
 
 export function CalendarItem({
   day,
@@ -19,16 +19,18 @@ export function CalendarItem({
   handleIntervalDays: (day: number, type: "add" | "remove") => void;
   days: number[];
 }) {
+  // console.log(day, year, month + 1);
   const date = dayjs(`${year}-${month + 1}-${day}`).toDate();
-  const isActive =
-    dayjs(new Date()).isSame(date, "day") &&
-    dayjs(new Date()).isSame(date, "month") &&
-    dayjs(new Date()).isSame(date, "year");
 
   const borderCondition =
     index !== 0 && ((index + 1) % 7 === 0 || index + 1 === length);
   const radiusCondition = length > 35 ? 35 : 28;
   const daysBeforeAtualMonth = getFirstDayOfMonth(month, year) - 1;
+  const isActive =
+    index > daysBeforeAtualMonth &&
+    dayjs(new Date()).isSame(date, "day") &&
+    dayjs(new Date()).isSame(date, "month") &&
+    dayjs(new Date()).isSame(date, "year");
 
   return (
     <div
