@@ -19,7 +19,6 @@ export function CalendarItem({
   handleIntervalDays: (day: number, type: "add" | "remove") => void;
   days: number[];
 }) {
-  // console.log(day, year, month + 1);
   const date = dayjs(`${year}-${month + 1}-${day}`).toDate();
 
   const borderCondition =
