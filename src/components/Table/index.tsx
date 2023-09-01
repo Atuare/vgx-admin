@@ -35,7 +35,8 @@ interface DataTableProps {
   defaultTableSize: number;
   globalFilterValue?: string;
   loading?: boolean;
-  tableName: string;
+  tableName?: string;
+  manualPagination?: boolean;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -57,6 +58,16 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       state: {
         globalFilter,
         rowSelection,
+        pagination: {
+          pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
+          pageSize: props.defaultTableSize,
+        },
+      },
+      initialState: {
+        pagination: {
+          pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
+          pageSize: props.defaultTableSize,
+        },
       },
       enableRowSelection: true,
       onRowSelectionChange: setRowSelection,
@@ -66,16 +77,12 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       onGlobalFilterChange: setGlobalFilter,
       globalFilterFn: (row, columnId, filterValue) => {
         const search = filterValue.toLowerCase();
-        let value = String(row.getValue(columnId)).toLowerCase();
-
-        dayjs(value).isValid()
-          ? (value = dayjs(value).utc().format("DD/MM/YYYY").toString())
-          : value;
+        const value = String(row.getValue(columnId)).toLowerCase();
 
         if (value === "ativo" || value === "inativo")
           return Boolean(value === filterValue);
 
-        return Boolean(value.includes(search));
+        return value.includes(search);
       },
     });
 
@@ -159,6 +166,7 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
           handleTogglePage={props.handleTogglePage}
           currentPage={props.currentPage}
           totalPages={Math.ceil(props.size / props.defaultTableSize)}
+          table={table}
         />
 
         {canExport && (

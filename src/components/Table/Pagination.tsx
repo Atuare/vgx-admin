@@ -5,6 +5,7 @@ import {
   PrevButton,
 } from "react-headless-pagination";
 
+import { Table } from "@tanstack/react-table";
 import styles from "./Pagination.module.scss";
 
 interface DataTablePaginationProps {
@@ -12,6 +13,7 @@ interface DataTablePaginationProps {
   currentPage: number;
   totalPages: number;
   handleTogglePage: (page: number) => void;
+  table: Table<any>;
 }
 
 export function DataTablePagination({
@@ -36,14 +38,14 @@ export function DataTablePagination({
           truncableClassName=""
           truncableText="..."
         >
-          <PrevButton className="">&lt; Anterior</PrevButton>
+          <PrevButton>&lt; Anterior</PrevButton>
           <div className={styles.footer__pages}>
             <PageButton
               activeClassName={styles.footer__pages__item__active}
               className={styles.footer__pages__item}
             />
           </div>
-          <NextButton className="">Próximo &gt;</NextButton>
+          <NextButton>Próximo &gt;</NextButton>
         </Pagination>
       </div>
       <div className={styles.disabled} />
