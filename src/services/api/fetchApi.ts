@@ -342,6 +342,15 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllTrainings: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/training/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -381,4 +390,5 @@ export const {
   useCreateSalaryClaimMutation,
   useCreateAvailabilityMutation,
   useCreateSchoolingMutation,
+  useGetAllTrainingsQuery,
 } = fetchApi;
