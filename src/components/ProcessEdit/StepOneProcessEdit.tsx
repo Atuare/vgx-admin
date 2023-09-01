@@ -185,6 +185,7 @@ export function StepOneProcessEdit({
                 name="Inscrições até"
                 width="224px"
                 error={error?.message}
+                optional
               >
                 <input
                   type="date"
@@ -206,6 +207,7 @@ export function StepOneProcessEdit({
                 name="Limite de candidaturas"
                 width="224px"
                 error={error?.message}
+                optional
               >
                 <NumberInput
                   onChange={onChange}

@@ -108,13 +108,13 @@ export function StepThreeProcessCreate({
       <div className={stylesStepOne.container}>
         <section className={stylesStepOne.container__form}>
           <div className={stylesStepOne.container__form__first}>
-            <DataInput name="Unidade/Site" width="296px" required>
+            <DataInput name="Unidade/Site" width="296px">
               <input type="text" value={processData?.unit?.name} disabled />
             </DataInput>
-            <DataInput name="Cargo" width="448px" required>
+            <DataInput name="Cargo" width="448px">
               <input type="text" value={processData?.role?.name} disabled />
             </DataInput>
-            <DataInput name="Solicitar currículo" width="264px" required>
+            <DataInput name="Solicitar currículo" width="264px">
               <Radio
                 defaultValue={processData?.curriculum}
                 onChange={() => {}}
@@ -124,7 +124,7 @@ export function StepThreeProcessCreate({
           </div>
 
           <div className={stylesStepOne.container__form__second}>
-            <DataInput name="Data inicial" width="224px" required>
+            <DataInput name="Data inicial" width="224px">
               <input
                 type="date"
                 defaultValue={formatDateTime(processData?.startDate)}
@@ -132,7 +132,7 @@ export function StepThreeProcessCreate({
                 disabled
               />
             </DataInput>
-            <DataInput name="Inscrições até" width="224px" required>
+            <DataInput name="Inscrições até" width="224px" optional>
               <input
                 type="date"
                 defaultValue={formatDateTime(processData?.endDate)}
@@ -140,14 +140,14 @@ export function StepThreeProcessCreate({
                 disabled
               />
             </DataInput>
-            <DataInput name="Limite de candidaturas" width="224px" required>
+            <DataInput name="Limite de candidaturas" width="224px" optional>
               <input
                 type="number"
                 disabled
                 value={processData?.limitCandidates}
               />
             </DataInput>
-            <DataInput name="Upload banner vaga" width="301px" required>
+            <DataInput name="Upload banner vaga" width="301px">
               <FileInput
                 onChange={() => {}}
                 defaultFile={processData?.file}
@@ -157,13 +157,13 @@ export function StepThreeProcessCreate({
           </div>
         </section>
 
-        <DataInput name="Observações" required>
+        <DataInput name="Observações">
           <EditorContent
             editor={observationsEditor}
             className={styles.container__editorContainer}
           />
         </DataInput>
-        <DataInput name="Mensagem exibida ao final do cadastro" required>
+        <DataInput name="Mensagem exibida ao final do cadastro">
           <EditorContent
             editor={registrationCompletionMessageEditor}
             className={styles.container__editorContainer}
@@ -192,7 +192,7 @@ export function StepThreeProcessCreate({
             title="Benefícios"
             items={processData?.benefits}
           />
-          <DataInput name="Tipo" width="328px" required>
+          <DataInput name="Tipo" width="328px">
             <Radio
               defaultValue={processData?.type === "PRESENCIAL" ? true : false}
               options={["Presencial", "Remoto"]}
