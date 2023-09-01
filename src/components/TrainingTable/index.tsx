@@ -86,21 +86,7 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
               rowStatusValue as keyof typeof TrainingStatusEnum
             ];
 
-          const statusBackgroundColors: Record<TrainingStatusEnum, string> = {
-            [TrainingStatusEnum.CONCLUIDO]: "var(-suceed)",
-            [TrainingStatusEnum.EM_ANDAMENTO]: "var(--attention)",
-            [TrainingStatusEnum.CANCELADO]: "var(--error)",
-            [TrainingStatusEnum.SUSPENSO]: "var(--secondary-7)",
-          };
-
-          return (
-            <FlatText
-              text={status}
-              styleProps={{
-                backgroundColor: statusBackgroundColors[status],
-              }}
-            />
-          );
+          return <FlatText text={status} type={status} />;
         },
       }),
       columnHelper.accessor("participantLimit", {
@@ -141,7 +127,6 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
 
     useEffect(() => {
       if (isSuccess) {
-        console.log(data);
         setTrainings(data);
       }
     }, [isSuccess]);

@@ -1,15 +1,24 @@
-import React from "react";
 import styles from "./FlatText.module.scss";
 
-export default function FlatText({
-  text,
-  styleProps,
-}: {
+interface FlatTextProps {
   text: string;
-  styleProps: React.StyleHTMLAttributes<HTMLDivElement>["style"];
-}) {
+  type: string;
+}
+
+export default function FlatText({ text, type }: FlatTextProps) {
+  const bgColor = {
+    CONCLUIDO: "var(--sucess)",
+    EM_ANDAMENTO: "var(--attention)",
+    EMANDAMENTO: "var(--attention)",
+    CANCELADO: "var(--error)",
+    SUSPENSO: "var(--secondary-7)",
+  };
+
   return (
-    <div className={styles.flatText} style={styleProps}>
+    <div
+      className={styles.flatText}
+      style={{ color: bgColor[type as keyof typeof bgColor] }}
+    >
       <span>{text}</span>
     </div>
   );
