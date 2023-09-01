@@ -5,7 +5,7 @@ interface RadioProps {
   defaultValue?: boolean;
   options?: string[];
   disabled?: boolean;
-  onChange: (value: boolean) => void;
+  onChange?: (value: boolean) => void;
 }
 
 export function Radio({
@@ -17,7 +17,7 @@ export function Radio({
   const [value, setValue] = useState<boolean>(defaultValue ?? false);
 
   useEffect(() => {
-    onChange(value);
+    onChange?.(value);
   }, [value]);
 
   return (
