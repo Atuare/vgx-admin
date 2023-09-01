@@ -16,3 +16,7 @@ export function formatPhoneNumber(input: string) {
   }${match[4] || ""}`;
   return formattedNumber;
 }
+
+export function formatWhatsappNumber(input: string) {
+  return input.replace(/^55(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+}
