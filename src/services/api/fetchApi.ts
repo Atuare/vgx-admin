@@ -351,6 +351,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAllAdmissions: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/admission/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -391,4 +400,5 @@ export const {
   useCreateAvailabilityMutation,
   useCreateSchoolingMutation,
   useGetAllTrainingsQuery,
+  useGetAllAdmissionsQuery,
 } = fetchApi;

@@ -10,6 +10,7 @@ export default function FlatText({ text, type }: FlatTextProps) {
     CONCLUIDO: "var(--sucess)",
     EM_ANDAMENTO: "var(--attention)",
     EMANDAMENTO: "var(--attention)",
+    "EM ANDAMENTO": "var(--attention)",
     CANCELADO: "var(--error)",
     SUSPENSO: "var(--secondary-7)",
   };
@@ -17,7 +18,7 @@ export default function FlatText({ text, type }: FlatTextProps) {
   return (
     <div
       className={styles.flatText}
-      style={{ color: bgColor[type as keyof typeof bgColor] }}
+      style={{ background: bgColor[type as keyof typeof bgColor] }}
     >
       <span>{text}</span>
     </div>
