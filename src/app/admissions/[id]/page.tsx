@@ -1,6 +1,7 @@
 "use client";
 import { EditSquare, Search, SystemUpdate, TaskAlt } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { SaveModal } from "@/components/SaveModal";
 import { SearchInput } from "@/components/SearchInput";
 import { IAdmission } from "@/interfaces/admissions.interface";
 import { getAdmissionById } from "@/utils/admissions";
@@ -62,11 +63,20 @@ export default function AdmissionClass() {
             />
           </div>
         </div>
-        <Button
-          buttonType="primary"
-          text="Liberar contratos para assinatura"
-          icon={<TaskAlt />}
-        />
+        <div className={styles.buttonContract}>
+          <SaveModal
+            buttonText="Permitir acesso"
+            handleOnSave={() => {}}
+            icon={<TaskAlt />}
+            text="Liberar contratos para assinatura?"
+          >
+            <Button
+              buttonType="primary"
+              text="Liberar contratos para assinatura"
+              icon={<TaskAlt />}
+            />
+          </SaveModal>
+        </div>
       </section>
     </div>
   );
