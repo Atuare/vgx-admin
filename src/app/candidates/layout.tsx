@@ -1,8 +1,13 @@
-"use client";
 import { AdmProfile } from "@/components/AdmProfile";
 import "@/styles/scrollbar.scss";
+import type { Metadata } from "next";
 import { ReactNode } from "react";
 import styles from "./Layout.module.scss";
+
+export const metadata: Metadata = {
+  title: "VGX - Candidatos",
+  description: "VGX - Candidatos",
+};
 
 export default function CandidatesLayout({
   children,
