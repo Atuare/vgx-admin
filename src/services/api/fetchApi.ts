@@ -360,6 +360,14 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAdmissionById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: "/admission/findById",
+        params: {
+          id,
+        },
+      }),
+    }),
   }),
 });
 
@@ -401,4 +409,5 @@ export const {
   useCreateSchoolingMutation,
   useGetAllTrainingsQuery,
   useGetAllAdmissionsQuery,
+  useGetAdmissionByIdQuery,
 } = fetchApi;

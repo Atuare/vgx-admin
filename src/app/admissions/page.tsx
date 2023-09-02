@@ -113,7 +113,14 @@ export default function Admmissions() {
               String(value) as keyof typeof AdmissionsStatusEnum
             ];
 
-          return <FlatText text={status} type={status} />;
+          return (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => handleGoClassPage(row.row.index)}
+            >
+              <FlatText text={status} type={status} />
+            </div>
+          );
         },
       },
     ),
@@ -275,6 +282,7 @@ export default function Admmissions() {
           text="Nova turma Admissão"
           buttonType="primary"
           icon={<AddCircle />}
+          onClick={() => push("/admissions/create")}
         />
       </div>
 

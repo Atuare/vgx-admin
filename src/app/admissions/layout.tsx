@@ -1,19 +1,56 @@
 "use client";
+import { ArrowBack } from "@/assets/Icons";
 import { AdmProfile } from "@/components/AdmProfile";
+import { IAdmission } from "@/interfaces/admissions.interface";
 import "@/styles/scrollbar.scss";
-import { ReactNode } from "react";
+import { getAdmissionById } from "@/utils/admissions";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { usePathname, useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
 import styles from "./Layout.module.scss";
+dayjs.extend(utc);
+
+const titles = {
+  "/admissions/create": "Nova turma admissão",
+  "/admissions": "Admissões",
+};
 
 export default function AdmissionsLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  const [admission, setAdmission] = useState<IAdmission>();
+  const pathname = usePathname();
+  const { back } = useRouter();
+
+  const getAdmission = async () => {
+    const { data } = await getAdmissionById(pathname.split("/")[2]);
+    setAdmission(data);
+  };
+
+  useEffect(() => {
+    getAdmission();
+  }, []);
+
   return (
     <div className={styles.admissions}>
       <header className={styles.admissions__header}>
         <div className={styles.header__title}>
-          <h1>Admissões</h1>
+          {pathname !== "/admissions" && (
+            <button onClick={() => back()} style={{ cursor: "pointer" }}>
+              <ArrowBack />
+            </button>
+          )}
+          <h1>
+            {titles[pathname as keyof typeof titles]
+              ? titles[pathname as keyof typeof titles]
+              : admission?.startDate &&
+                `Turma admissão - ${dayjs(admission.startDate)
+                  .utc()
+                  .format("DD/MM/YYYY")}`}
+          </h1>
         </div>
         <AdmProfile />
       </header>

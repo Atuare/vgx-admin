@@ -1,0 +1,40 @@
+.admissionCreate {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__classInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h1 {
+      color: var(--primary-2);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    &__inputs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h1 {
+      color: var(--primary-2);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    &__input {
+      align-self: flex-end !important;
+    }
+  }
+}
