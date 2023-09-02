@@ -1,29 +1,26 @@
-"use client";
-import Placeholder from "@/assets/placeholder.png";
 import { AdmProfile } from "@/components/AdmProfile";
-import useUser from "@/hooks/useUser";
 import styles from "@/styles/layout.module.scss";
 import "@/styles/scrollbar.scss";
+import type { Metadata } from "next";
 import { ReactNode } from "react";
+
+export const metadata: Metadata = {
+  title: "VGX - Entrevistas",
+  description: "VGX - Entrevistas",
+};
 
 export default function InterviewsLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user } = useUser();
-
   return (
     <div className={styles.container}>
       <header className={styles.container__header}>
         <div className={styles.header__title}>
           <h1>Entrevistas</h1>
         </div>
-        <AdmProfile
-          image={user?.employee?.image ? user?.employee.image : Placeholder}
-          name={user?.employee?.name}
-          role={user?.profile}
-        />
+        <AdmProfile />
       </header>
       {children}
     </div>
