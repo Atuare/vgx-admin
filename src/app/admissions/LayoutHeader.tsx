@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import styles from "./Admissions.module.scss";
+import styles from "./Layout.module.scss";
 dayjs.extend(utc);
 
 const titles = {
