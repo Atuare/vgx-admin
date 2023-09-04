@@ -20,7 +20,6 @@ import {
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { DownloadTableExcel } from "react-export-table-to-excel";
 import ReactLoading from "react-loading";
 import { DataTablePagination } from "./Pagination";
 dayjs.extend(utc);
@@ -46,7 +45,6 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
     );
     const [rowSelection, setRowSelection] = useState<any>({});
     const tableRef = useRef<HTMLTableElement>(null);
-    const [canExport, setCanExport] = useState<boolean>(false);
 
     const data = props.data;
     const columns = props.columns;
@@ -58,12 +56,6 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       state: {
         globalFilter,
         rowSelection,
-        pagination: {
-          pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
-          pageSize: props.defaultTableSize,
-        },
-      },
-      initialState: {
         pagination: {
           pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
           pageSize: props.defaultTableSize,
@@ -94,12 +86,6 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       setGlobalFilter(props.globalFilterValue ?? globalFilter);
     }, [props.globalFilterValue]);
 
-    useEffect(() => {
-      setTimeout(() => {
-        setCanExport(true);
-      }, 456);
-    }, []);
-
     if (props.loading)
       return (
         <div
@@ -121,7 +107,7 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
 
     return (
       <>
-        <Table ref={tableRef}>
+        <Table ref={tableRef} id={props.tableName}>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
@@ -168,16 +154,6 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
           totalPages={Math.ceil(props.size / props.defaultTableSize)}
           table={table}
         />
-
-        {canExport && (
-          <DownloadTableExcel
-            filename={`${props.tableName} pág: ${props.currentPage}`}
-            sheet={`${props.tableName} pág: ${props.currentPage}`}
-            currentTableRef={tableRef.current}
-          >
-            <button style={{ display: "none" }} ref={ref} />
-          </DownloadTableExcel>
-        )}
       </>
     );
   },
