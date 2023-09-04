@@ -36,6 +36,7 @@ export function CalendarItem({
       className={`${styles.item} ${isActive ? styles.active : ""}`}
       style={{
         borderRadius: index === radiusCondition ? "0 0 0 8px" : "",
+        borderBottomRightRadius: index === length - 1 ? "8px" : "",
         borderRight: borderCondition ? "1px solid #e8e8e8" : "",
       }}
       data-state={
