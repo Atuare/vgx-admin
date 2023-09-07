@@ -52,14 +52,14 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
     const table = useReactTable({
       data,
       columns,
-      pageCount: Math.round(props.size / props.defaultTableSize),
+      pageCount: Math.ceil(props.size / props.defaultTableSize),
       state: {
-        globalFilter,
-        rowSelection,
         pagination: {
           pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
           pageSize: props.defaultTableSize,
         },
+        globalFilter,
+        rowSelection,
       },
       enableRowSelection: true,
       onRowSelectionChange: setRowSelection,

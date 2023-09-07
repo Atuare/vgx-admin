@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import styles from "./Process.module.scss";
 
@@ -7,18 +7,74 @@ import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { ProcessTable } from "@/components/ProcessTable";
 import { SearchInput } from "@/components/SearchInput";
+import { Table } from "@tanstack/react-table";
+import dayjs from "dayjs";
 import Link from "next/link";
+import { downloadExcel } from "react-export-table-to-excel";
 
 export default function Process() {
   const [value, setValue] = useState<string>("");
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [table, setTable] = useState<Table<any>>();
 
   function handleInputValue(value: string) {
     setValue(value);
   }
 
-  function handleExportData() {
-    if (buttonRef.current) buttonRef.current.click();
+  function downloadTableExcelHandler() {
+    const selectedRows = table
+      ?.getSelectedRowModel()
+      .flatRows.map(row => row.original);
+
+    const columnHeaders = [
+      "Status",
+      "Lim. Candidaturas",
+      "Data início",
+      "Data fim",
+      "Processo/Cargo",
+      "Unidade/Site",
+    ];
+
+    if (selectedRows && selectedRows.length > 0) {
+      const excelData = selectedRows.map(row => ({
+        status: row.status,
+        candidates: row.limitCandidates,
+        startDate: dayjs(row.startDate).utc().format("DD/MM/YYYY"),
+        endDate: dayjs(row.endDate).utc().format("DD/MM/YYYY"),
+        role: row.role.roleText,
+        unit: row.unit.unitName,
+      }));
+
+      downloadExcel({
+        fileName: `Processo`,
+        sheet: `Processo`,
+        tablePayload: {
+          header: columnHeaders,
+          body: excelData,
+        },
+      });
+    } else {
+      const rows = table?.getRowModel().flatRows.map(row => row.original);
+
+      if (rows && rows.length > 0) {
+        const excelData = rows.map(row => ({
+          status: row.status,
+          candidates: row.limitCandidates,
+          startDate: dayjs(row.startDate).utc().format("DD/MM/YYYY"),
+          endDate: dayjs(row.endDate).utc().format("DD/MM/YYYY"),
+          role: row.role.roleText,
+          unit: row.unit.unitName,
+        }));
+
+        downloadExcel({
+          fileName: `Processo`,
+          sheet: `Processo`,
+          tablePayload: {
+            header: columnHeaders,
+            body: excelData,
+          },
+        });
+      }
+    }
   }
 
   return (
@@ -28,7 +84,7 @@ export default function Process() {
           text="Exportar dados"
           buttonType="secondary"
           icon={<SystemUpdate />}
-          onClick={handleExportData}
+          onClick={downloadTableExcelHandler}
         />
 
         <SearchInput handleChangeValue={handleInputValue} icon={<Search />} />
@@ -40,7 +96,7 @@ export default function Process() {
           />
         </Link>
       </div>
-      <ProcessTable globalFilter={value} ref={buttonRef} />
+      <ProcessTable globalFilter={value} setTable={setTable} table={table} />
     </div>
   );
 }
