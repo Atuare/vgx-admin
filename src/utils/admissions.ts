@@ -12,10 +12,16 @@ export async function getAllAdmissions(page: number, defaultTableSize: number) {
   return data;
 }
 
-export async function getAdmissionById(id: string) {
+export async function getAdmissionById(
+  admissionId: string,
+  page: number,
+  size: number,
+) {
   const { data } = await store.dispatch<any>(
-    fetchApi.endpoints.getAdmissionById.initiate({
-      id: id,
+    fetchApi.endpoints.getAdmission.initiate({
+      admissionId,
+      page,
+      size,
     }),
   );
 

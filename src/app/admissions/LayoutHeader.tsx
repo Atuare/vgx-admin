@@ -2,7 +2,7 @@
 import { ArrowBack } from "@/assets/Icons";
 import { AdmProfile } from "@/components/AdmProfile";
 import { IAdmission } from "@/interfaces/admissions.interface";
-import { getAdmissionById } from "@/utils/admissions";
+import { useGetAdmissionQuery } from "@/services/api/fetchApi";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,14 +20,17 @@ export function Header() {
   const pathname = usePathname();
   const { back } = useRouter();
 
-  const getAdmission = async () => {
-    const { data } = await getAdmissionById(pathname.split("/")[2]);
-    setAdmission(data);
-  };
+  const { data, isSuccess } = useGetAdmissionQuery({
+    admissionId: pathname.split("/")[2],
+    page: 1,
+    size: 99999999999999,
+  });
 
   useEffect(() => {
-    getAdmission();
-  }, []);
+    if (pathname !== "/admissions") {
+      isSuccess && setAdmission(data.admission);
+    }
+  }, [isSuccess]);
 
   return (
     <header className={styles.admissions__header}>

@@ -1,4 +1,5 @@
 export function formatPhoneNumber(input: string) {
+  if (typeof input !== "string") return "";
   if (input === "") {
     return "";
   }
