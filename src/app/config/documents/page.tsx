@@ -95,7 +95,7 @@ export default function DocumentsConfigPage() {
       status: checked ? "ATIVO" : "INATIVO",
     };
 
-    documents!.documents.map((item, index) => {
+    const newItems = documents!.documents.map((item, index) => {
       if (rowIndex === index) {
         newItem.id = String(item.id);
         newItem.name = item.name;
@@ -107,9 +107,14 @@ export default function DocumentsConfigPage() {
       }
       return item;
     });
-    // quando a animação do switch terminar, atualiza o processo
+
     setTimeout(() => {
-      handleUpdateDocument(newItem);
+      updateDocument(newItem);
+
+      setDocuments({
+        documents: newItems,
+        totalCount: documents!.totalCount,
+      });
     }, 100);
   };
 
