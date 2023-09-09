@@ -44,6 +44,7 @@ export function Checkbox({
           }
         }
       }}
+      type="button"
       {...props}
     >
       {isIndeterminate ? (

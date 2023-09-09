@@ -385,6 +385,43 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllDocuments: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/document/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
+    deleteDocument: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/document`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
+    createDocument: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/document",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    updateDocument: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/document",
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
   }),
 });
 
@@ -428,4 +465,8 @@ export const {
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
   useChangeEmployeePasswordMutation,
+  useGetAllDocumentsQuery,
+  useDeleteDocumentMutation,
+  useCreateDocumentMutation,
+  useUpdateDocumentMutation,
 } = fetchApi;

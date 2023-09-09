@@ -2,6 +2,7 @@ import "@/styles/scrollbar.scss";
 import type { Metadata } from "next";
 
 import { ReactNode } from "react";
+import "react-toastify/dist/ReactToastify.css";
 import { RootLayoutProvider } from "./RootLayoutProvider";
 import "./globals.scss";
 
