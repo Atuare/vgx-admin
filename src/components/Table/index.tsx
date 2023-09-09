@@ -17,12 +17,9 @@ import {
   TableRow,
 } from "./TableComponents";
 
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import ReactLoading from "react-loading";
 import { DataTablePagination } from "./Pagination";
-dayjs.extend(utc);
 
 interface DataTableProps {
   data: any[];
@@ -35,7 +32,6 @@ interface DataTableProps {
   globalFilterValue?: string;
   loading?: boolean;
   tableName?: string;
-  manualPagination?: boolean;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -53,11 +49,12 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       data,
       columns,
       pageCount: Math.ceil(props.size / props.defaultTableSize),
-      state: {
+      initialState: {
         pagination: {
-          pageIndex: props.manualPagination ? props.currentPage - 1 : 0,
           pageSize: props.defaultTableSize,
         },
+      },
+      state: {
         globalFilter,
         rowSelection,
       },

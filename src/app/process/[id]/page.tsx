@@ -36,6 +36,7 @@ import utc from "dayjs/plugin/utc";
 import { downloadExcel } from "react-export-table-to-excel";
 dayjs.extend(utc);
 
+const defaultTableSize = 2;
 export default function ProcessData() {
   const { data, isSuccess } = useGetAllProcessQuery({
     page: 1,
@@ -110,7 +111,7 @@ export default function ProcessData() {
             disabled: !row.getCanSelect(),
             onChangeCheckbox: () => row?.toggleSelected(),
           }}
-          iconType="outline"
+          iconType="solid"
           style={{ padding: 0, transform: "translateY(-2px)" }}
         />
       ),
@@ -169,13 +170,23 @@ export default function ProcessData() {
       ?.getSelectedRowModel()
       .flatRows.map(row => row.original);
 
-    const columnHeaders = ["CPF", "Nome", "Whatsapp"];
+    const columnHeaders = [
+      "CPF",
+      "Nome",
+      "Whatsapp",
+      "Vaga",
+      "Disponibilidade",
+      "Unidade",
+    ];
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        cpf: formatCpf(row.candidate.cpf),
-        name: row.candidate.name,
-        whatsapp: formatPhoneNumber(row.candidate.whatsapp),
+        cpf: formatCpf(row.cpf),
+        name: row.name,
+        whatsapp: formatPhoneNumber(row.whatsapp),
+        role: row.role,
+        availabilities: row.availabilities,
+        unit: row.unit,
       }));
 
       downloadExcel({
@@ -191,9 +202,12 @@ export default function ProcessData() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          cpf: formatCpf(row.candidate.cpf),
-          name: row.candidate.name,
-          whatsapp: formatPhoneNumber(row.candidate.whatsapp),
+          cpf: formatCpf(row.cpf),
+          name: row.name,
+          whatsapp: formatPhoneNumber(row.whatsapp),
+          role: row.role,
+          availabilities: row.availabilities,
+          unit: row.unit,
         }));
 
         downloadExcel({
@@ -248,6 +262,9 @@ export default function ProcessData() {
       unit: process.unit.unitName,
     });
   });
+
+  const firstIndex = (currentPage - 1) * defaultTableSize;
+  const lastIndex = firstIndex + defaultTableSize;
 
   return (
     <div className={styles.process}>
@@ -366,14 +383,13 @@ export default function ProcessData() {
         <section className={styles.process__candidacyList}>
           <DataTable
             currentPage={currentPage}
-            defaultTableSize={2}
+            defaultTableSize={defaultTableSize}
             setTable={setTable}
             handleTogglePage={handleTogglePage}
             columns={columns}
-            data={tableData}
+            data={tableData.slice(firstIndex, lastIndex)}
             size={totalCount}
             globalFilterValue={globalFilter}
-            manualPagination
           />
         </section>
       )}

@@ -25,7 +25,7 @@ interface ProcessTableProps {
   table: Table<any> | undefined;
 }
 
-const defaultTableSize = 5;
+const defaultTableSize = 15;
 
 export function ProcessTable({
   globalFilter,
@@ -50,7 +50,7 @@ export function ProcessTable({
 
   const { data, isSuccess } = useGetAllProcessQuery({
     page: currentPage,
-    size: 5,
+    size: defaultTableSize,
   });
   const { data: units, isSuccess: unitsSuccess } = useGetAllUnitsQuery({
     page: 1,
