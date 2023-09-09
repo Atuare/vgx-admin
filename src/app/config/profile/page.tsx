@@ -6,10 +6,13 @@ import { Button } from "@/components/Button";
 import { PasswordInput } from "@/components/PasswordInput";
 import useUser from "@/hooks/useUser";
 import { editProfileSchema } from "@/schemas/editProfileSchema";
-import { useUpdateUserMutation } from "@/services/api/fetchApi";
+import {
+  useChangeEmployeePasswordMutation,
+  useUpdateUserMutation,
+} from "@/services/api/fetchApi";
 import { getBase64 } from "@/utils/getBase64";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import Image from "next/image";
@@ -46,17 +49,56 @@ export default function Profile() {
   const [picture, setPicture] = useState<File>();
   const [base64Picture, setBase64Picture] = useState<string>();
   const [updateUser] = useUpdateUserMutation();
+  const [changeEmployeePassword] = useChangeEmployeePasswordMutation();
 
   const { user } = useUser();
 
   const { handleSubmit, control } = useForm({
-    resolver: yupResolver(editProfileSchema),
+    resolver: zodResolver(editProfileSchema),
   });
 
   const handleEditProfile = async (data: Partial<YupDataType>) => {
-    updateUser({ ...data, image: base64Picture }).then(() => {
-      location.replace("/config/profile");
+    const { currentPassword, newPassword, confirmPassword, ...rest } = data;
+
+    updateUser({ ...rest, image: base64Picture }).then(() => {
+      toast.success("Perfil atualizado com sucesso!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        pauseOnHover: false,
+        theme: "light",
+      });
     });
+
+    if (currentPassword && newPassword) {
+      changeEmployeePassword({ password: currentPassword, newPassword }).then(
+        e => {
+          if (e?.error?.data?.data?.error?.[0]) {
+            toast.error(e?.error?.data?.data?.error?.[0], {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              progress: undefined,
+              pauseOnHover: false,
+              theme: "light",
+            });
+          } else {
+            toast.success("Senha alterada com sucesso!", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              progress: undefined,
+              pauseOnHover: false,
+              theme: "light",
+            });
+          }
+        },
+      );
+    }
   };
 
   const handlePictureChange = async (event: ChangeEvent<HTMLInputElement>) => {

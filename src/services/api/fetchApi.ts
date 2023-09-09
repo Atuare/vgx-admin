@@ -373,6 +373,18 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    changeEmployeePassword: builder.mutation<
+      any,
+      { password: string; newPassword: string }
+    >({
+      query: (data: { password: string; newPassword: string }) => {
+        return {
+          url: "/employee-user/changePassword",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -415,4 +427,5 @@ export const {
   useGetAllTrainingsQuery,
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
+  useChangeEmployeePasswordMutation,
 } = fetchApi;
