@@ -18,8 +18,8 @@ import { ProcessType } from "@/interfaces/process.interface";
 
 import { Checkbox } from "@/components/Checkbox";
 import { DataInput } from "@/components/DataInput";
-import { DeleteModal } from "@/components/DeleteModal";
 import { Input } from "@/components/Input";
+import { DeleteModal } from "@/components/Modals/DeleteModal";
 import { Radio } from "@/components/Radio";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";

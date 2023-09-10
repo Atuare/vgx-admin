@@ -1,9 +1,9 @@
 "use client";
 import { Delete, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
-import { DeleteModal } from "@/components/DeleteModal";
 import { IconButton } from "@/components/IconButton";
 import { AvailabilityModal } from "@/components/Modals/AvailabilityCreate";
+import { DeleteModal } from "@/components/Modals/DeleteModal";
 import { RoleModal } from "@/components/Modals/RoleCreate";
 import { SalaryClaimModal } from "@/components/Modals/SalaryClaimCreate";
 import { SchoolingModal } from "@/components/Modals/SchoolingCreate";

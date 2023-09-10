@@ -1,7 +1,7 @@
 import { Delete } from "@/assets/Icons";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { ReactNode } from "react";
-import { Button } from "../Button";
+import { Button } from "../../Button";
 import styles from "./DeleteModal.module.scss";
 
 export function DeleteModal({

@@ -2,8 +2,8 @@
 
 import { Delete, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
-import { DeleteModal } from "@/components/DeleteModal";
 import { IconButton } from "@/components/IconButton";
+import { DeleteModal } from "@/components/Modals/DeleteModal";
 import { DocumentsConfigModal } from "@/components/Modals/DocumentsConfig";
 import { Switch } from "@/components/Switch";
 import { DataTable } from "@/components/Table";
