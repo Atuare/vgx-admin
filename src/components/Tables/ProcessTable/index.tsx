@@ -48,7 +48,7 @@ export function ProcessTable({
   const { push } = useRouter();
   const { setParams } = useTableParams();
 
-  const { data, isSuccess } = useGetAllProcessQuery({
+  const { data, isSuccess, isFetching, refetch } = useGetAllProcessQuery({
     page: currentPage,
     size: defaultTableSize,
   });
@@ -219,7 +219,11 @@ export function ProcessTable({
     if (isSuccess) {
       setProcesses(data);
     }
-  }, [isSuccess]);
+  }, [isSuccess, isFetching]);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (!processes) return null;
 
