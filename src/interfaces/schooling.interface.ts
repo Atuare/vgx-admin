@@ -8,3 +8,8 @@ export interface ISchooling {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ISchoolings {
+  schoolings: ISchooling[];
+  totalCount: number;
+}

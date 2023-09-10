@@ -8,3 +8,8 @@ export interface ISalaryClaim {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ISalaryClaims {
+  salaryClaims: ISalaryClaim[];
+  totalCount: number;
+}

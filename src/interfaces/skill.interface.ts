@@ -7,3 +7,8 @@ export interface ISkill {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ISkills {
+  skills: ISkill[];
+  totalCount: number;
+}

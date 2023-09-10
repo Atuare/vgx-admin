@@ -96,61 +96,99 @@ export const fetchApi = createApi({
     }),
     getAllUnits: builder.query<
       { units: IUnit[]; totalCount: number },
-      { page: number; size: number }
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, orderBy, direction }) => ({
         url: "/unit/findAll",
         params: {
           page,
           size,
+          orderBy,
+          direction,
         },
       }),
     }),
     getAllRoles: builder.query<
       { roles: IRole[]; totalCount: number },
-      { page: number; size: number }
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, orderBy, direction }) => ({
         url: "/role/findAll",
         params: {
           page,
           size,
+          orderBy,
+          direction,
         },
       }),
     }),
     getAllAvailabilities: builder.query<
-      { availabilities: IAvailability[]; totalCount: number },
-      { page: number; size: number }
+      {
+        availabilities: IAvailability[];
+        totalCount: number;
+      },
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, direction, orderBy }) => ({
         url: "/availability/findAll",
         params: {
           page,
           size,
+          direction,
+          orderBy,
         },
       }),
     }),
     getAllSchoolings: builder.query<
       { schoolings: ISchooling[]; totalCount: number },
-      { page: number; size: number }
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, direction, orderBy }) => ({
         url: "/schooling/findAll",
         params: {
           page,
           size,
+          orderBy,
+          direction,
         },
       }),
     }),
     getAllSkills: builder.query<
       { skills: ISkill[]; totalCount: number },
-      { page: number; size: number }
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, direction, orderBy }) => ({
         url: "/skill/findAll",
         params: {
           page,
           size,
+          orderBy,
+          direction,
         },
       }),
     }),
@@ -167,14 +205,21 @@ export const fetchApi = createApi({
       }),
     }),
     getAllSalaryClaim: builder.query<
-      { benefits: ISalaryClaim[]; totalCount: number },
-      { page: number; size: number }
+      { salaryClaims: ISalaryClaim[]; totalCount: number },
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
     >({
-      query: ({ page, size }) => ({
+      query: ({ page, size, direction, orderBy }) => ({
         url: "/salary-claim/findAll",
         params: {
           page,
           size,
+          orderBy,
+          direction,
         },
       }),
     }),
@@ -254,6 +299,9 @@ export const fetchApi = createApi({
       query: ({ id }) => ({
         url: `/unit/${id}`,
         method: "DELETE",
+        params: {
+          id,
+        },
       }),
     }),
     deleteRole: builder.mutation<any, { id: string }>({
@@ -276,7 +324,7 @@ export const fetchApi = createApi({
         method: "DELETE",
       }),
     }),
-    deleteAvaliabilities: builder.mutation<any, { id: string }>({
+    deleteAvaliability: builder.mutation<any, { id: string }>({
       query: ({ id }) => ({
         url: `/availability/${id}`,
         method: "DELETE",
@@ -453,7 +501,7 @@ export const {
   useDeleteRoleMutation,
   useDeleteSkillMutation,
   useDeleteSalaryClaimMutation,
-  useDeleteAvaliabilitiesMutation,
+  useDeleteAvaliabilityMutation,
   useDeleteSchoolingMutation,
   useCreateUnitMutation,
   useCreateRoleMutation,

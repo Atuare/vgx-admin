@@ -8,3 +8,8 @@ export interface IRole {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IRoles {
+  roles: IRole[];
+  totalCount: number;
+}

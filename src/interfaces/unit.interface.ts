@@ -9,3 +9,8 @@ export interface IUnit {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IUnits {
+  units: IUnit[];
+  totalCount: number;
+}

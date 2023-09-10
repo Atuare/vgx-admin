@@ -10,3 +10,8 @@ export interface IAvailability {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IAvailabilities {
+  availabilities: IAvailability[];
+  totalCount: number;
+}
