@@ -11,9 +11,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RefObject, forwardRef, useEffect, useState } from "react";
-import { Checkbox } from "../Checkbox";
-import FlatText from "../FlatText";
-import { DataTable } from "../Table";
+import { Checkbox } from "../../Checkbox";
+import FlatText from "../../FlatText";
+import { DataTable } from "../../Table";
 import styles from "./TrainingTable.module.scss";
 dayjs.extend(utc);
 

@@ -3,7 +3,7 @@
 import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
-import { TrainingTable } from "@/components/TrainingTable";
+import { TrainingTable } from "@/components/Tables/TrainingTable";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import styles from "./training.module.scss";

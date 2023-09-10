@@ -5,8 +5,8 @@ import styles from "./Process.module.scss";
 
 import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
-import { ProcessTable } from "@/components/ProcessTable";
 import { SearchInput } from "@/components/SearchInput";
+import { ProcessTable } from "@/components/Tables/ProcessTable";
 import { Table } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import Link from "next/link";
