@@ -7,7 +7,6 @@ import {
   useGetAllUnitsQuery,
   useUpdateProcessMutation,
 } from "@/services/api/fetchApi";
-import { getAllProcess } from "@/utils/process";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -34,7 +33,6 @@ export function ProcessTable({
 }: ProcessTableProps) {
   const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
   const [rolesOptions, setRolesOptions] = useState<string[]>([]);
-
   const [processes, setProcesses] = useState<ProcessesType>();
 
   const { get } = useSearchParams();
@@ -105,9 +103,6 @@ export function ProcessTable({
   };
 
   const handleTogglePage = async (page: number) => {
-    const data = await getAllProcess(page + 1, defaultTableSize);
-
-    setProcesses(data);
     setCurrentPage(page + 1);
   };
 
@@ -213,6 +208,7 @@ export function ProcessTable({
 
   useEffect(() => {
     setParams("page", String(currentPage));
+    refetch();
   }, [currentPage]);
 
   useEffect(() => {
