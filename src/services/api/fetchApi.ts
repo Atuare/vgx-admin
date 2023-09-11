@@ -479,6 +479,50 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAllContracts: builder.query<
+      any,
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
+    >({
+      query: ({ page, size, orderBy, direction }) => ({
+        url: "/contract/findAll",
+        params: {
+          page,
+          size,
+          orderBy,
+          direction,
+        },
+      }),
+    }),
+    createContract: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/contract",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    updateContract: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/contract",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    deleteContract: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/contract`,
+        method: "DELETE",
+        body: { id },
+      }),
+    }),
   }),
 });
 
@@ -527,4 +571,8 @@ export const {
   useCreateDocumentMutation,
   useUpdateDocumentMutation,
   useGetAllCandidatesQuery,
+  useGetAllContractsQuery,
+  useCreateContractMutation,
+  useUpdateContractMutation,
+  useDeleteContractMutation,
 } = fetchApi;

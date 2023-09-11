@@ -1,24 +1,26 @@
 import { Upload } from "@/assets/Icons";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import styles from "./FileInput.module.scss";
 
 interface FileInputProps {
-  onChange: (file: File) => void;
+  onChange: (file: File, event?: ChangeEvent<HTMLInputElement>) => void;
   defaultFile?: File;
   disabled?: boolean;
+  width?: string;
 }
 
-export function FileInput({ onChange, defaultFile, disabled }: FileInputProps) {
+export function FileInput({
+  onChange,
+  defaultFile,
+  disabled,
+  width,
+}: FileInputProps) {
   const [file, setFile] = useState<File | null>(defaultFile ?? null);
 
   const input = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    file && onChange(file);
-  }, [file]);
-
   return (
-    <div className={styles.inputContainer}>
+    <div className={styles.inputContainer} style={{ width }}>
       <input
         type="file"
         id="file"
@@ -26,6 +28,9 @@ export function FileInput({ onChange, defaultFile, disabled }: FileInputProps) {
         className={styles.inputContainer__input}
         onChange={event => {
           setFile(event.target.files?.[0] ?? null);
+          if (event.target.files?.[0]) {
+            onChange(event.target.files?.[0], event);
+          }
         }}
         disabled={!!disabled}
       />
