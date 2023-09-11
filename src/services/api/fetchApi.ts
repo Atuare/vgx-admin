@@ -470,6 +470,15 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllCandidates: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/candidate/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
+    }),
   }),
 });
 
@@ -517,4 +526,5 @@ export const {
   useDeleteDocumentMutation,
   useCreateDocumentMutation,
   useUpdateDocumentMutation,
+  useGetAllCandidatesQuery,
 } = fetchApi;
