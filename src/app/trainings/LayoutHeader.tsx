@@ -1,18 +1,17 @@
 "use client";
 import { ArrowBack } from "@/assets/Icons";
 import { AdmProfile } from "@/components/AdmProfile";
+import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "./Layout.module.scss";
-
-const titles = {
-  "/trainings": "Treinamentos",
-  "/training/create": "Criar treinamento",
-  "/training/edit": "Editar treinamento",
-};
 
 export function LayoutHeader() {
   const pathname = usePathname();
   const { back } = useRouter();
+
+  const trainingId = pathname.split("/")[2];
+
+  const { data } = useGetTrainingByIdQuery({ id: trainingId });
 
   return (
     <header className={styles.training__header}>
@@ -24,8 +23,8 @@ export function LayoutHeader() {
         )}
         <h1>
           {(pathname.endsWith("/edit") && "Editar treinamento") ||
-            titles[pathname as keyof typeof titles] ||
-            "Dados do treinamento"}
+            (data && `${data.data.trainingName} - ${data.data.productName}`) ||
+            "Criar treinamento"}
         </h1>
       </div>
       <AdmProfile />
