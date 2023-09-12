@@ -122,7 +122,14 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
       columnHelper.accessor("trainingName", {
         header: "Nome",
         cell: ({ row }) => {
-          return <div>{row.getValue("trainingName")}</div>;
+          return (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => push(`/trainings/${row.original.id}`)}
+            >
+              {row.getValue("trainingName")}
+            </div>
+          );
         },
       }),
       columnHelper.accessor("trainingLocation", {
@@ -212,7 +219,7 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
           currentPage={currentPage}
           handleTogglePage={handleTogglePage}
           globalFilterValue={props.globalFilter}
-          tableName="Processos"
+          tableName="Treinamentos"
         />
       </section>
     );

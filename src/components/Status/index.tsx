@@ -8,7 +8,13 @@ enum StatusEnum {
   CANCELADO = "CANCELADO",
 }
 
-export function Status({ type }: { type: string }) {
+export function Status({
+  type,
+  pointer = false,
+}: {
+  type: string;
+  pointer?: boolean;
+}) {
   const bgColor = {
     CONCLUIDO: "var(--sucess)",
     EM_ANDAMENTO: "var(--attention)",
@@ -23,7 +29,10 @@ export function Status({ type }: { type: string }) {
   return (
     <div
       className={styles.status}
-      style={{ background: bgColor[type as keyof typeof bgColor] }}
+      style={{
+        background: bgColor[type as keyof typeof bgColor],
+        cursor: pointer ? "pointer" : "default",
+      }}
     >
       {status}
       <DonutLarge />

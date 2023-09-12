@@ -1,6 +1,7 @@
 "use client";
 import { EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { TrainingStatusModal } from "@/components/Modals/TrainingStatusModal";
 import { SearchInput } from "@/components/SearchInput";
 import { Status } from "@/components/Status";
 import { useTableParams } from "@/hooks/useTableParams";
@@ -35,9 +36,12 @@ export default function TraningDetails() {
   };
 
   useEffect(() => {
-    setParams("page", String(currentPage));
-    setParams("table", headers[select]);
+    setParams("page", currentPage.toString());
   }, [currentPage]);
+
+  useEffect(() => {
+    setParams("table", headers[select]);
+  }, [select]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -67,7 +71,9 @@ export default function TraningDetails() {
           <SearchInput handleChangeValue={handleInputvalue} icon={<Search />} />
 
           <div className={styles.training__header__actions__rightButtons}>
-            <Status type={training.status.replace("_", "")} />
+            <TrainingStatusModal handleOnSubmit={() => {}}>
+              <Status type={training.status.replace("_", "")} pointer />
+            </TrainingStatusModal>
             <Button
               buttonType="secondary"
               text="Editar"
