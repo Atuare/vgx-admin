@@ -1,3 +1,4 @@
+import { FilterButton } from "@/components/FilterButton";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
   TrainingStatusEnum,
@@ -5,7 +6,6 @@ import {
   TrainingsType,
 } from "@/interfaces/training.interface";
 import { useGetAllTrainingsQuery } from "@/services/api/fetchApi";
-import { getAllTrainings } from "@/utils/training";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -29,6 +29,9 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
   (props, ref) => {
     const [table, setTable] = useState<Table<any>>();
     const [trainings, setTrainings] = useState<TrainingsType>();
+    const [unitOptions, setUnitsOptions] = useState<string[]>([]);
+    const [trainersOptions, setTrainersOptions] = useState<string[]>([]);
+    const [productsOptions, setProductsOptions] = useState<string[]>([]);
 
     const { get } = useSearchParams();
 
@@ -39,9 +42,9 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
     const { push } = useRouter();
     const { setParams } = useTableParams();
 
-    const { data, isSuccess } = useGetAllTrainingsQuery({
+    const { data, isSuccess, isFetching, refetch } = useGetAllTrainingsQuery({
       page: currentPage,
-      size: 5,
+      size: defaultTableSize,
     });
 
     const getFilterValues = (column: string) => {
@@ -53,10 +56,31 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
     };
 
     const handleTogglePage = async (page: number) => {
-      const data = await getAllTrainings(page + 1, defaultTableSize);
-
-      setTrainings(data);
       setCurrentPage(page + 1);
+    };
+
+    const getAllFilters = () => {
+      const units: string[] = [];
+      const trainers: string[] = [];
+      const products: string[] = [];
+
+      trainings?.trainings.map(training => {
+        if (!units.includes(training.trainingLocation)) {
+          units.push(training.trainingLocation);
+        }
+
+        if (!trainers.includes(training.trainer)) {
+          trainers.push(training.trainer);
+        }
+
+        if (!products.includes(training.productName)) {
+          products.push(training.productName);
+        }
+      });
+
+      setUnitsOptions(units);
+      setTrainersOptions(trainers);
+      setProductsOptions(products);
     };
 
     const columnHelper = createColumnHelper<TrainingType>();
@@ -102,34 +126,77 @@ export const TrainingTable = forwardRef<HTMLButtonElement, ProcessTableProps>(
         },
       }),
       columnHelper.accessor("trainingLocation", {
-        header: "Unidade/Site",
+        header: () => (
+          <FilterButton
+            title="Unidade/Site"
+            column="trainingLocation"
+            table={table}
+            options={unitOptions}
+          />
+        ),
         cell: ({ row }) => {
           return <div>{row.getValue("trainingLocation")}</div>;
         },
+        filterFn: (row, id, value) => {
+          return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+        },
       }),
       columnHelper.accessor("trainer", {
-        header: "Instrutor",
+        header: () => (
+          <FilterButton
+            title="Instrutor"
+            column="trainer"
+            table={table}
+            options={trainersOptions}
+          />
+        ),
         cell: ({ row }) => {
           return <div>{row.getValue("trainer")}</div>;
         },
+        filterFn: (row, id, value) => {
+          return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+        },
       }),
       columnHelper.accessor("productName", {
-        header: "Produto",
+        header: () => (
+          <FilterButton
+            title="Produto"
+            column="productName"
+            table={table}
+            options={productsOptions}
+          />
+        ),
         cell: ({ row }) => {
           return <div>{row.getValue("productName")}</div>;
+        },
+        filterFn: (row, id, value) => {
+          return value.length !== 0 ? value.includes(row.getValue(id)) : true;
         },
       }),
     ];
 
     useEffect(() => {
       setParams("page", String(currentPage));
+      refetch();
     }, [currentPage]);
+
+    useEffect(() => {
+      getFilterValues("trainingLocation");
+      getFilterValues("trainer");
+      getFilterValues("trainingProduct");
+    }, [table]);
 
     useEffect(() => {
       if (isSuccess) {
         setTrainings(data);
       }
-    }, [isSuccess]);
+    }, [isSuccess, isFetching]);
+
+    useEffect(() => {
+      if (trainings) {
+        getAllFilters();
+      }
+    }, [trainings]);
 
     if (!trainings) return null;
 
