@@ -14,7 +14,7 @@ const status = [
     name: "Em andamento",
   },
   {
-    id: "CONCLUIDO",
+    id: "CONCLUÍDO",
     name: "Concluído",
   },
   {
