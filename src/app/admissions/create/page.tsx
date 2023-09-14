@@ -36,10 +36,6 @@ export default function AdmissionCreate() {
       <section className={styles.admissionCreate__classInfo}>
         <h1>Dados turma</h1>
         <div className={styles.admissionCreate__classInfo__inputs}>
-          <DataInput required name="Examinador">
-            <Input />
-          </DataInput>
-
           <DataInput name="Unidade/Site" required>
             <Select
               placeholder="Selecione"
@@ -47,21 +43,16 @@ export default function AdmissionCreate() {
               onChange={() => {}}
             />
           </DataInput>
-
-          <DataInput required name="Data inicial">
-            <input type="date" />
+          <DataInput required name="Produto">
+            <Input />
           </DataInput>
 
-          <DataInput required name="Data final">
+          <DataInput required name="Data admissão">
             <input type="date" />
           </DataInput>
 
           <DataInput name="Lim. participantes" required>
             <NumberInput onChange={() => {}} />
-          </DataInput>
-
-          <DataInput required name="Horário">
-            <input type="time" />
           </DataInput>
         </div>
       </section>

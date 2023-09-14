@@ -1,6 +1,6 @@
 import { AdmissionResultType } from "./admissionResult.interface";
 import { IAvailability } from "./availability.interface";
-import { CandidateType } from "./candidate.interface";
+import { ICandidate } from "./candidate.interface";
 import { InterviewType } from "./interviews.interface";
 import { ProcessType } from "./process.interface";
 import { TrainingType } from "./training.interface";
@@ -10,7 +10,7 @@ import { TrainingParticipantQuestionAnswerType } from "./trainingParticipantQues
 export interface CandidacyType {
   id: string;
   status: CandidacyStatusEnum;
-  candidate: CandidateType;
+  candidate: ICandidate;
   training: TrainingType;
   process: ProcessType;
   trainingParticipantQuestionAnswers: TrainingParticipantQuestionAnswerType[];

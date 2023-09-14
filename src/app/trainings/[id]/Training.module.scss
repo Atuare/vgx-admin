@@ -43,16 +43,20 @@
     flex-direction: column;
 
     &__header {
-      width: 100%;
+      width: 83vw;
       background: var(--primary-2);
       border-radius: 8px 8px 0 0;
 
       display: flex;
       align-items: center;
       justify-content: space-between;
+      overflow-x: auto;
+      // flex-wrap: wrap;
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--primary-1);
+      }
 
       &__item {
-        flex: 1;
         display: grid;
         place-content: center;
         padding: 16px;
@@ -60,6 +64,7 @@
         font-size: 17px;
         font-weight: 700;
         cursor: pointer;
+        min-width: 212px;
 
         &.active {
           background: var(--primary-1);

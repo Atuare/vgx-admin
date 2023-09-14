@@ -4,18 +4,18 @@ import { Button } from "@/components/Button";
 import { TrainingStatusModal } from "@/components/Modals/TrainingStatusModal";
 import { SearchInput } from "@/components/SearchInput";
 import { Status } from "@/components/Status";
+import { TrainingDetailsTable } from "@/components/Tables/TrainingDetailsTable";
 import { useTableParams } from "@/hooks/useTableParams";
 import { TrainingType } from "@/interfaces/training.interface";
 import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
 import dayjs from "dayjs";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import styles from "./Traning.module.scss";
+import styles from "./Training.module.scss";
 
-const headers = ["DADOS TURMA", "DIA 01", "DIA 02", "DIA 03", "DIA 04"];
-
-export default function TraningDetails() {
+export default function TrainingDetails() {
   const [training, setTraining] = useState<TrainingType>();
+  const [trainingHeaders, setTrainingHeaders] = useState<string[]>([]);
   const [select, setSelect] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -40,7 +40,7 @@ export default function TraningDetails() {
   }, [currentPage]);
 
   useEffect(() => {
-    setParams("table", headers[select]);
+    setParams("table", trainingHeaders[select]);
   }, [select]);
 
   useEffect(() => {
@@ -48,6 +48,23 @@ export default function TraningDetails() {
       setTraining(data?.data);
     }
   }, [isSuccess, isFetching]);
+
+  useEffect(() => {
+    if (training) {
+      setTrainingHeaders(() => {
+        const newTrainingHeaders = [
+          "DADOS TURMA",
+          ...training.trainingDaysList
+            .map(v => v.dayNumber)
+            .sort((a, b) => a - b)
+            .map(v => {
+              return `DIA ${v}`;
+            }),
+        ];
+        return newTrainingHeaders;
+      });
+    }
+  }, [training]);
 
   if (!training) return;
 
@@ -85,7 +102,7 @@ export default function TraningDetails() {
 
       <main className={styles.training__main}>
         <header className={styles.training__main__header}>
-          {headers.map((header, index) => (
+          {trainingHeaders?.map((header, index) => (
             <div
               key={crypto.randomUUID()}
               className={`${styles.training__main__header__item} ${
@@ -97,6 +114,7 @@ export default function TraningDetails() {
             </div>
           ))}
         </header>
+        <TrainingDetailsTable trainingId={trainingId} />
       </main>
     </div>
   );
