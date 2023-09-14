@@ -24,7 +24,7 @@ export function LayoutHeader() {
         <h1>
           {(pathname.endsWith("/edit") && "Editar treinamento") ||
             (data && `${data.data.trainingName} - ${data.data.productName}`) ||
-            "Criar treinamento"}
+            "Treinamentos"}
         </h1>
       </div>
       <AdmProfile />
