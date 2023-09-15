@@ -232,7 +232,16 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Número de filhos">
-                      <input type="number" style={{ width: 80 }} min={0} />
+                      <input
+                        type="number"
+                        style={{ width: 80 }}
+                        min={0}
+                        onChange={e => {
+                          if (!e.target.validity.valid) {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
                     </InputContainer>
                   </div>
                 </div>
