@@ -3,7 +3,7 @@ import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import { FilterButton } from "@/components/FilterButton";
-import { InterviewCandidateEditModal } from "@/components/Modals/InterviewCandidateEdit";
+import { DataModal } from "@/components/Modals/DataModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
@@ -47,14 +47,6 @@ export default function Interviews() {
     size: 9999,
   });
 
-  function handleEditCandidate(data: any) {
-    return (
-      <InterviewCandidateEditModal
-        handleOnSubmit={() => console.log("teste")}
-      />
-    );
-  }
-
   const columnHelper = createColumnHelper<InterviewType>();
   const columns = [
     columnHelper.accessor("id", {
@@ -75,17 +67,16 @@ export default function Interviews() {
     columnHelper.accessor("candidacy.candidate.cpf", {
       header: "CPF",
       cell: row => (
-        <div
-          style={{ paddingLeft: 0 }}
-          onClick={() => handleEditCandidate(row.getValue())}
-        >
-          {formatCpf(row.getValue())}
-        </div>
+        <div style={{ paddingLeft: 0 }}>{formatCpf(row.getValue())}</div>
       ),
     }),
     columnHelper.accessor("candidacy.candidate.name", {
       header: "Nome",
-      cell: row => <div>{row.getValue()}</div>,
+      cell: row => (
+        <DataModal>
+          <div style={{ cursor: "pointer" }}>{row.getValue()}</div>
+        </DataModal>
+      ),
     }),
     columnHelper.accessor("link", {
       header: "Link",

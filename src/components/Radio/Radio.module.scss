@@ -19,6 +19,12 @@
         align-items: center;
         justify-content: center;
 
+        &.light {
+          div {
+            background-color: var(--primary-3);
+          }
+        }
+
         div {
           width: 12px;
           height: 12px;
@@ -34,6 +40,10 @@
       .radio__thumb {
         border: 2px solid var(--neutral-1);
       }
+
+      &.light {
+        border: 2px solid var(--primary-3);
+      }
     }
   }
 
@@ -42,5 +52,9 @@
     height: 24px;
     border-radius: 50%;
     border: 2px solid var(--primary-1);
+
+    &.light {
+      border: 2px solid var(--primary-3);
+    }
   }
 }

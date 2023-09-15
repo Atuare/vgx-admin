@@ -6,6 +6,8 @@ interface RadioProps {
   options?: string[];
   disabled?: boolean;
   onChange?: (value: boolean) => void;
+  column?: boolean;
+  lightTheme?: boolean;
 }
 
 export function Radio({
@@ -13,6 +15,8 @@ export function Radio({
   options,
   disabled,
   onChange,
+  column = false,
+  lightTheme = false,
 }: RadioProps) {
   const [value, setValue] = useState<boolean>(defaultValue ?? false);
 
@@ -30,9 +34,16 @@ export function Radio({
           data-state={item === value ? "active" : "inactive"}
           onClick={() => setValue(item)}
           disabled={item !== value && disabled}
-          style={disabled ? { cursor: "default" } : {}}
+          style={{
+            cursor: disabled ? "not-allowed" : "pointer",
+            flexDirection: column ? "column" : "row",
+          }}
         >
-          <div className={styles.radio__thumb}>
+          <div
+            className={`${styles.radio__thumb} ${
+              lightTheme ? styles.light : ""
+            }`}
+          >
             <div />
           </div>
           {item
