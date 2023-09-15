@@ -2,9 +2,11 @@ import { Close } from "@/assets/Icons";
 import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
 import { Select } from "@/components/Select";
-import { genders, maritalStatus, results } from "@/utils/datamodal";
+import { genders, maritalStatus, results, states } from "@/utils/datamodal";
+import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ReactNode, useState } from "react";
+import axios from "axios";
+import { ChangeEvent, ReactNode, useState } from "react";
 import styles from "./DataModal.module.scss";
 
 interface DataModalProps {
@@ -13,14 +15,59 @@ interface DataModalProps {
 
 export function DataModal({ children }: DataModalProps) {
   const [open, setOpen] = useState(false);
+  const [cpf, setCPF] = useState("");
+  const [cities, setCities] = useState<Array<{ name: string; id: string }>>();
+  const [whatsapp, setWhatsapp] = useState("");
+  const [phone, setPhone] = useState("");
 
   function handleOnSave(data: any) {
     setOpen(false);
   }
 
+  const formatCPF = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+
+    const formattedValue = numericValue.replace(
+      /(\d{3})(\d{3})(\d{3})(\d{2})/,
+      "$1.$2.$3-$4",
+    );
+
+    return formattedValue;
+  };
+
   function onChangeGender() {}
 
   function onChangeMaritalStatus() {}
+
+  function handleOnChangeCPF(event: ChangeEvent<HTMLInputElement>) {
+    setCPF(formatCPF(event.target.value));
+  }
+
+  function handleOnChangeWhatsapp(event: ChangeEvent<HTMLInputElement>) {
+    setWhatsapp(formatPhoneNumber(event.target.value));
+  }
+
+  function handleOnChangePhone(event: ChangeEvent<HTMLInputElement>) {
+    setPhone(formatPhoneNumber(event.target.value));
+  }
+
+  async function getCitiesByState(id: string) {
+    const cities: Array<{ name: string; id: string }> = [];
+    axios
+      .get(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${id}/municipios`,
+      )
+      .then(({ data }) => {
+        data.map((item: any) =>
+          cities.push({ name: item.nome, id: item.nome }),
+        );
+        setCities(cities);
+      });
+  }
+
+  async function onChangeState(id: string) {
+    getCitiesByState(id);
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -56,7 +103,13 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="CPF">
-                      <input type="text" id="CPF" />
+                      <input
+                        type="text"
+                        id="CPF"
+                        value={cpf}
+                        onChange={handleOnChangeCPF}
+                        maxLength={11}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Sexo" width={"100%"}>
@@ -86,15 +139,30 @@ export function DataModal({ children }: DataModalProps) {
                       title="Data de nascimento"
                       htmlFor="birthdate"
                     >
-                      <input type="text" id="birthdate" />
+                      <input type="date" id="birthdate" />
                     </InputContainer>
 
-                    <InputContainer title="Estado" htmlFor="state">
-                      <input type="text" id="state" />
+                    <InputContainer
+                      title="Estado"
+                      htmlFor="state"
+                      width={"30%"}
+                    >
+                      <Select
+                        onChange={({ id }) => onChangeState(id)}
+                        placeholder="Selecione"
+                        options={states}
+                        height={200}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Município" htmlFor="city">
-                      <input type="text" id="city" />
+                      <Select
+                        onChange={() => {}}
+                        placeholder="Selecione"
+                        options={cities ?? []}
+                        height={200}
+                        width={200}
+                      />
                     </InputContainer>
                   </div>
 
@@ -104,15 +172,25 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Whatsapp" htmlFor="whatsapp">
-                      <input type="text" id="whatsapp" />
+                      <input
+                        type="text"
+                        id="whatsapp"
+                        value={whatsapp}
+                        onChange={handleOnChangeWhatsapp}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Telefone" htmlFor="phone">
-                      <input type="text" id="phone" />
+                      <input
+                        type="text"
+                        id="phone"
+                        value={phone}
+                        onChange={handleOnChangePhone}
+                      />
                     </InputContainer>
 
                     <InputContainer title="E-mail" htmlFor="email">
-                      <input type="text" id="email" />
+                      <input type="email" id="email" />
                     </InputContainer>
                   </div>
 
@@ -150,11 +228,11 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui filhos menores de 14 anos?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultFalse={false} />
                     </InputContainer>
 
                     <InputContainer title="Número de filhos">
-                      <input type="number" style={{ width: 80 }} />
+                      <input type="number" style={{ width: 80 }} min={0} />
                     </InputContainer>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import { ChevronDown } from "@/assets/Icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Select.module.scss";
 
 interface SelectProps {
@@ -7,7 +7,8 @@ interface SelectProps {
   defaultValue?: string | undefined;
   onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
-  width?: string;
+  width?: string | number;
+  height?: string | number;
 }
 
 export function Select({
@@ -16,23 +17,31 @@ export function Select({
   placeholder,
   defaultValue,
   width,
+  height,
 }: SelectProps) {
   const [openSelect, setOpenSelect] = useState(false);
   const [select, setSelect] = useState<string>(defaultValue ?? "");
 
+  useEffect(() => {
+    setSelect(defaultValue ?? "");
+    setOpenSelect(false);
+  }, [options]);
+
   return (
     <div className={styles.select} style={{ width }}>
-      <div
+      <button
         className={`${styles.select__trigger} ${
           openSelect ? styles.active : ""
         }`}
         onClick={() => setOpenSelect(prev => !prev)}
+        type="button"
+        disabled={options.length === 0}
       >
         <span>{select ? select : placeholder}</span>
         <ChevronDown />
-      </div>
+      </button>
       {openSelect && (
-        <div className={styles.select__list}>
+        <div className={styles.select__list} style={{ height }}>
           {options.map((option, index) => (
             <button
               style={{
