@@ -19,6 +19,7 @@ export function DataModal({ children }: DataModalProps) {
   const [cities, setCities] = useState<Array<{ name: string; id: string }>>();
   const [whatsapp, setWhatsapp] = useState("");
   const [phone, setPhone] = useState("");
+  const [rg, setRg] = useState("");
 
   function handleOnSave(data: any) {
     setOpen(false);
@@ -50,6 +51,16 @@ export function DataModal({ children }: DataModalProps) {
   function handleOnChangePhone(event: ChangeEvent<HTMLInputElement>) {
     setPhone(formatPhoneNumber(event.target.value));
   }
+
+  const formatRG = (rg: string) => {
+    const numericRG = rg.replace(/\D/g, "");
+
+    const formattedRG = numericRG.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{1})$/,
+      "$1.$2.$3-$4",
+    );
+    return formattedRG;
+  };
 
   async function getCitiesByState(id: string) {
     const cities: Array<{ name: string; id: string }> = [];
@@ -189,7 +200,7 @@ export function DataModal({ children }: DataModalProps) {
                       />
                     </InputContainer>
 
-                    <InputContainer title="E-mail" htmlFor="email">
+                    <InputContainer title="E-mail" htmlFor="email" width={272}>
                       <input type="email" id="email" />
                     </InputContainer>
                   </div>
@@ -301,7 +312,18 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="RG">
-                      <input type="text" id="RG" />
+                      <input
+                        type="text"
+                        id="RG"
+                        value={rg}
+                        onChange={e => {
+                          setRg(formatRG(e.target.value));
+                          if (!e.target.validity.valid) {
+                            e.target.value = "";
+                          }
+                        }}
+                        maxLength={9}
+                      />
                     </InputContainer>
 
                     <InputContainer
@@ -315,10 +337,27 @@ export function DataModal({ children }: DataModalProps) {
                       <input type="text" id="Órgão expedidor" />
                     </InputContainer>
 
-                    <InputContainer title="UF">
-                      <input type="text" id="UF" />
+                    <InputContainer title="UF" width={"30%"}>
+                      <Select
+                        onChange={() => {}}
+                        placeholder="Selecione"
+                        options={states}
+                        height={200}
+                      />
                     </InputContainer>
                   </div>
+
+                  <div
+                    className={
+                      styles.modal__content__form__item__inputs__container
+                    }
+                  >
+                    <InputContainer title="Número do PIS">
+                      <input type="text" id="Número do PIS" />
+                    </InputContainer>
+                  </div>
+
+                  <h1 style={{ fontSize: 17 }}>CTPS</h1>
 
                   <div
                     className={
@@ -329,8 +368,24 @@ export function DataModal({ children }: DataModalProps) {
                       <input type="text" id="Número da CTPS" />
                     </InputContainer>
 
-                    <InputContainer title="Número do PIS">
-                      <input type="text" id="Número do PIS" />
+                    <InputContainer
+                      title="Data de expedição"
+                      htmlFor="expeditionDate"
+                    >
+                      <input type="date" id="expeditionDate" />
+                    </InputContainer>
+
+                    <InputContainer title="Série">
+                      <input type="text" id="Série" />
+                    </InputContainer>
+
+                    <InputContainer title="UF" width={"30%"}>
+                      <Select
+                        onChange={() => {}}
+                        placeholder="Selecione"
+                        options={states}
+                        height={200}
+                      />
                     </InputContainer>
                   </div>
 
