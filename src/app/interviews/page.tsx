@@ -73,7 +73,7 @@ export default function Interviews() {
     columnHelper.accessor("candidacy.candidate.name", {
       header: "Nome",
       cell: row => (
-        <DataModal>
+        <DataModal data={row.row.original}>
           <div style={{ cursor: "pointer" }}>{row.getValue()}</div>
         </DataModal>
       ),

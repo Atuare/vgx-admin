@@ -21,11 +21,11 @@ export function Radio({
   defaultFalse = true,
 }: RadioProps) {
   const [value, setValue] = useState<boolean | null>(
-    defaultValue ? defaultValue : defaultFalse ? false : null,
+    defaultValue ? defaultValue : defaultFalse === false ? false : null,
   );
 
   useEffect(() => {
-    value && onChange?.(value);
+    value !== null && onChange?.(value);
   }, [value]);
 
   return (
@@ -35,7 +35,7 @@ export function Radio({
           type="button"
           className={styles.radio__item}
           key={crypto.randomUUID()}
-          data-state={item === value ? "active" : "inactive"}
+          data-state={item !== null && item === value ? "active" : "inactive"}
           onClick={() => setValue(item)}
           disabled={item !== value && disabled}
           style={{

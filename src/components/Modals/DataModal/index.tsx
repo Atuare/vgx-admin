@@ -2,15 +2,23 @@ import { Close } from "@/assets/Icons";
 import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
 import { Select } from "@/components/Select";
+import useUser from "@/hooks/useUser";
+import { InterviewType } from "@/interfaces/interviews.interface";
+import {
+  useGetAllSchoolingsQuery,
+  useGetAllTrainingsQuery,
+} from "@/services/api/fetchApi";
 import { genders, maritalStatus, results, states } from "@/utils/datamodal";
+import { formatCpf } from "@/utils/formatCpf";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
 import axios from "axios";
-import { ChangeEvent, ReactNode, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 import styles from "./DataModal.module.scss";
 
 interface DataModalProps {
   children: ReactNode;
+  data?: InterviewType;
 }
 
 interface AddressProps {
@@ -25,21 +33,52 @@ interface AddressProps {
   siafi: string;
 }
 
-export function DataModal({ children }: DataModalProps) {
+export function DataModal({ children, data }: DataModalProps) {
+  const defaultWhatsapp = data?.candidacy?.candidate.whatsapp;
+  const defaultPhone = data?.candidacy?.candidate.phone;
+  const defaultCpf = data?.candidacy?.candidate?.cpf;
+
   const [open, setOpen] = useState(false);
-  const [cpf, setCPF] = useState("");
+  const [cpf, setCPF] = useState(defaultCpf ? formatCpf(defaultCpf) : "");
   const [cities, setCities] = useState<Array<{ name: string; id: string }>>();
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState<AddressProps>();
-  const [whatsapp, setWhatsapp] = useState("");
-  const [phone, setPhone] = useState("");
+  const [whatsapp, setWhatsapp] = useState(
+    defaultWhatsapp ? formatPhoneNumber(defaultWhatsapp) : "",
+  );
+  const [phone, setPhone] = useState(
+    defaultPhone ? formatPhoneNumber(defaultPhone) : "",
+  );
   const [rg, setRg] = useState("");
+  const [hasDeficiency, setHasDeficiency] = useState(false);
+  const [hasMedicalReport, setHasMedicalReport] = useState(false);
+  const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
+  const [approved, setApproved] = useState<boolean | null>(null);
+  const [schoolings, setSchoolings] =
+    useState<Array<{ name: string; id: string }>>();
+  const [trainings, setTrainings] =
+    useState<Array<{ name: string; id: string }>>();
+  const [salaryClaim, setSalaryClaim] = useState<string>("");
+  const [transportTaxGoing, setTransportTaxGoing] = useState<string>("");
+  const [transportTaxReturn, setTransportTaxReturn] = useState<string>("");
+  const [transportTaxDaily, setTransportTaxDaily] = useState<string>("");
+
+  const { user } = useUser();
+  const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
+    useGetAllSchoolingsQuery({
+      page: 1,
+      size: 999999,
+    });
+  const { data: trainingsData, isSuccess: isTrainingsSuccess } =
+    useGetAllTrainingsQuery({
+      page: 1,
+      size: 999999,
+    });
 
   function handleOnSave(data: any) {
     setOpen(false);
   }
-
-  const formatCPF = (value: string) => {
+  function formatCPF(value: string) {
     const numericValue = value.replace(/\D/g, "");
 
     const formattedValue = numericValue.replace(
@@ -48,22 +87,6 @@ export function DataModal({ children }: DataModalProps) {
     );
 
     return formattedValue;
-  };
-
-  function onChangeGender() {}
-
-  function onChangeMaritalStatus() {}
-
-  function handleOnChangeCPF(event: ChangeEvent<HTMLInputElement>) {
-    setCPF(formatCPF(event.target.value));
-  }
-
-  function handleOnChangeWhatsapp(event: ChangeEvent<HTMLInputElement>) {
-    setWhatsapp(formatPhoneNumber(event.target.value));
-  }
-
-  function handleOnChangePhone(event: ChangeEvent<HTMLInputElement>) {
-    setPhone(formatPhoneNumber(event.target.value));
   }
 
   const formatRG = (rg: string) => {
@@ -75,6 +98,57 @@ export function DataModal({ children }: DataModalProps) {
     );
     return formattedRG;
   };
+
+  const formatCurrency = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+
+    const formattedValue = (+numericValue / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    return formattedValue;
+  };
+
+  function onChangeGender() {}
+
+  function onChangeMaritalStatus() {}
+
+  function handleOnChangeCPF(event: ChangeEvent<HTMLInputElement>) {
+    const cpf = formatCPF(event.target.value);
+
+    cpf && setCPF(cpf);
+  }
+
+  function handleOnChangeWhatsapp(event: ChangeEvent<HTMLInputElement>) {
+    setWhatsapp(formatPhoneNumber(event.target.value));
+  }
+
+  function handleOnChangePhone(event: ChangeEvent<HTMLInputElement>) {
+    setPhone(formatPhoneNumber(event.target.value));
+  }
+
+  function handleOnSalaryClaimChange(event: ChangeEvent<HTMLInputElement>) {
+    setSalaryClaim(formatCurrency(event.target.value));
+  }
+
+  function handleOnChangeTransportTaxDaily(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setTransportTaxDaily(formatCurrency(event.target.value));
+  }
+
+  function handleOnChangeTransportTaxGoing(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setTransportTaxGoing(formatCurrency(event.target.value));
+  }
+
+  function handleOnChangeTransportTaxReturn(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    setTransportTaxReturn(formatCurrency(event.target.value));
+  }
 
   async function getCitiesByState(id: string) {
     const cities: Array<{ name: string; id: string }> = [];
@@ -110,6 +184,26 @@ export function DataModal({ children }: DataModalProps) {
     getCitiesByState(id);
   }
 
+  useEffect(() => {
+    isSchoolingsSuccess &&
+      setSchoolings(
+        schoolingsData.schoolings.map(item => ({
+          name: item.schoolingName,
+          id: item.schoolingName,
+        })),
+      );
+  }, [isSchoolingsSuccess]);
+
+  useEffect(() => {
+    isTrainingsSuccess &&
+      setTrainings(
+        trainingsData.trainings.map((item: any) => ({
+          name: item.trainingName,
+          id: item.trainingName,
+        })),
+      );
+  }, [isTrainingsSuccess]);
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
@@ -120,7 +214,8 @@ export function DataModal({ children }: DataModalProps) {
         <Dialog.Content className={styles.modal__content}>
           <form onSubmit={handleOnSave}>
             <Dialog.Title className={styles.modal__title}>
-              Neiriele Sabrina Rocha Souza - Instrutor Treinamentos
+              {data?.candidacy.candidate.name} -{" "}
+              {data?.candidacy?.process?.role?.roleText}
               <Dialog.Close asChild>
                 <span>
                   <Close />
@@ -140,7 +235,12 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Nome">
-                      <input type="text" id="Nome" style={{ width: 272 }} />
+                      <input
+                        type="text"
+                        id="Nome"
+                        style={{ width: 272 }}
+                        defaultValue={data?.candidacy?.candidate?.name}
+                      />
                     </InputContainer>
 
                     <InputContainer title="CPF">
@@ -149,7 +249,7 @@ export function DataModal({ children }: DataModalProps) {
                         id="CPF"
                         value={cpf}
                         onChange={handleOnChangeCPF}
-                        maxLength={11}
+                        maxLength={12}
                       />
                     </InputContainer>
 
@@ -180,7 +280,11 @@ export function DataModal({ children }: DataModalProps) {
                       title="Data de nascimento"
                       htmlFor="birthdate"
                     >
-                      <input type="date" id="birthdate" />
+                      <input
+                        type="date"
+                        id="birthdate"
+                        defaultValue={data?.candidacy?.candidate?.birthdate}
+                      />
                     </InputContainer>
 
                     <InputContainer
@@ -231,7 +335,11 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="E-mail" htmlFor="email" width={272}>
-                      <input type="email" id="email" />
+                      <input
+                        type="email"
+                        id="email"
+                        defaultValue={data?.candidacy?.candidate?.email}
+                      />
                     </InputContainer>
                   </div>
 
@@ -248,6 +356,7 @@ export function DataModal({ children }: DataModalProps) {
                         type="text"
                         style={{ width: 272 }}
                         id="motherName"
+                        defaultValue={data?.candidacy?.candidate?.motherName}
                       />
                     </InputContainer>
 
@@ -259,6 +368,7 @@ export function DataModal({ children }: DataModalProps) {
                         type="text"
                         style={{ width: 272 }}
                         id="fatherName"
+                        defaultValue={data?.candidacy?.candidate?.fatherName}
                       />
                     </InputContainer>
                   </div>
@@ -269,7 +379,14 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui filhos menores de 14 anos?">
-                      <Radio column lightTheme defaultFalse={false} />
+                      <Radio
+                        column
+                        lightTheme
+                        defaultFalse={false}
+                        defaultValue={
+                          data?.candidacy?.candidate?.childUnderfourteen
+                        }
+                      />
                     </InputContainer>
 
                     <InputContainer title="Número de filhos">
@@ -277,6 +394,7 @@ export function DataModal({ children }: DataModalProps) {
                         type="number"
                         style={{ width: 80 }}
                         min={0}
+                        defaultValue={data?.candidacy?.candidate?.childCount}
                         onChange={e => {
                           if (!e.target.validity.valid) {
                             e.target.value = "";
@@ -396,7 +514,17 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Número do PIS">
-                      <input type="text" id="Número do PIS" />
+                      <input
+                        type="number"
+                        id="Número do PIS"
+                        maxLength={11}
+                        min={0}
+                        onChange={e => {
+                          if (!e.target.validity.valid) {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
                     </InputContainer>
                   </div>
 
@@ -408,7 +536,17 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Número da CTPS">
-                      <input type="text" id="Número da CTPS" />
+                      <input
+                        type="number"
+                        id="Número da CTPS"
+                        min={0}
+                        maxLength={11}
+                        onChange={e => {
+                          if (!e.target.validity.valid) {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
                     </InputContainer>
 
                     <InputContainer
@@ -479,15 +617,15 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui celular?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultFalse={false} />
                     </InputContainer>
 
                     <InputContainer title="Possui computador?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultFalse={false} />
                     </InputContainer>
 
                     <InputContainer title="Possui internet?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultFalse={false} />
                     </InputContainer>
                   </div>
 
@@ -497,7 +635,7 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui objeção em trabalhar algum dia da semana?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultFalse={false} />
                     </InputContainer>
                   </div>
 
@@ -507,7 +645,12 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Pretensão salarial">
-                      <input type="text" id="Pretensão salarial" />
+                      <input
+                        type="text"
+                        id="Pretensão salarial"
+                        onChange={handleOnSalaryClaimChange}
+                        value={salaryClaim}
+                      />
                     </InputContainer>
                   </div>
 
@@ -517,12 +660,19 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui alguma deficiência?">
-                      <Radio column lightTheme />
+                      <Radio
+                        column
+                        lightTheme
+                        defaultFalse={false}
+                        onChange={val => setHasDeficiency(val)}
+                      />
                     </InputContainer>
 
-                    <InputContainer title="Qual?">
-                      <input type="text" id="Qual?" />
-                    </InputContainer>
+                    {hasDeficiency && (
+                      <InputContainer title="Qual?">
+                        <input type="text" id="Qual?" />
+                      </InputContainer>
+                    )}
                   </div>
 
                   <div
@@ -531,23 +681,30 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui laudo médico?">
-                      <Radio column lightTheme />
+                      <Radio
+                        column
+                        lightTheme
+                        defaultFalse={false}
+                        onChange={val => setHasMedicalReport(val)}
+                      />
                     </InputContainer>
 
-                    <InputContainer title="Anexar arquivo">
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: 8,
-                        }}
-                      >
-                        <FileInput onChange={() => {}} />
-                        <a href="#" style={{ alignSelf: "flex-end" }}>
-                          Visualizar documento
-                        </a>
-                      </div>
-                    </InputContainer>
+                    {hasMedicalReport && (
+                      <InputContainer title="Anexar arquivo">
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 8,
+                          }}
+                        >
+                          <FileInput onChange={() => {}} />
+                          <a href="#" style={{ alignSelf: "flex-end" }}>
+                            Visualizar documento
+                          </a>
+                        </div>
+                      </InputContainer>
+                    )}
                   </div>
 
                   <div
@@ -559,41 +716,65 @@ export function DataModal({ children }: DataModalProps) {
                       title="Opta por receber vale transporte?"
                       lightTitle="(vagas presenciais)"
                     >
-                      <Radio column lightTheme />
+                      <Radio
+                        column
+                        lightTheme
+                        defaultFalse={false}
+                        onChange={val => setHasTransportVoucher(val)}
+                      />
                     </InputContainer>
                   </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Empresa">
-                      <input type="text" id="Empresa" />
-                    </InputContainer>
+                  {hasTransportVoucher && (
+                    <>
+                      <div
+                        className={
+                          styles.modal__content__form__item__inputs__container
+                        }
+                      >
+                        <InputContainer title="Empresa">
+                          <input type="text" id="Empresa" />
+                        </InputContainer>
 
-                    <InputContainer title="Linha">
-                      <input type="text" id="Linha" />
-                    </InputContainer>
-                  </div>
+                        <InputContainer title="Linha">
+                          <input type="text" id="Linha" />
+                        </InputContainer>
+                      </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Tarifa de ida">
-                      <input type="number" id="Tarifa de ida" />
-                    </InputContainer>
+                      <div
+                        className={
+                          styles.modal__content__form__item__inputs__container
+                        }
+                      >
+                        <InputContainer title="Tarifa de ida">
+                          <input
+                            type="string"
+                            id="Tarifa de ida"
+                            value={transportTaxGoing}
+                            onChange={handleOnChangeTransportTaxGoing}
+                          />
+                        </InputContainer>
 
-                    <InputContainer title="Tarifa de volta">
-                      <input type="number" id="Tarifa de volta" />
-                    </InputContainer>
+                        <InputContainer title="Tarifa de volta">
+                          <input
+                            type="string"
+                            id="Tarifa de volta"
+                            value={transportTaxReturn}
+                            onChange={handleOnChangeTransportTaxReturn}
+                          />
+                        </InputContainer>
 
-                    <InputContainer title="Tarifa diária">
-                      <input type="number" id="Tarifa diária" />
-                    </InputContainer>
-                  </div>
+                        <InputContainer title="Tarifa diária">
+                          <input
+                            type="string"
+                            id="Tarifa diária"
+                            value={transportTaxDaily}
+                            onChange={handleOnChangeTransportTaxDaily}
+                          />
+                        </InputContainer>
+                      </div>
+                    </>
+                  )}
                 </div>
               </section>
 
@@ -624,8 +805,13 @@ export function DataModal({ children }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Escolaridade">
-                      <input type="text" id="Escolaridade" />
+                    <InputContainer title="Escolaridade" width={"30%"}>
+                      <Select
+                        onChange={() => {}}
+                        placeholder="Selecione"
+                        options={schoolings ?? []}
+                        height={200}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Curso">
@@ -647,26 +833,28 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
                   </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Currículo">
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          gap: 8,
-                        }}
-                      >
-                        <FileInput onChange={() => {}} />
-                        <a href="#" style={{ alignSelf: "flex-end" }}>
-                          Visualizar documento
-                        </a>
-                      </div>
-                    </InputContainer>
-                  </div>
+                  {data?.candidacy?.process?.requestCv && (
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <InputContainer title="Currículo">
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 8,
+                          }}
+                        >
+                          <FileInput onChange={() => {}} />
+                          <a href="#" style={{ alignSelf: "flex-end" }}>
+                            Visualizar documento
+                          </a>
+                        </div>
+                      </InputContainer>
+                    </div>
+                  )}
 
                   <div
                     className={
@@ -675,15 +863,30 @@ export function DataModal({ children }: DataModalProps) {
                   >
                     <InputContainer title="Resultado">
                       <Select
-                        onChange={() => {}}
+                        onChange={({ name }) => {
+                          setApproved(name === "Aprovado");
+                        }}
                         options={results}
                         placeholder="Selecione"
                       />
                     </InputContainer>
 
-                    <InputContainer title="Motivo">
-                      <input type="text" id="Motivo" />
-                    </InputContainer>
+                    {approved && (
+                      <InputContainer title="Treinamento" width={"30%"}>
+                        <Select
+                          onChange={() => {}}
+                          placeholder="Selecione"
+                          options={trainings ?? []}
+                          height={200}
+                        />
+                      </InputContainer>
+                    )}
+
+                    {approved === false && (
+                      <InputContainer title="Motivo">
+                        <input type="text" id="Motivo" />
+                      </InputContainer>
+                    )}
                   </div>
 
                   <div
@@ -705,7 +908,12 @@ export function DataModal({ children }: DataModalProps) {
                       title="Entrevistador responsável"
                       width={"100%"}
                     >
-                      <input type="text" id="Entrevistador responsável" />
+                      <input
+                        type="text"
+                        id="Entrevistador responsável"
+                        disabled
+                        defaultValue={user?.employee.name}
+                      />
                     </InputContainer>
                   </div>
                 </div>

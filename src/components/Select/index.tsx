@@ -41,7 +41,7 @@ export function Select({
         <ChevronDown />
       </button>
       {openSelect && (
-        <div className={styles.select__list} style={{ height }}>
+        <div className={styles.select__list} style={{ maxHeight: height }}>
           {options.map((option, index) => (
             <button
               style={{
