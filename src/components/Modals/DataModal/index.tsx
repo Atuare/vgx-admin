@@ -1,15 +1,18 @@
 import { Close } from "@/assets/Icons";
+import { Button } from "@/components/Button";
 import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
 import { Select } from "@/components/Select";
 import useUser from "@/hooks/useUser";
 import { InterviewType } from "@/interfaces/interviews.interface";
 import {
+  useGetAllAvailabilitiesQuery,
   useGetAllSchoolingsQuery,
   useGetAllTrainingsQuery,
 } from "@/services/api/fetchApi";
 import { genders, maritalStatus, results, states } from "@/utils/datamodal";
 import { formatCpf } from "@/utils/formatCpf";
+import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
 import axios from "axios";
@@ -33,6 +36,11 @@ interface AddressProps {
   siafi: string;
 }
 
+type SelectType = {
+  name: string;
+  id: string;
+}[];
+
 export function DataModal({ children, data }: DataModalProps) {
   const defaultWhatsapp = data?.candidacy?.candidate.whatsapp;
   const defaultPhone = data?.candidacy?.candidate.phone;
@@ -40,7 +48,7 @@ export function DataModal({ children, data }: DataModalProps) {
 
   const [open, setOpen] = useState(false);
   const [cpf, setCPF] = useState(defaultCpf ? formatCpf(defaultCpf) : "");
-  const [cities, setCities] = useState<Array<{ name: string; id: string }>>();
+  const [cities, setCities] = useState<SelectType>();
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState<AddressProps>();
   const [whatsapp, setWhatsapp] = useState(
@@ -54,10 +62,9 @@ export function DataModal({ children, data }: DataModalProps) {
   const [hasMedicalReport, setHasMedicalReport] = useState(false);
   const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
   const [approved, setApproved] = useState<boolean | null>(null);
-  const [schoolings, setSchoolings] =
-    useState<Array<{ name: string; id: string }>>();
-  const [trainings, setTrainings] =
-    useState<Array<{ name: string; id: string }>>();
+  const [schoolings, setSchoolings] = useState<SelectType>();
+  const [trainings, setTrainings] = useState<SelectType>();
+  const [availabilites, setAvailabilites] = useState<SelectType>();
   const [salaryClaim, setSalaryClaim] = useState<string>("");
   const [transportTaxGoing, setTransportTaxGoing] = useState<string>("");
   const [transportTaxReturn, setTransportTaxReturn] = useState<string>("");
@@ -74,6 +81,8 @@ export function DataModal({ children, data }: DataModalProps) {
       page: 1,
       size: 999999,
     });
+  const { data: availabilitesData, isSuccess: isAvailabilitiesSuccess } =
+    useGetAllAvailabilitiesQuery({ page: 1, size: 99999999 });
 
   function handleOnSave(data: any) {
     setOpen(false);
@@ -151,7 +160,7 @@ export function DataModal({ children, data }: DataModalProps) {
   }
 
   async function getCitiesByState(id: string) {
-    const cities: Array<{ name: string; id: string }> = [];
+    const cities: SelectType = [];
     axios
       .get(
         `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${id}/municipios`,
@@ -203,6 +212,16 @@ export function DataModal({ children, data }: DataModalProps) {
         })),
       );
   }, [isTrainingsSuccess]);
+
+  useEffect(() => {
+    isAvailabilitiesSuccess &&
+      setAvailabilites(
+        availabilitesData.availabilities.map(item => ({
+          name: formatTimeRange(item),
+          id: `${item.startDay},${item.endDay},${item.startHour},${item.endHour}}`,
+        })),
+      );
+  }, [isAvailabilitiesSuccess]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -382,7 +401,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <Radio
                         column
                         lightTheme
-                        defaultFalse={false}
                         defaultValue={
                           data?.candidacy?.candidate?.childUnderfourteen
                         }
@@ -788,8 +806,13 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Disponibilidade">
-                      <input type="text" id="Disponibilidade" />
+                    <InputContainer title="Disponibilidade" width={"45%"}>
+                      <Select
+                        onChange={() => {}}
+                        placeholder="Selecione"
+                        options={availabilites ?? []}
+                        height={200}
+                      />
                     </InputContainer>
                   </div>
                 </div>
@@ -918,6 +941,24 @@ export function DataModal({ children, data }: DataModalProps) {
                   </div>
                 </div>
               </section>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                justifyContent: "flex-end",
+                padding: 10,
+                marginTop: 24,
+              }}
+            >
+              <Dialog.Close asChild>
+                <span>
+                  <Button text="Cancelar" buttonType="default" />
+                </span>
+              </Dialog.Close>
+
+              <Button text="Salvar" buttonType="primary" type="submit" />
             </div>
           </form>
         </Dialog.Content>

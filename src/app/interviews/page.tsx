@@ -2,6 +2,7 @@
 import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
+import { DateFilterButton } from "@/components/DateFilterButton";
 import { FilterButton } from "@/components/FilterButton";
 import { DataModal } from "@/components/Modals/DataModal";
 import { SearchInput } from "@/components/SearchInput";
@@ -103,7 +104,9 @@ export default function Interviews() {
       },
     }),
     columnHelper.accessor("date", {
-      header: "Data",
+      header: () => (
+        <DateFilterButton column="date" table={table} title="Data" />
+      ),
       cell: row => (
         <div>{dayjs(row.getValue()).utc().format("DD/MM/YYYY")}</div>
       ),
