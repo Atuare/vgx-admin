@@ -13,10 +13,24 @@ interface DataModalProps {
   children: ReactNode;
 }
 
+interface AddressProps {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  uf: string;
+  ibge: string;
+  gia: string;
+  ddd: string;
+  siafi: string;
+}
+
 export function DataModal({ children }: DataModalProps) {
   const [open, setOpen] = useState(false);
   const [cpf, setCPF] = useState("");
   const [cities, setCities] = useState<Array<{ name: string; id: string }>>();
+  const [cep, setCep] = useState("");
+  const [address, setAddress] = useState<AddressProps>();
   const [whatsapp, setWhatsapp] = useState("");
   const [phone, setPhone] = useState("");
   const [rg, setRg] = useState("");
@@ -74,6 +88,22 @@ export function DataModal({ children }: DataModalProps) {
         );
         setCities(cities);
       });
+  }
+
+  async function getAddressByCep(cep: string) {
+    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+    const data: AddressProps = response.data;
+
+    setAddress(data);
+  }
+
+  async function handleOnChangeCep(event: ChangeEvent<HTMLInputElement>) {
+    const cep = event.target.value;
+    setCep(cep);
+
+    if (cep.length === 8) {
+      await getAddressByCep(cep);
+    }
   }
 
   async function onChangeState(id: string) {
@@ -269,11 +299,20 @@ export function DataModal({ children }: DataModalProps) {
                     }
                   >
                     <InputContainer title="CEP">
-                      <input type="text" id="CEP" />
+                      <input
+                        type="text"
+                        id="CEP"
+                        value={cep}
+                        onChange={handleOnChangeCep}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Logradouro">
-                      <input type="text" id="Logradouro" />
+                      <input
+                        type="text"
+                        id="Logradouro"
+                        value={address?.logradouro}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Endereço">
@@ -281,7 +320,7 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Bairro">
-                      <input type="text" id="Bairro" />
+                      <input type="text" id="Bairro" value={address?.bairro} />
                     </InputContainer>
                   </div>
 
@@ -295,7 +334,11 @@ export function DataModal({ children }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Complemento">
-                      <input type="text" id="Complemento" />
+                      <input
+                        type="text"
+                        id="Complemento"
+                        value={address?.complemento}
+                      />
                     </InputContainer>
                   </div>
                 </div>
