@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Radio.module.scss";
 
 interface RadioProps {
-  defaultValue?: boolean;
+  defaultValue?: boolean | null;
   options?: string[];
   disabled?: boolean;
   onChange?: (value: boolean) => void;
@@ -11,16 +11,14 @@ interface RadioProps {
 }
 
 export function Radio({
-  defaultValue,
+  defaultValue = null,
   options,
   disabled,
   onChange,
   column = false,
   lightTheme = false,
 }: RadioProps) {
-  const [value, setValue] = useState<boolean | null>(
-    defaultValue ? defaultValue : null,
-  );
+  const [value, setValue] = useState<boolean | null>(defaultValue);
 
   useEffect(() => {
     value !== null && onChange?.(value);

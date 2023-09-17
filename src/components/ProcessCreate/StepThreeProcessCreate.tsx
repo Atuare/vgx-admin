@@ -4,6 +4,7 @@ import { StatusEnum } from "@/enums/status.enum";
 import { useCreateProcessMutation } from "@/services/api/fetchApi";
 import { formatDateTime } from "@/utils/dates";
 import { TextStyleExtended } from "@/utils/fontsize";
+import { getBase64 } from "@/utils/getBase64";
 import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Image from "@tiptap/extension-image";
@@ -94,7 +95,7 @@ export function StepThreeProcessCreate({
         registrationCompletionMessage:
           processData?.registrationCompletionMessage,
       }),
-      file: processData?.file,
+      file: getBase64(processData?.file),
     };
 
     createProcess(createProcessData).then(() => {

@@ -227,7 +227,12 @@ export function StepOneProcessEdit({
                 error={error?.message}
                 required
               >
-                <FileInput onChange={onChange} />
+                <FileInput
+                  onChange={file => onChange(file)}
+                  defaultFile={currentProcessData?.banner}
+                  allowedTypes={["png", "jpeg", "jpg"]}
+                  maxSize={5}
+                />
               </DataInput>
             )}
           />

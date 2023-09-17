@@ -216,8 +216,10 @@ export function StepOneProcessCreate({
                 required
               >
                 <FileInput
-                  onChange={onChange}
+                  onChange={file => onChange(file)}
                   defaultFile={currentProcessData?.file}
+                  allowedTypes={["png", "jpeg", "jpg"]}
+                  maxSize={5}
                 />
               </DataInput>
             )}
