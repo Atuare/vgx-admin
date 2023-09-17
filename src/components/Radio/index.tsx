@@ -8,7 +8,6 @@ interface RadioProps {
   onChange?: (value: boolean) => void;
   column?: boolean;
   lightTheme?: boolean;
-  defaultFalse?: boolean;
 }
 
 export function Radio({
@@ -18,10 +17,9 @@ export function Radio({
   onChange,
   column = false,
   lightTheme = false,
-  defaultFalse = true,
 }: RadioProps) {
   const [value, setValue] = useState<boolean | null>(
-    defaultValue ? defaultValue : defaultFalse === false ? false : null,
+    defaultValue ? defaultValue : null,
   );
 
   useEffect(() => {
