@@ -407,6 +407,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    updateTraining: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/training",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
     getAllAdmissions: builder.query<any, { page: number; size: number }>({
       query: ({ page, size }) => ({
         url: "/admission/findAll",
@@ -572,6 +581,7 @@ export const {
   useCreateSchoolingMutation,
   useGetAllTrainingsQuery,
   useGetTrainingByIdQuery,
+  useUpdateTrainingMutation,
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
   useChangeEmployeePasswordMutation,
