@@ -10,7 +10,13 @@ import {
   useGetAllSchoolingsQuery,
   useGetAllTrainingsQuery,
 } from "@/services/api/fetchApi";
-import { genders, maritalStatus, results, states } from "@/utils/datamodal";
+import {
+  genders,
+  maritalStatus,
+  pixTypes,
+  results,
+  states,
+} from "@/utils/datamodal";
 import { formatCpf } from "@/utils/formatCpf";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
@@ -65,10 +71,19 @@ export function DataModal({ children, data }: DataModalProps) {
   const [schoolings, setSchoolings] = useState<SelectType>();
   const [trainings, setTrainings] = useState<SelectType>();
   const [availabilites, setAvailabilites] = useState<SelectType>();
-  const [salaryClaim, setSalaryClaim] = useState<string>("");
-  const [transportTaxGoing, setTransportTaxGoing] = useState<string>("");
-  const [transportTaxReturn, setTransportTaxReturn] = useState<string>("");
-  const [transportTaxDaily, setTransportTaxDaily] = useState<string>("");
+  const [salaryClaim, setSalaryClaim] = useState<string>(formatCurrency("0"));
+  const [transportTaxGoing, setTransportTaxGoing] = useState<string>(
+    formatCurrency("0"),
+  );
+  const [transportTaxReturn, setTransportTaxReturn] = useState<string>(
+    formatCurrency("0"),
+  );
+  const [transportTaxDaily, setTransportTaxDaily] = useState<string>(
+    formatCurrency("0"),
+  );
+
+  const [medicalReportPdf, setMedicalReportPdf] = useState<File>();
+  const [curriculumPdf, setCurriculumPdf] = useState<File>();
 
   const { user } = useUser();
   const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
@@ -87,28 +102,14 @@ export function DataModal({ children, data }: DataModalProps) {
   function handleOnSave(data: any) {
     setOpen(false);
   }
-  function formatCPF(value: string) {
-    const numericValue = value.replace(/\D/g, "");
-
-    const formattedValue = numericValue.replace(
-      /(\d{3})(\d{3})(\d{3})(\d{2})/,
-      "$1.$2.$3-$4",
-    );
-
-    return formattedValue;
-  }
 
   const formatRG = (rg: string) => {
     const numericRG = rg.replace(/\D/g, "");
 
-    const formattedRG = numericRG.replace(
-      /^(\d{2})(\d{3})(\d{3})(\d{1})$/,
-      "$1.$2.$3-$4",
-    );
-    return formattedRG;
+    return numericRG.replace(/(\d{2})(\d{3})(\d{3})(\d{1})$/, "$1.$2.$3-$4");
   };
 
-  const formatCurrency = (value: string) => {
+  function formatCurrency(value: string) {
     const numericValue = value.replace(/\D/g, "");
 
     const formattedValue = (+numericValue / 100).toLocaleString("pt-BR", {
@@ -117,16 +118,26 @@ export function DataModal({ children, data }: DataModalProps) {
     });
 
     return formattedValue;
-  };
+  }
+
+  function formatCEP(cepInput: string) {
+    const cepValue = cepInput.replace(/\D/g, "");
+
+    const formattedCepValue = cepValue
+      .replace(/\D/g, "")
+      .replace(/(\d{5})(\d{3})/, "$1-$2");
+
+    return formattedCepValue;
+  }
 
   function onChangeGender() {}
 
   function onChangeMaritalStatus() {}
 
   function handleOnChangeCPF(event: ChangeEvent<HTMLInputElement>) {
-    const cpf = formatCPF(event.target.value);
+    const cpf = formatCpf(event.target.value);
 
-    cpf && setCPF(cpf);
+    setCPF(cpf);
   }
 
   function handleOnChangeWhatsapp(event: ChangeEvent<HTMLInputElement>) {
@@ -174,7 +185,9 @@ export function DataModal({ children, data }: DataModalProps) {
   }
 
   async function getAddressByCep(cep: string) {
-    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+    const response = await axios.get(
+      `https://viacep.com.br/ws/${cep.replace("-", "")}/json/`,
+    );
     const data: AddressProps = response.data;
 
     setAddress(data);
@@ -182,9 +195,10 @@ export function DataModal({ children, data }: DataModalProps) {
 
   async function handleOnChangeCep(event: ChangeEvent<HTMLInputElement>) {
     const cep = event.target.value;
-    setCep(cep);
+    const formattedCEP = formatCEP(cep);
+    setCep(formattedCEP);
 
-    if (cep.length === 8) {
+    if (cep.replace("-", "").length === 8) {
       await getAddressByCep(cep);
     }
   }
@@ -268,7 +282,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         id="CPF"
                         value={cpf}
                         onChange={handleOnChangeCPF}
-                        maxLength={12}
+                        maxLength={14}
                       />
                     </InputContainer>
 
@@ -440,6 +454,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         id="CEP"
                         value={cep}
                         onChange={handleOnChangeCep}
+                        maxLength={9}
                       />
                     </InputContainer>
 
@@ -613,8 +628,12 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Tipo chave PIX ">
-                      <input type="text" id="Tipo chave PIX " />
+                    <InputContainer title="Tipo chave PIX" width={"20%"}>
+                      <Select
+                        onChange={() => {}}
+                        options={pixTypes}
+                        placeholder="Selecione"
+                      />
                     </InputContainer>
 
                     <InputContainer title="Chave PIX">
@@ -635,15 +654,15 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui celular?">
-                      <Radio column lightTheme defaultFalse={false} />
+                      <Radio column lightTheme />
                     </InputContainer>
 
                     <InputContainer title="Possui computador?">
-                      <Radio column lightTheme defaultFalse={false} />
+                      <Radio column lightTheme />
                     </InputContainer>
 
                     <InputContainer title="Possui internet?">
-                      <Radio column lightTheme defaultFalse={false} />
+                      <Radio column lightTheme />
                     </InputContainer>
                   </div>
 
@@ -653,7 +672,7 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui objeção em trabalhar algum dia da semana?">
-                      <Radio column lightTheme defaultFalse={false} />
+                      <Radio column lightTheme />
                     </InputContainer>
                   </div>
 
@@ -681,7 +700,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <Radio
                         column
                         lightTheme
-                        defaultFalse={false}
                         onChange={val => setHasDeficiency(val)}
                       />
                     </InputContainer>
@@ -702,7 +720,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <Radio
                         column
                         lightTheme
-                        defaultFalse={false}
                         onChange={val => setHasMedicalReport(val)}
                       />
                     </InputContainer>
@@ -716,8 +733,19 @@ export function DataModal({ children, data }: DataModalProps) {
                             gap: 8,
                           }}
                         >
-                          <FileInput onChange={() => {}} />
-                          <a href="#" style={{ alignSelf: "flex-end" }}>
+                          <FileInput
+                            onChange={file => setMedicalReportPdf(file)}
+                            maxSize={5}
+                            allowedTypes={["pdf"]}
+                          />
+                          <a
+                            href={
+                              medicalReportPdf &&
+                              URL.createObjectURL(medicalReportPdf)
+                            }
+                            target="_blank"
+                            style={{ alignSelf: "flex-end", cursor: "pointer" }}
+                          >
                             Visualizar documento
                           </a>
                         </div>
@@ -737,7 +765,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <Radio
                         column
                         lightTheme
-                        defaultFalse={false}
                         onChange={val => setHasTransportVoucher(val)}
                       />
                     </InputContainer>
@@ -845,7 +872,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input type="text" id="Status" />
                     </InputContainer>
                   </div>
-
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container
@@ -855,8 +881,8 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input type="text" id="Período" />
                     </InputContainer>
                   </div>
-
-                  {data?.candidacy?.process?.requestCv && (
+                  {/* data?.candidacy?.process?.requestCv */}
+                  {true && (
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
@@ -870,15 +896,25 @@ export function DataModal({ children, data }: DataModalProps) {
                             gap: 8,
                           }}
                         >
-                          <FileInput onChange={() => {}} />
-                          <a href="#" style={{ alignSelf: "flex-end" }}>
+                          <FileInput
+                            onChange={file => setCurriculumPdf(file)}
+                            maxSize={5}
+                            allowedTypes={["pdf"]}
+                          />
+                          <a
+                            href={
+                              curriculumPdf &&
+                              URL.createObjectURL(curriculumPdf)
+                            }
+                            target="_blank"
+                            style={{ alignSelf: "flex-end", cursor: "pointer" }}
+                          >
                             Visualizar documento
                           </a>
                         </div>
                       </InputContainer>
                     </div>
                   )}
-
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container
@@ -911,7 +947,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       </InputContainer>
                     )}
                   </div>
-
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container
@@ -921,7 +956,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input type="text" id="Observação" />
                     </InputContainer>
                   </div>
-
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container

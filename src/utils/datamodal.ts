@@ -153,3 +153,22 @@ export const states = [
     id: "TO",
   },
 ];
+
+export const pixTypes = [
+  {
+    name: "CPF",
+    id: "CPF",
+  },
+  {
+    name: "E-mail",
+    id: "E-mail",
+  },
+  {
+    name: "Telefone",
+    id: "Telefone",
+  },
+  {
+    name: "Chave aleatória",
+    id: "Chave aleatória",
+  },
+];
