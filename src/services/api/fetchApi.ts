@@ -1,5 +1,6 @@
 import { IAvailability } from "@/interfaces/availability.interface";
 import { IBenefit } from "@/interfaces/benefit.interface";
+import { ICandidate } from "@/interfaces/candidate.interface";
 import { IRole } from "@/interfaces/role.interface";
 import { ISalaryClaim } from "@/interfaces/salaryClaim.interface";
 import { ISchooling } from "@/interfaces/schooling.interface";
@@ -496,6 +497,14 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getCandidateById: builder.query<ICandidate, { id: string }>({
+      query: ({ id }) => ({
+        url: "/candidate/findById",
+        params: {
+          id,
+        },
+      }),
+    }),
     getAllContracts: builder.query<
       any,
       {
@@ -590,6 +599,7 @@ export const {
   useCreateDocumentMutation,
   useUpdateDocumentMutation,
   useGetAllCandidatesQuery,
+  useGetCandidateByIdQuery,
   useGetAllContractsQuery,
   useCreateContractMutation,
   useUpdateContractMutation,
