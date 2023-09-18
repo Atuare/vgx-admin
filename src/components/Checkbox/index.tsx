@@ -14,6 +14,15 @@ interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
 }
 
+/**
+ * Componente de checkbox.
+ *
+ * @param value - Texto a ser colocado ao lado do trigger do checkbox.
+ * @param onChangeCheckbox - Função que é chamada após o valor do checkbox alterar.
+ * @param isActive - Estado inicial do checkbox.
+ * @param disabled - Desativa o trigger do checkbox.
+ * @param iconType - Enum do tipo do ícone do checkbox.
+ */
 export function Checkbox({
   value,
   onChangeCheckbox,
@@ -36,12 +45,10 @@ export function Checkbox({
         padding: iconType === "solid" ? "4px" : "16px",
       }}
       onClick={() => {
-        if (!disabled) {
-          if (!isIndeterminate) {
-            const newChecked = !checked;
-            setChecked(newChecked);
-            onChangeCheckbox?.(newChecked, value);
-          }
+        if (!disabled && !isIndeterminate) {
+          const newChecked = !checked;
+          setChecked(newChecked);
+          onChangeCheckbox?.(newChecked, value);
         }
       }}
       type="button"

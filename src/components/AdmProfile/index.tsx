@@ -13,6 +13,10 @@ interface AdmProfileProps {
   image: StaticImageData | string;
 }
 
+/**
+ * Componente de perfil do usuário logado.
+ * Mostra o avatar, nome e cargo do usuário.
+ */
 export function AdmProfile() {
   const [openSelect, setOpenSelect] = useState(false);
 
