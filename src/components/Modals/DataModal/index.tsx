@@ -22,7 +22,7 @@ import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
 import axios from "axios";
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./DataModal.module.scss";
 
 interface DataModalProps {
@@ -55,6 +55,8 @@ export function DataModal({ children, data }: DataModalProps) {
   const [open, setOpen] = useState(false);
   const [cpf, setCPF] = useState(defaultCpf ? formatCpf(defaultCpf) : "");
   const [cities, setCities] = useState<SelectType>();
+  const [pixType, setPixType] = useState<{ name: string; id: string }>();
+  const [pix, setPix] = useState("");
   const [cep, setCep] = useState("");
   const [address, setAddress] = useState<AddressProps>();
   const [whatsapp, setWhatsapp] = useState(
@@ -64,6 +66,7 @@ export function DataModal({ children, data }: DataModalProps) {
     defaultPhone ? formatPhoneNumber(defaultPhone) : "",
   );
   const [rg, setRg] = useState("");
+  const [account, setAccount] = useState("");
   const [hasDeficiency, setHasDeficiency] = useState(false);
   const [hasMedicalReport, setHasMedicalReport] = useState(false);
   const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
@@ -84,6 +87,9 @@ export function DataModal({ children, data }: DataModalProps) {
 
   const [medicalReportPdf, setMedicalReportPdf] = useState<File>();
   const [curriculumPdf, setCurriculumPdf] = useState<File>();
+
+  const backAccountFirstInput = useRef<HTMLInputElement | null>(null);
+  const backAccountSecondInput = useRef<HTMLInputElement | null>(null);
 
   const { user } = useUser();
   const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
@@ -170,6 +176,38 @@ export function DataModal({ children, data }: DataModalProps) {
     setTransportTaxReturn(formatCurrency(event.target.value));
   }
 
+  function handleChangeBankAccount(event: ChangeEvent<HTMLInputElement>) {
+    const numericValue = event.target.value.replace(/\D/g, "");
+
+    if (numericValue.length >= 7) {
+      backAccountSecondInput.current?.focus();
+    } else if (event.target.id === "Conta 2" && numericValue.length === 0) {
+      backAccountFirstInput.current?.focus();
+    }
+
+    setAccount(
+      event.target.id === "Conta 2"
+        ? account
+        : "" + numericValue.replace(/^(\d{7})(\d)/, "$1-$2"),
+    );
+  }
+
+  function handleOnChangePixKey(event: ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    const numericValue = value.replace(/\D/g, "");
+
+    switch (pixType?.name) {
+      case "CPF":
+        setPix(formatCpf(numericValue));
+        break;
+      case "Telefone":
+        setPix(formatPhoneNumber(numericValue));
+        break;
+      default:
+        setPix(value);
+    }
+  }
+
   async function getCitiesByState(id: string) {
     const cities: SelectType = [];
     axios
@@ -236,6 +274,10 @@ export function DataModal({ children, data }: DataModalProps) {
         })),
       );
   }, [isAvailabilitiesSuccess]);
+
+  useEffect(() => {
+    setPix("");
+  }, [pixType]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -548,10 +590,10 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Número do PIS">
                       <input
-                        type="number"
+                        type="text"
                         id="Número do PIS"
                         maxLength={11}
-                        min={0}
+                        pattern="\d*"
                         onChange={e => {
                           if (!e.target.validity.valid) {
                             e.target.value = "";
@@ -570,9 +612,9 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Número da CTPS">
                       <input
-                        type="number"
+                        type="text"
                         id="Número da CTPS"
-                        min={0}
+                        pattern="\d*"
                         maxLength={11}
                         onChange={e => {
                           if (!e.target.validity.valid) {
@@ -615,11 +657,53 @@ export function DataModal({ children, data }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Agência">
-                      <input type="text" id="Agência" />
+                      <input
+                        type="text"
+                        id="Agência"
+                        maxLength={4}
+                        pattern="\d*"
+                        onChange={e => {
+                          if (!e.target.validity.valid) {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Conta">
-                      <input type="text" id="Conta" />
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <input
+                          type="text"
+                          id="Conta"
+                          pattern="\d*"
+                          maxLength={7}
+                          value={account.split("-"[0])}
+                          ref={backAccountFirstInput}
+                          onChange={e => {
+                            if (!e.target.validity.valid) {
+                              e.target.value = "";
+                            } else {
+                              handleChangeBankAccount(e);
+                            }
+                          }}
+                        />
+
+                        <input
+                          style={{ width: 80 }}
+                          pattern="\d*"
+                          maxLength={1}
+                          value={account.split("-")[1]}
+                          id="Conta 2"
+                          onChange={e => {
+                            if (!e.target.validity.valid) {
+                              e.target.value = "";
+                            } else {
+                              handleChangeBankAccount(e);
+                            }
+                          }}
+                          ref={backAccountSecondInput}
+                        />
+                      </div>
                     </InputContainer>
                   </div>
 
@@ -630,14 +714,29 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Tipo chave PIX" width={"20%"}>
                       <Select
-                        onChange={() => {}}
+                        onChange={setPixType}
                         options={pixTypes}
                         placeholder="Selecione"
                       />
                     </InputContainer>
 
                     <InputContainer title="Chave PIX">
-                      <input type="text" id="Chave PIX" />
+                      <input
+                        type={pixType?.id === "E-mail" ? "email" : "text"}
+                        pattern={
+                          pixType?.id === "CPF" || pixType?.id === "Telefone"
+                            ? "d*"
+                            : undefined
+                        }
+                        maxLength={
+                          pixType?.id === "Chave aleatória" ? 32 : undefined
+                        }
+                        id="Chave PIX"
+                        value={pix}
+                        disabled={!pixType}
+                        onChange={handleOnChangePixKey}
+                        style={{ cursor: !pixType ? "not-allowed" : "text" }}
+                      />
                     </InputContainer>
                   </div>
                 </div>
@@ -881,8 +980,8 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input type="text" id="Período" />
                     </InputContainer>
                   </div>
-                  {/* data?.candidacy?.process?.requestCv */}
-                  {true && (
+
+                  {data?.candidacy?.process?.requestCv && (
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
