@@ -8,7 +8,7 @@ interface SelectProps {
   onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
   width?: string | number;
-  height?: string | number;
+  maxHeight?: string | number;
 }
 
 export function Select({
@@ -17,7 +17,7 @@ export function Select({
   placeholder,
   defaultValue,
   width,
-  height,
+  maxHeight,
 }: SelectProps) {
   const [openSelect, setOpenSelect] = useState(false);
   const [select, setSelect] = useState<string>(defaultValue ?? "");
@@ -36,12 +36,16 @@ export function Select({
         onClick={() => setOpenSelect(prev => !prev)}
         type="button"
         disabled={options.length === 0}
+        style={{ cursor: options.length === 0 ? "not-allowed" : "pointer" }}
       >
         <span>{select ? select : placeholder}</span>
         <ChevronDown />
       </button>
       {openSelect && (
-        <div className={styles.select__list} style={{ maxHeight: height }}>
+        <div
+          className={styles.select__list}
+          style={{ maxHeight: maxHeight ? maxHeight : 200 }}
+        >
           {options.map((option, index) => (
             <button
               style={{
