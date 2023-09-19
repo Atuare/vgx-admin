@@ -67,7 +67,8 @@ export function DataModal({ children, data }: DataModalProps) {
     defaultPhone ? formatPhoneNumber(defaultPhone) : "",
   );
   const [rg, setRg] = useState("");
-  const [account, setAccount] = useState("");
+  const [firstAccount, setFirstAccount] = useState("");
+  const [secondAccount, setSecondAccount] = useState("");
   const [hasDeficiency, setHasDeficiency] = useState(false);
   const [hasMedicalReport, setHasMedicalReport] = useState(false);
   const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
@@ -177,20 +178,19 @@ export function DataModal({ children, data }: DataModalProps) {
     setTransportTaxReturn(formatCurrency(event.target.value));
   }
 
-  function handleChangeBankAccount(event: ChangeEvent<HTMLInputElement>) {
+  function handleChangeBankAccount(
+    event: ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) {
     const numericValue = event.target.value.replace(/\D/g, "");
 
     if (numericValue.length >= 7) {
       backAccountSecondInput.current?.focus();
-    } else if (event.target.id === "Conta 2" && numericValue.length === 0) {
-      backAccountFirstInput.current?.focus();
     }
 
-    setAccount(
-      event.target.id === "Conta 2"
-        ? account
-        : "" + numericValue.replace(/^(\d{7})(\d)/, "$1-$2"),
-    );
+    index === 0
+      ? setFirstAccount(numericValue)
+      : setSecondAccount(numericValue);
   }
 
   function handleOnChangePixKey(event: ChangeEvent<HTMLInputElement>) {
@@ -675,14 +675,10 @@ export function DataModal({ children, data }: DataModalProps) {
                           id="Conta"
                           pattern="\d*"
                           maxLength={7}
-                          value={account.split("-"[0])}
+                          value={firstAccount}
                           ref={backAccountFirstInput}
                           onChange={e => {
-                            if (!e.target.validity.valid) {
-                              e.target.value = "";
-                            } else {
-                              handleChangeBankAccount(e);
-                            }
+                            handleChangeBankAccount(e, 0);
                           }}
                         />
 
@@ -690,13 +686,18 @@ export function DataModal({ children, data }: DataModalProps) {
                           style={{ width: 80 }}
                           pattern="\d*"
                           maxLength={1}
-                          value={account.split("-")[1]}
-                          id="Conta 2"
+                          value={secondAccount}
                           onChange={e => {
-                            if (!e.target.validity.valid) {
-                              e.target.value = "";
-                            } else {
-                              handleChangeBankAccount(e);
+                            handleChangeBankAccount(e, 1);
+                          }}
+                          onKeyDown={e => {
+                            if (
+                              e.key === "Backspace" &&
+                              secondAccount.trim() === ""
+                            ) {
+                              setTimeout(() => {
+                                backAccountFirstInput.current?.focus();
+                              }, 1);
                             }
                           }}
                           ref={backAccountSecondInput}
