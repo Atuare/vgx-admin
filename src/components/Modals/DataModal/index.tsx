@@ -11,6 +11,7 @@ import {
   useGetAllTrainingsQuery,
 } from "@/services/api/fetchApi";
 import {
+  StatusSelect,
   genders,
   maritalStatus,
   pixTypes,
@@ -342,6 +343,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={onChangeMaritalStatus}
                         placeholder="Selecione"
                         options={maritalStatus}
+                        maxHeight={250}
                       />
                     </InputContainer>
                   </div>
@@ -371,7 +373,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={({ id }) => onChangeState(id)}
                         placeholder="Selecione"
                         options={states}
-                        height={200}
                       />
                     </InputContainer>
 
@@ -380,7 +381,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={cities ?? []}
-                        height={200}
                         width={200}
                       />
                     </InputContainer>
@@ -578,7 +578,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
-                        height={200}
                       />
                     </InputContainer>
                   </div>
@@ -640,7 +639,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
-                        height={200}
                       />
                     </InputContainer>
                   </div>
@@ -717,6 +715,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={setPixType}
                         options={pixTypes}
                         placeholder="Selecione"
+                        maxHeight={250}
                       />
                     </InputContainer>
 
@@ -937,7 +936,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={availabilites ?? []}
-                        height={200}
                       />
                     </InputContainer>
                   </div>
@@ -959,7 +957,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={schoolings ?? []}
-                        height={200}
                       />
                     </InputContainer>
 
@@ -967,8 +964,12 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input type="text" id="Curso" />
                     </InputContainer>
 
-                    <InputContainer title="Status">
-                      <input type="text" id="Status" />
+                    <InputContainer title="Status" width={"20%"}>
+                      <Select
+                        onChange={() => {}}
+                        options={StatusSelect}
+                        placeholder="Selecione"
+                      />
                     </InputContainer>
                   </div>
                   <div
@@ -1035,7 +1036,6 @@ export function DataModal({ children, data }: DataModalProps) {
                           onChange={() => {}}
                           placeholder="Selecione"
                           options={trainings ?? []}
-                          height={200}
                         />
                       </InputContainer>
                     )}

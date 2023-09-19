@@ -172,3 +172,18 @@ export const pixTypes = [
     id: "Chave aleatória",
   },
 ];
+
+export const StatusSelect = [
+  {
+    name: "Concluído",
+    id: "CONCLUÍDO",
+  },
+  {
+    name: "Em andamento",
+    id: "EMANDAMENTO",
+  },
+  {
+    name: "Suspenso",
+    id: "SUSPENSO",
+  },
+];
