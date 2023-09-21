@@ -4,11 +4,12 @@ import { ChangeEvent, useState } from "react";
 import styles from "./FileInput.module.scss";
 interface FileInputProps {
   onChange?: (file: File) => void;
-  defaultFile?: File;
+  defaultFile?: File | null;
   disabled?: boolean;
   width?: string;
   maxSize?: number;
   allowedTypes?: string[];
+  fileName?: string;
 }
 
 /**
@@ -28,6 +29,7 @@ export function FileInput({
   width,
   maxSize = 5,
   allowedTypes = [],
+  fileName,
 }: FileInputProps) {
   const [file, setFile] = useState<File | null>(defaultFile ?? null);
 
@@ -78,7 +80,7 @@ export function FileInput({
         </label>
 
         <p className={styles.inputContainer__left__fileName}>
-          {file ? file.name : ""}
+          {file ? file.name : fileName ? fileName : ""}
         </p>
       </div>
 

@@ -144,7 +144,12 @@ export function StepOneProcessEdit({
             name="requestCv"
             control={control}
             render={({ field: { onChange }, fieldState: { error } }) => (
-              <DataInput name="Solicitar currículo" width="264px" required>
+              <DataInput
+                name="Solicitar currículo"
+                width="264px"
+                required
+                error={error?.message}
+              >
                 <Radio
                   onChange={onChange}
                   defaultValue={currentProcessData?.requestCv}
@@ -229,9 +234,14 @@ export function StepOneProcessEdit({
               >
                 <FileInput
                   onChange={file => onChange(file)}
-                  defaultFile={currentProcessData?.banner}
                   allowedTypes={["png", "jpeg", "jpg"]}
                   maxSize={5}
+                  defaultFile={currentProcessData?.file}
+                  fileName={
+                    typeof currentProcessData?.banner === "string"
+                      ? currentProcessData?.banner
+                      : undefined
+                  }
                 />
               </DataInput>
             )}
