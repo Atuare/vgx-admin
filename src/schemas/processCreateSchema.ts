@@ -22,26 +22,6 @@ export const processCreateStepOneSchema = yup
     limitCandidates: yup.number().optional(),
     banner: yup
       .mixed()
-      .test(
-        "fileFormat",
-        "O banner deve ser uma imagem PNG, JPG ou JPEG",
-        (file: File | any) => {
-          if (!file) return true; // Permite valores vazios
-
-          const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
-          return allowedFormats.includes(file?.type);
-        },
-      )
-      .test(
-        "fileSize",
-        "O banner deve ter no máximo 5MB",
-        (file: File | any) => {
-          if (!file) return true; // Permite valores vazios
-
-          const maxSize = 5 * 1024 * 1024; // 5MB
-          return file?.size <= maxSize;
-        },
-      )
       .test("required", "O banner é obrigatório", (file: File | any) => file),
     observations: yup.string().optional(),
     registrationCompletionMessage: yup.string().optional(),

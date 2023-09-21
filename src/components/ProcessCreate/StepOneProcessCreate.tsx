@@ -27,11 +27,14 @@ export function StepOneProcessCreate({
   setProcessData: (data: any) => void;
   currentProcessData: any;
 }) {
+  const { file, ...rest } = currentProcessData;
+
   const { back } = useRouter();
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processCreateStepOneSchema),
     defaultValues: {
-      ...currentProcessData,
+      banner: file,
+      ...rest,
     },
   });
 
@@ -132,7 +135,12 @@ export function StepOneProcessCreate({
             name="requestCv"
             control={control}
             render={({ field: { onChange }, fieldState: { error } }) => (
-              <DataInput name="Solicitar currículo" width="264px" required>
+              <DataInput
+                name="Solicitar currículo"
+                width="264px"
+                required
+                error={error?.message}
+              >
                 <Radio
                   onChange={onChange}
                   defaultValue={currentProcessData?.curriculum}
