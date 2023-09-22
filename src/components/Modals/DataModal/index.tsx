@@ -19,6 +19,7 @@ import {
   pixTypes,
   results,
   states,
+  statesAccronym,
 } from "@/utils/datamodal";
 import { formatCpf } from "@/utils/formatCpf";
 import { formatTimeRange } from "@/utils/formatTimeRange";
@@ -86,13 +87,17 @@ export function DataModal({ children, data }: DataModalProps) {
   const [hasCellPc, setHasCellPc] = useState(false);
   const [hasInternet, setHasInternet] = useState(false);
   const [hasDeficiency, setHasDeficiency] = useState(false);
+  const [deficiency, setDeficiency] = useState("");
   const [hasMedicalReport, setHasMedicalReport] = useState(false);
+  const [hasWeekendObjection, setHasWeekendObjection] = useState(false);
   const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
   const [approved, setApproved] = useState<boolean | null>(null);
   const [schoolings, setSchoolings] = useState<SelectType>();
   const [trainings, setTrainings] = useState<SelectType>();
   const [availabilites, setAvailabilites] = useState<SelectType>();
   const [salaryClaim, setSalaryClaim] = useState<string>(formatCurrency("0"));
+  const [transportCompany, setTransportCompany] = useState<string>("");
+  const [transportLine, setTransportLine] = useState<string>("");
   const [transportTaxGoing, setTransportTaxGoing] = useState<string>(
     formatCurrency("0"),
   );
@@ -128,6 +133,7 @@ export function DataModal({ children, data }: DataModalProps) {
   }
 
   const formatRG = (rg: string) => {
+    if (!rg) return "";
     const numericRG = rg.replace(/\D/g, "");
 
     return numericRG.replace(/(\d{2})(\d{3})(\d{3})(\d{1})$/, "$1.$2.$3-$4");
@@ -209,11 +215,10 @@ export function DataModal({ children, data }: DataModalProps) {
       : setSecondAccount(numericValue);
   }
 
-  function handleOnChangePixKey(event: ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value;
+  function handleOnChangePixKey(value: string, type?: string) {
     const numericValue = value.replace(/\D/g, "");
 
-    switch (pixType?.name) {
+    switch (pixType?.name ?? type) {
       case "CPF":
         setPix(formatCpf(numericValue));
         break;
@@ -298,11 +303,7 @@ export function DataModal({ children, data }: DataModalProps) {
   }, [isAvailabilitiesSuccess]);
 
   useEffect(() => {
-    setPix("");
-  }, [pixType]);
-
-  useEffect(() => {
-    if (data && open) {
+    if (data) {
       const candidateId = data?.candidacy.candidate.id;
       getCandidateData(candidateId);
     }
@@ -317,9 +318,9 @@ export function DataModal({ children, data }: DataModalProps) {
       setPis(candidate?.documents?.work?.pis);
       setCtps(candidate?.documents?.work?.ctps);
       setFederalUnitRg(candidate?.documents?.identity?.federalUnit);
-      setRgUf(candidate?.documents.identity?.uf);
+      setRgUf(candidate?.documents?.identity?.uf);
       setCtpsShippingDate(candidate?.documents?.work?.shippingDate);
-      setCtpsSerie(candidate?.documents.work?.serie);
+      setCtpsSerie(candidate?.documents?.work?.serie);
       setCtpsUf(candidate?.documents?.work?.uf);
       setBank(candidate?.documents?.bank?.bank);
       setAgency(candidate?.documents?.bank?.agency);
@@ -329,10 +330,24 @@ export function DataModal({ children, data }: DataModalProps) {
         id: candidate?.documents?.bank?.pixKeyType,
         name: candidate?.documents?.bank?.pixKeyType,
       });
-      setPix(candidate?.documents?.bank?.pixKey);
+      handleOnChangePixKey(
+        candidate?.documents?.bank?.pixKey,
+        candidate?.documents?.bank?.pixKeyType,
+      );
       setHasCellPhone(candidate?.complementaryInfo?.hasCellPhone);
       setHasCellPc(candidate?.complementaryInfo?.hasCellPc);
       setHasInternet(candidate?.complementaryInfo?.hasInternet);
+
+      setHasWeekendObjection(candidate?.complementaryInfo.weekendObjection);
+
+      setDeficiency(candidate?.complementaryInfo?.disabilityDescription);
+      setHasDeficiency(candidate?.complementaryInfo?.haveDisability);
+
+      setHasMedicalReport(candidate?.complementaryInfo?.hasMedicalReport);
+
+      setHasTransportVoucher(candidate?.complementaryInfo?.transportVoucher);
+      setTransportCompany(candidate?.complementaryInfo?.transportCompany);
+      setTransportLine(candidate?.complementaryInfo?.transportLine);
     }
   }, [candidate]);
 
@@ -642,7 +657,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
-                        defaultValue={rgUf}
+                        defaultValue={
+                          statesAccronym[
+                            rgUf.toUpperCase() as keyof typeof statesAccronym
+                          ]
+                        }
                       />
                     </InputContainer>
                   </div>
@@ -710,7 +729,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
-                        defaultValue={ctpsUf}
+                        defaultValue={
+                          statesAccronym[
+                            ctpsUf.toUpperCase() as keyof typeof statesAccronym
+                          ]
+                        }
                       />
                     </InputContainer>
                   </div>
@@ -786,10 +809,15 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Tipo chave PIX" width={"20%"}>
                       <Select
-                        onChange={setPixType}
+                        onChange={value => {
+                          if (value.id === pixType?.id) return;
+                          setPixType(value);
+                          setPix("");
+                        }}
                         options={pixTypes}
                         placeholder="Selecione"
                         maxHeight={250}
+                        defaultValue={pixType?.id}
                       />
                     </InputContainer>
 
@@ -807,7 +835,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         id="Chave PIX"
                         value={pix}
                         disabled={!pixType}
-                        onChange={handleOnChangePixKey}
+                        onChange={e => handleOnChangePixKey(e.target.value)}
                         style={{ cursor: !pixType ? "not-allowed" : "text" }}
                       />
                     </InputContainer>
@@ -844,7 +872,11 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui objeção em trabalhar algum dia da semana?">
-                      <Radio column lightTheme />
+                      <Radio
+                        column
+                        lightTheme
+                        defaultValue={hasWeekendObjection}
+                      />
                     </InputContainer>
                   </div>
 
@@ -873,12 +905,13 @@ export function DataModal({ children, data }: DataModalProps) {
                         column
                         lightTheme
                         onChange={val => setHasDeficiency(val)}
+                        defaultValue={hasDeficiency}
                       />
                     </InputContainer>
 
                     {hasDeficiency && (
                       <InputContainer title="Qual?">
-                        <input type="text" id="Qual?" />
+                        <input type="text" id="Qual?" value={deficiency} />
                       </InputContainer>
                     )}
                   </div>
@@ -893,6 +926,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         column
                         lightTheme
                         onChange={val => setHasMedicalReport(val)}
+                        defaultValue={hasMedicalReport}
                       />
                     </InputContainer>
 
@@ -938,6 +972,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         column
                         lightTheme
                         onChange={val => setHasTransportVoucher(val)}
+                        defaultValue={hasTransportVoucher}
                       />
                     </InputContainer>
                   </div>
@@ -950,11 +985,15 @@ export function DataModal({ children, data }: DataModalProps) {
                         }
                       >
                         <InputContainer title="Empresa">
-                          <input type="text" id="Empresa" />
+                          <input
+                            type="text"
+                            id="Empresa"
+                            value={transportCompany}
+                          />
                         </InputContainer>
 
                         <InputContainer title="Linha">
-                          <input type="text" id="Linha" />
+                          <input type="text" id="Linha" value={transportLine} />
                         </InputContainer>
                       </div>
 
