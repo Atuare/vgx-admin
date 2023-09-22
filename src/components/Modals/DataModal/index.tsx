@@ -106,8 +106,8 @@ export function DataModal({ children, data }: DataModalProps) {
   const [medicalReportPdf, setMedicalReportPdf] = useState<File>();
   const [curriculumPdf, setCurriculumPdf] = useState<File>();
 
-  const backAccountFirstInput = useRef<HTMLInputElement | null>(null);
-  const backAccountSecondInput = useRef<HTMLInputElement | null>(null);
+  const bankAccountFirstInput = useRef<HTMLInputElement | null>(null);
+  const bankAccountSecondInput = useRef<HTMLInputElement | null>(null);
 
   const { user } = useUser();
   const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
@@ -201,7 +201,7 @@ export function DataModal({ children, data }: DataModalProps) {
     const numericValue = event.target.value.replace(/\D/g, "");
 
     if (numericValue.length >= 7) {
-      backAccountSecondInput.current?.focus();
+      bankAccountSecondInput.current?.focus();
     }
 
     index === 0
@@ -749,7 +749,7 @@ export function DataModal({ children, data }: DataModalProps) {
                           pattern="\d*"
                           maxLength={7}
                           value={firstAccount}
-                          ref={backAccountFirstInput}
+                          ref={bankAccountFirstInput}
                           onChange={e => {
                             handleChangeBankAccount(e, 0);
                           }}
@@ -769,11 +769,11 @@ export function DataModal({ children, data }: DataModalProps) {
                               secondAccount.trim() === ""
                             ) {
                               setTimeout(() => {
-                                backAccountFirstInput.current?.focus();
+                                bankAccountFirstInput.current?.focus();
                               }, 1);
                             }
                           }}
-                          ref={backAccountSecondInput}
+                          ref={bankAccountSecondInput}
                         />
                       </div>
                     </InputContainer>
