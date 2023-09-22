@@ -4,12 +4,14 @@ import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
 import { Select } from "@/components/Select";
 import useUser from "@/hooks/useUser";
+import { ICandidate } from "@/interfaces/candidate.interface";
 import { InterviewType } from "@/interfaces/interviews.interface";
 import {
   useGetAllAvailabilitiesQuery,
   useGetAllSchoolingsQuery,
   useGetAllTrainingsQuery,
 } from "@/services/api/fetchApi";
+import { getCandidateById } from "@/utils/candidate";
 import {
   StatusSelect,
   genders,
@@ -54,6 +56,7 @@ export function DataModal({ children, data }: DataModalProps) {
   const defaultCpf = data?.candidacy?.candidate?.cpf;
 
   const [open, setOpen] = useState(false);
+  const [candidate, setCandidate] = useState<ICandidate>();
   const [cpf, setCPF] = useState(defaultCpf ? formatCpf(defaultCpf) : "");
   const [cities, setCities] = useState<SelectType>();
   const [pixType, setPixType] = useState<{ name: string; id: string }>();
@@ -67,8 +70,21 @@ export function DataModal({ children, data }: DataModalProps) {
     defaultPhone ? formatPhoneNumber(defaultPhone) : "",
   );
   const [rg, setRg] = useState("");
+  const [identityShippingDate, setIdentityShippingDate] = useState("");
+  const [federalUnitRg, setFederalUnitRg] = useState("");
+  const [rgUf, setRgUf] = useState("");
+  const [ctps, setCtps] = useState("");
+  const [ctpsShippingDate, setCtpsShippingDate] = useState("");
+  const [pis, setPis] = useState("");
+  const [ctpsSerie, setCtpsSerie] = useState("");
+  const [ctpsUf, setCtpsUf] = useState("");
+  const [bank, setBank] = useState("");
+  const [agency, setAgency] = useState("");
   const [firstAccount, setFirstAccount] = useState("");
   const [secondAccount, setSecondAccount] = useState("");
+  const [hasCellPhone, setHasCellPhone] = useState(false);
+  const [hasCellPc, setHasCellPc] = useState(false);
+  const [hasInternet, setHasInternet] = useState(false);
   const [hasDeficiency, setHasDeficiency] = useState(false);
   const [hasMedicalReport, setHasMedicalReport] = useState(false);
   const [hasTransportVoucher, setHasTransportVoucher] = useState(false);
@@ -246,6 +262,11 @@ export function DataModal({ children, data }: DataModalProps) {
     getCitiesByState(id);
   }
 
+  async function getCandidateData(id: string) {
+    const { data } = await getCandidateById({ id });
+    setCandidate(data);
+  }
+
   useEffect(() => {
     isSchoolingsSuccess &&
       setSchoolings(
@@ -279,6 +300,41 @@ export function DataModal({ children, data }: DataModalProps) {
   useEffect(() => {
     setPix("");
   }, [pixType]);
+
+  useEffect(() => {
+    if (data && open) {
+      const candidateId = data?.candidacy.candidate.id;
+      getCandidateData(candidateId);
+    }
+  }, [open, data]);
+
+  useEffect(() => {
+    if (candidate) {
+      setRg(formatRG(candidate?.documents?.identity?.rg));
+      setIdentityShippingDate(
+        candidate?.documents?.identity?.identityShippingDate,
+      );
+      setPis(candidate?.documents?.work?.pis);
+      setCtps(candidate?.documents?.work?.ctps);
+      setFederalUnitRg(candidate?.documents?.identity?.federalUnit);
+      setRgUf(candidate?.documents.identity?.uf);
+      setCtpsShippingDate(candidate?.documents?.work?.shippingDate);
+      setCtpsSerie(candidate?.documents.work?.serie);
+      setCtpsUf(candidate?.documents?.work?.uf);
+      setBank(candidate?.documents?.bank?.bank);
+      setAgency(candidate?.documents?.bank?.agency);
+      setFirstAccount(candidate?.documents?.bank?.account?.slice(0, 7));
+      setSecondAccount(candidate?.documents?.bank?.account?.slice(8, 9));
+      setPixType({
+        id: candidate?.documents?.bank?.pixKeyType,
+        name: candidate?.documents?.bank?.pixKeyType,
+      });
+      setPix(candidate?.documents?.bank?.pixKey);
+      setHasCellPhone(candidate?.complementaryInfo?.hasCellPhone);
+      setHasCellPc(candidate?.complementaryInfo?.hasCellPc);
+      setHasInternet(candidate?.complementaryInfo?.hasInternet);
+    }
+  }, [candidate]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -566,11 +622,19 @@ export function DataModal({ children, data }: DataModalProps) {
                       title="Data de expedição"
                       htmlFor="expeditionDate"
                     >
-                      <input type="date" id="expeditionDate" />
+                      <input
+                        type="date"
+                        id="expeditionDate"
+                        value={identityShippingDate}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Órgão expedidor">
-                      <input type="text" id="Órgão expedidor" />
+                      <input
+                        type="text"
+                        id="Órgão expedidor"
+                        value={federalUnitRg}
+                      />
                     </InputContainer>
 
                     <InputContainer title="UF" width={"30%"}>
@@ -578,6 +642,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
+                        defaultValue={rgUf}
                       />
                     </InputContainer>
                   </div>
@@ -591,6 +656,7 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input
                         type="text"
                         id="Número do PIS"
+                        value={pis}
                         maxLength={11}
                         pattern="\d*"
                         onChange={e => {
@@ -613,6 +679,7 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input
                         type="text"
                         id="Número da CTPS"
+                        value={ctps}
                         pattern="\d*"
                         maxLength={11}
                         onChange={e => {
@@ -627,11 +694,15 @@ export function DataModal({ children, data }: DataModalProps) {
                       title="Data de expedição"
                       htmlFor="expeditionDate"
                     >
-                      <input type="date" id="expeditionDate" />
+                      <input
+                        type="date"
+                        id="expeditionDate"
+                        value={ctpsShippingDate}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Série">
-                      <input type="text" id="Série" />
+                      <input type="text" id="Série" value={ctpsSerie} />
                     </InputContainer>
 
                     <InputContainer title="UF" width={"30%"}>
@@ -639,6 +710,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={() => {}}
                         placeholder="Selecione"
                         options={states}
+                        defaultValue={ctpsUf}
                       />
                     </InputContainer>
                   </div>
@@ -651,13 +723,14 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Banco">
-                      <input type="text" id="Banco" />
+                      <input type="text" id="Banco" value={bank} />
                     </InputContainer>
 
                     <InputContainer title="Agência">
                       <input
                         type="text"
                         id="Agência"
+                        value={agency}
                         maxLength={4}
                         pattern="\d*"
                         onChange={e => {
@@ -753,15 +826,15 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Possui celular?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultValue={hasCellPhone} />
                     </InputContainer>
 
                     <InputContainer title="Possui computador?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultValue={hasCellPc} />
                     </InputContainer>
 
                     <InputContainer title="Possui internet?">
-                      <Radio column lightTheme />
+                      <Radio column lightTheme defaultValue={hasInternet} />
                     </InputContainer>
                   </div>
 

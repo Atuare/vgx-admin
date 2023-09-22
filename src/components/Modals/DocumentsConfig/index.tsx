@@ -2,7 +2,7 @@ import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import { IconButton } from "@/components/IconButton";
-import { IDocument } from "@/interfaces/document.interface";
+import { IConfigDocument } from "@/interfaces/configDocument.interface";
 import { documentConfigModalConfigSchema } from "@/schemas/configDocumentsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import styles from "./DocumentsConfig.module.scss";
 
 interface DocumentsConfigModalProps {
-  defaultValue?: IDocument;
+  defaultValue?: IConfigDocument;
   handleOnSubmit: (data: any) => void;
   create?: boolean;
 }

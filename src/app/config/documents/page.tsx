@@ -8,7 +8,10 @@ import { DocumentsConfigModal } from "@/components/Modals/DocumentsConfig";
 import { Switch } from "@/components/Switch";
 import { DataTable } from "@/components/Table";
 import { StatusEnum } from "@/enums/status.enum";
-import { IDocument, IDocuments } from "@/interfaces/document.interface";
+import {
+  IConfigDocument,
+  IConfigDocuments,
+} from "@/interfaces/configDocument.interface";
 import {
   useCreateDocumentMutation,
   useDeleteDocumentMutation,
@@ -37,7 +40,7 @@ interface ActionsProps {
 const defaultTableSize = 5;
 
 export default function DocumentsConfigPage() {
-  const [documents, setDocuments] = useState<IDocuments>();
+  const [documents, setDocuments] = useState<IConfigDocuments>();
   const [table, setTable] = useState<Table<any>>();
 
   const { get } = useSearchParams();
@@ -118,7 +121,7 @@ export default function DocumentsConfigPage() {
     }, 100);
   };
 
-  const columnHelper = createColumnHelper<IDocument>();
+  const columnHelper = createColumnHelper<IConfigDocument>();
   const columns = [
     columnHelper.accessor("status", {
       header: "Status",
