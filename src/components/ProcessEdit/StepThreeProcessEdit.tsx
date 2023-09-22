@@ -158,7 +158,16 @@ export function StepThreeProcessEdit({
             <DataInput name="Upload banner vaga" width="301px">
               <FileInput
                 onChange={() => {}}
-                defaultFile={processData?.file}
+                defaultFile={
+                  typeof processData?.file === "string"
+                    ? null
+                    : processData?.file
+                }
+                fileName={
+                  typeof processData?.file === "string"
+                    ? processData?.file
+                    : undefined
+                }
                 disabled
               />
             </DataInput>

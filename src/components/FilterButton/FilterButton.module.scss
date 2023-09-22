@@ -80,6 +80,7 @@
       flex-direction: column;
       gap: 8px;
       overflow-y: scroll;
+      max-height: 200px;
 
       button {
         display: flex;

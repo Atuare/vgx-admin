@@ -359,7 +359,7 @@ export default function ProcessData() {
 
       <section className={styles.process__actions}>
         <h1>Candidaturas</h1>
-        {tableData ? (
+        {tableData.length > 0 ? (
           <div>
             <Button
               text="Exportar dados"
@@ -373,13 +373,10 @@ export default function ProcessData() {
             />
           </div>
         ) : (
-          <div style={{ margin: "0 auto" }}>
-            Não há candidaturas para este processo.
-          </div>
+          <div>Não há candidaturas para este processo.</div>
         )}
       </section>
-
-      {candidatesData && totalCount && (
+      {tableData.length > 0 && typeof totalCount !== "undefined" && (
         <section className={styles.process__candidacyList}>
           <DataTable
             currentPage={currentPage}

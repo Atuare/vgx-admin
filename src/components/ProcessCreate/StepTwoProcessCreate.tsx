@@ -157,7 +157,13 @@ export function StepTwoProcessCreate({
               error={error?.message}
             >
               <Radio
-                defaultValue={currentProcessData?.type === "PRESENCIAL"}
+                defaultValue={
+                  currentProcessData?.type === "PRESENCIAL"
+                    ? true
+                    : currentProcessData?.type === "REMOTO"
+                    ? false
+                    : undefined
+                }
                 options={["Presencial", "Remoto"]}
                 onChange={value => {
                   if (value) {

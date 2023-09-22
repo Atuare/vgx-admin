@@ -132,29 +132,25 @@ export function ProcessTable({
         </div>
       ),
     }),
-    columnHelper.accessor("startDate", {
-      header: "Data início",
-      cell: ({ row }) => {
-        return (
-          <div>
-            {row.getValue("startDate")
-              ? dayjs(row.getValue("startDate")).utc().format("DD/MM/YYYY")
-              : "-"}
-          </div>
-        );
+    columnHelper.accessor(
+      value => dayjs(value.startDate).utc().format("DD/MM/YYYY"),
+      {
+        id: "startDate",
+        header: "Data início",
+        cell: row => {
+          return <div>{row.getValue() ? row.getValue() : "-"}</div>;
+        },
       },
-    }),
+    ),
 
-    columnHelper.accessor("endDate", {
-      header: "Data fim",
-      cell: ({ row }) => (
-        <div>
-          {row.getValue("endDate")
-            ? dayjs(row.getValue("endDate")).utc().format("DD/MM/YYYY")
-            : "-"}
-        </div>
-      ),
-    }),
+    columnHelper.accessor(
+      value => dayjs(value.endDate).utc().format("DD/MM/YYYY"),
+      {
+        id: "endDate",
+        header: "Data fim",
+        cell: row => <div>{row.getValue() ? row.getValue() : "-"}</div>,
+      },
+    ),
 
     columnHelper.accessor("role.roleText", {
       header: () => (

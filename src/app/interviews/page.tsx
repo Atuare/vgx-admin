@@ -29,7 +29,6 @@ dayjs.extend(utc);
 export default function Interviews() {
   const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
   const tableRef = useRef(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [interviewTableData, setInterviewTableData] =
     useState<IInterviewsType>();
   const [table, setTable] = useState<Table<any>>();
@@ -38,9 +37,13 @@ export default function Interviews() {
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
 
-  const { data, isSuccess } = useGetAllInterviewsQuery({
+  const [currentPage, setCurrentPage] = useState(
+    get("page") ? Number(get("page")) : 1,
+  );
+
+  const { data, isSuccess, isFetching, refetch } = useGetAllInterviewsQuery({
     page: currentPage,
-    size: 5,
+    size: 1,
   });
 
   const { data: units, isSuccess: unitsSuccess } = useGetAllUnitsQuery({
@@ -90,12 +93,13 @@ export default function Interviews() {
       ),
     }),
     columnHelper.accessor("candidacy.process.unit.unitName", {
+      id: "unit",
       header: () => (
         <FilterButton
           title="Unidade/Site"
           table={table}
           options={unitsOptions}
-          column="candidacy_process_unit_unitName"
+          column="unit"
         />
       ),
       cell: row => <div>{row.getValue()}</div>,
@@ -103,14 +107,26 @@ export default function Interviews() {
         return value.length !== 0 ? value.includes(row.getValue(id)) : true;
       },
     }),
-    columnHelper.accessor("date", {
-      header: () => (
-        <DateFilterButton column="date" table={table} title="Data" />
-      ),
-      cell: row => (
-        <div>{dayjs(row.getValue()).utc().format("DD/MM/YYYY")}</div>
-      ),
-    }),
+    columnHelper.accessor(
+      value => dayjs(value.date).utc().format("DD/MM/YYYY"),
+      {
+        id: "date",
+        header: () => (
+          <DateFilterButton column="date" table={table} title="Data" />
+        ),
+        cell: row => <div>{row.getValue()}</div>,
+        filterFn: (row, id, value) => {
+          const date = dayjs(row.getValue(id)).utc().format("DD/MM/YYYY");
+
+          if (value.length === 0) return true;
+
+          return (
+            dayjs(date).isAfter(dayjs(value[0])) &&
+            dayjs(date).isBefore(dayjs(value[1]))
+          );
+        },
+      },
+    ),
     columnHelper.accessor("date", {
       id: "Hour",
       header: "Hora",
@@ -180,7 +196,7 @@ export default function Interviews() {
   };
 
   const handleTogglePage = (page: number) => {
-    setCurrentPage(page);
+    setCurrentPage(page + 1);
   };
 
   useEffect(() => {
@@ -199,17 +215,19 @@ export default function Interviews() {
 
   useEffect(() => {
     setParams("page", String(currentPage));
+    refetch();
   }, [currentPage]);
 
   useEffect(() => {
-    getFilterValues("candidacy_process_unit_unitName");
+    getFilterValues("unit");
+    getFilterValues("date");
   }, [table]);
 
   useEffect(() => {
     if (isSuccess) {
       setInterviewTableData(data);
     }
-  }, [isSuccess]);
+  }, [isSuccess, isFetching]);
 
   if (!interviewTableData) return;
 
@@ -229,7 +247,7 @@ export default function Interviews() {
       <DataTable
         ref={tableRef}
         currentPage={currentPage}
-        defaultTableSize={5}
+        defaultTableSize={1}
         handleTogglePage={handleTogglePage}
         setTable={setTable}
         columns={columns}

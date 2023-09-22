@@ -1,7 +1,9 @@
 import { Close, FilterAlt } from "@/assets/Icons";
 import { useTableParams } from "@/hooks/useTableParams";
+import { Toast } from "@/utils/toast";
 import * as Popover from "@radix-ui/react-popover";
 import { Table } from "@tanstack/react-table";
+import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import { ReactNode, useState } from "react";
 import { Button } from "../Button";
@@ -57,30 +59,35 @@ export function PopoverFilter({
   table: Table<any> | undefined;
   column: string;
 }) {
-  const [inputValue, setInputValue] = useState<string>("");
+  const [firstDate, setFirstDate] = useState<string>("");
+  const [secondDate, setSecondDate] = useState<string>("");
   const [selected, setSelected] = useState<string[]>([]);
 
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
 
-  const handleCreateFilter = (_value: boolean, name?: string) => {
-    if (selected.includes(name!)) {
-      setSelected(prev => prev.filter(item => item !== name));
-    } else {
-      setSelected(prev => [...prev, name!]);
-    }
-  };
-
   const handleToggleFilter = () => {
-    table?.getColumn(column)?.setFilterValue(selected);
+    if (!firstDate && !secondDate) return;
 
-    setParams(column, selected.join(","));
+    if (dayjs(firstDate).isAfter(dayjs(secondDate))) {
+      Toast("error", "A data inicial não pode ser maior que a data final");
+      return;
+    } else if (dayjs(secondDate).isBefore(dayjs(firstDate))) {
+      Toast("error", "A data final não pode ser menor que a data inicial");
+      return;
+    }
+
+    setSelected([firstDate, secondDate]);
+    table?.getColumn(column)?.setFilterValue([firstDate, secondDate]);
+    setParams(column, [firstDate, secondDate].join(","));
   };
 
   const getFilterValues = () => {
     const paramsValue = get(column);
     if (paramsValue) {
       const paramsArray = paramsValue.split(",");
+      setFirstDate(paramsArray[0]);
+      setSecondDate(paramsArray[1]);
       setSelected(paramsArray);
     }
   };
@@ -105,11 +112,21 @@ export function PopoverFilter({
 
           <div className={styles.popover__content__list}>
             <div>
-              De <input type="date" />
+              De{" "}
+              <input
+                type="date"
+                onChange={e => setFirstDate(e.target.value)}
+                value={firstDate}
+              />
             </div>
 
             <div>
-              Até <input type="date" />
+              Até{" "}
+              <input
+                type="date"
+                onChange={e => setSecondDate(e.target.value)}
+                value={secondDate}
+              />
             </div>
           </div>
 
