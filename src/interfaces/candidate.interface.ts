@@ -1,3 +1,6 @@
+import { ComplementaryInfoType } from "./complementaryInfo.interface";
+import { UserDocumentType } from "./userDocument.interface";
+
 export interface ICandidate {
   id: string;
   name: string;
@@ -21,6 +24,9 @@ export interface ICandidate {
   curriculum: any;
   createdAt: string;
   updatedAt: string;
+  complementaryInfo: ComplementaryInfoType;
+  formations: any; // ! Must change to formations type
+  documents: UserDocumentType;
 }
 
 export interface ICandidates {
