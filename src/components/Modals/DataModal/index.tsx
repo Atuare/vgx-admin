@@ -7,7 +7,6 @@ import useUser from "@/hooks/useUser";
 import { ICandidate } from "@/interfaces/candidate.interface";
 import { InterviewType } from "@/interfaces/interviews.interface";
 import {
-  useGetAllAvailabilitiesQuery,
   useGetAllSchoolingsQuery,
   useGetAllTrainingsQuery,
 } from "@/services/api/fetchApi";
@@ -35,15 +34,12 @@ interface DataModalProps {
 }
 
 interface AddressProps {
-  cep: string;
-  logradouro: string;
-  complemento: string;
-  bairro: string;
-  uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
+  zipCode: string;
+  address: string;
+  neighborhood: string;
+  complement: string;
+  state: string;
+  number: string;
 }
 
 type SelectType = {
@@ -70,6 +66,10 @@ export function DataModal({ children, data }: DataModalProps) {
   const [phone, setPhone] = useState(
     defaultPhone ? formatPhoneNumber(defaultPhone) : "",
   );
+  const [gender, setGender] = useState("");
+  const [civilStatus, setCivilStatus] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [rg, setRg] = useState("");
   const [identityShippingDate, setIdentityShippingDate] = useState("");
   const [federalUnitRg, setFederalUnitRg] = useState("");
@@ -125,8 +125,6 @@ export function DataModal({ children, data }: DataModalProps) {
       page: 1,
       size: 999999,
     });
-  const { data: availabilitesData, isSuccess: isAvailabilitiesSuccess } =
-    useGetAllAvailabilitiesQuery({ page: 1, size: 99999999 });
 
   function handleOnSave(data: any) {
     setOpen(false);
@@ -159,10 +157,6 @@ export function DataModal({ children, data }: DataModalProps) {
 
     return formattedCepValue;
   }
-
-  function onChangeGender() {}
-
-  function onChangeMaritalStatus() {}
 
   function handleOnChangeCPF(event: ChangeEvent<HTMLInputElement>) {
     const cpf = formatCpf(event.target.value);
@@ -216,7 +210,7 @@ export function DataModal({ children, data }: DataModalProps) {
   }
 
   function handleOnChangePixKey(value: string, type?: string) {
-    const numericValue = value.replace(/\D/g, "");
+    const numericValue = value?.replace(/\D/g, "");
 
     switch (pixType?.name ?? type) {
       case "CPF":
@@ -248,9 +242,16 @@ export function DataModal({ children, data }: DataModalProps) {
     const response = await axios.get(
       `https://viacep.com.br/ws/${cep.replace("-", "")}/json/`,
     );
-    const data: AddressProps = response.data;
+    const data = response.data;
 
-    setAddress(data);
+    setAddress(prevAddress => ({
+      zipCode: data.cep,
+      address: data.logradouro,
+      neighborhood: data.bairro,
+      complement: data.complemento,
+      state: data.uf,
+      number: prevAddress?.number ?? "",
+    }));
   }
 
   async function handleOnChangeCep(event: ChangeEvent<HTMLInputElement>) {
@@ -264,6 +265,7 @@ export function DataModal({ children, data }: DataModalProps) {
   }
 
   async function onChangeState(id: string) {
+    setState(id);
     getCitiesByState(id);
   }
 
@@ -293,14 +295,13 @@ export function DataModal({ children, data }: DataModalProps) {
   }, [isTrainingsSuccess]);
 
   useEffect(() => {
-    isAvailabilitiesSuccess &&
-      setAvailabilites(
-        availabilitesData.availabilities.map(item => ({
-          name: formatTimeRange(item),
-          id: `${item.startDay},${item.endDay},${item.startHour},${item.endHour}}`,
-        })),
-      );
-  }, [isAvailabilitiesSuccess]);
+    setAvailabilites(
+      data?.candidacy?.process?.availabilities.map(item => ({
+        name: formatTimeRange(item),
+        id: `${item.startDay},${item.endDay},${item.startHour},${item.endHour}}`,
+      })),
+    );
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -311,6 +312,22 @@ export function DataModal({ children, data }: DataModalProps) {
 
   useEffect(() => {
     if (candidate) {
+      setGender(candidate?.gender);
+      setCivilStatus(candidate?.civilStatus);
+      onChangeState(candidate?.state);
+      setCity(candidate?.county);
+
+      setAddress({
+        zipCode: candidate?.address?.zipCode,
+        address: candidate?.address?.address,
+        neighborhood: candidate?.address?.neighborhood,
+        complement: candidate?.address?.complement,
+        state: candidate?.address?.state,
+        number: candidate?.address?.number,
+      });
+
+      setCep(formatCEP(candidate?.address?.zipCode));
+
       setRg(formatRG(candidate?.documents?.identity?.rg));
       setIdentityShippingDate(
         candidate?.documents?.identity?.identityShippingDate,
@@ -338,7 +355,7 @@ export function DataModal({ children, data }: DataModalProps) {
       setHasCellPc(candidate?.complementaryInfo?.hasCellPc);
       setHasInternet(candidate?.complementaryInfo?.hasInternet);
 
-      setHasWeekendObjection(candidate?.complementaryInfo.weekendObjection);
+      setHasWeekendObjection(candidate?.complementaryInfo?.weekendObjection);
 
       setDeficiency(candidate?.complementaryInfo?.disabilityDescription);
       setHasDeficiency(candidate?.complementaryInfo?.haveDisability);
@@ -402,19 +419,21 @@ export function DataModal({ children, data }: DataModalProps) {
 
                     <InputContainer title="Sexo" width={"100%"}>
                       <Select
-                        onChange={onChangeGender}
+                        onChange={({ id }) => setGender(id)}
                         placeholder="Selecione"
                         options={genders}
                         width="100%"
+                        defaultValue={gender}
                       />
                     </InputContainer>
 
                     <InputContainer title="Estado civil" width={"100%"}>
                       <Select
-                        onChange={onChangeMaritalStatus}
+                        onChange={({ id }) => setCivilStatus(id)}
                         placeholder="Selecione"
                         options={maritalStatus}
                         maxHeight={250}
+                        defaultValue={civilStatus}
                       />
                     </InputContainer>
                   </div>
@@ -444,6 +463,9 @@ export function DataModal({ children, data }: DataModalProps) {
                         onChange={({ id }) => onChangeState(id)}
                         placeholder="Selecione"
                         options={states}
+                        defaultValue={
+                          statesAccronym[state as keyof typeof statesAccronym]
+                        }
                       />
                     </InputContainer>
 
@@ -453,6 +475,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         placeholder="Selecione"
                         options={cities ?? []}
                         width={200}
+                        defaultValue={city}
                       />
                     </InputContainer>
                   </div>
@@ -575,7 +598,7 @@ export function DataModal({ children, data }: DataModalProps) {
                       <input
                         type="text"
                         id="Logradouro"
-                        value={address?.logradouro}
+                        value={address?.address}
                       />
                     </InputContainer>
 
@@ -584,7 +607,11 @@ export function DataModal({ children, data }: DataModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Bairro">
-                      <input type="text" id="Bairro" value={address?.bairro} />
+                      <input
+                        type="text"
+                        id="Bairro"
+                        value={address?.neighborhood}
+                      />
                     </InputContainer>
                   </div>
 
@@ -594,14 +621,18 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Número">
-                      <input type="number" id="Número" />
+                      <input
+                        type="number"
+                        id="Número"
+                        value={address?.number}
+                      />
                     </InputContainer>
 
                     <InputContainer title="Complemento">
                       <input
                         type="text"
                         id="Complemento"
-                        value={address?.complemento}
+                        value={address?.complement}
                       />
                     </InputContainer>
                   </div>
@@ -659,7 +690,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         options={states}
                         defaultValue={
                           statesAccronym[
-                            rgUf.toUpperCase() as keyof typeof statesAccronym
+                            rgUf?.toUpperCase() as keyof typeof statesAccronym
                           ]
                         }
                       />
@@ -731,7 +762,7 @@ export function DataModal({ children, data }: DataModalProps) {
                         options={states}
                         defaultValue={
                           statesAccronym[
-                            ctpsUf.toUpperCase() as keyof typeof statesAccronym
+                            ctpsUf?.toUpperCase() as keyof typeof statesAccronym
                           ]
                         }
                       />
@@ -880,20 +911,22 @@ export function DataModal({ children, data }: DataModalProps) {
                     </InputContainer>
                   </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Pretensão salarial">
-                      <input
-                        type="text"
-                        id="Pretensão salarial"
-                        onChange={handleOnSalaryClaimChange}
-                        value={salaryClaim}
-                      />
-                    </InputContainer>
-                  </div>
+                  {data?.candidacy?.process?.requestCv && (
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <InputContainer title="Pretensão salarial">
+                        <input
+                          type="text"
+                          id="Pretensão salarial"
+                          onChange={handleOnSalaryClaimChange}
+                          value={salaryClaim}
+                        />
+                      </InputContainer>
+                    </div>
+                  )}
 
                   <div
                     className={
