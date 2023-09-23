@@ -217,3 +217,18 @@ export const StatusSelect = [
     id: "SUSPENSO",
   },
 ];
+
+export const PeriodSelect = [
+  {
+    name: "Matutino",
+    id: "MATUTINO",
+  },
+  {
+    name: "Vespertino",
+    id: "VESPERTINO",
+  },
+  {
+    name: "Noturno",
+    id: "NOTURNO",
+  },
+];

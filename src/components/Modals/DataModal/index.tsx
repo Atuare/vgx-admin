@@ -12,6 +12,7 @@ import {
 } from "@/services/api/fetchApi";
 import { getCandidateById } from "@/utils/candidate";
 import {
+  PeriodSelect,
   StatusSelect,
   genders,
   maritalStatus,
@@ -1124,7 +1125,11 @@ export function DataModal({ children, data }: DataModalProps) {
                     }
                   >
                     <InputContainer title="Período">
-                      <input type="text" id="Período" />
+                      <Select
+                        onChange={() => {}}
+                        options={PeriodSelect}
+                        placeholder="Selecione"
+                      />
                     </InputContainer>
                   </div>
 
