@@ -255,6 +255,7 @@ export default function Interviews() {
         size={interviewTableData?.totalCount}
         globalFilterValue={globalFilter}
         tableName="Entrevistas"
+        loading={isFetching}
       />
     </div>
   );
