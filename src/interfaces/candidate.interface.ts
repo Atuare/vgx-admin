@@ -26,7 +26,7 @@ export interface ICandidate {
   createdAt: string;
   updatedAt: string;
   complementaryInfo: ComplementaryInfoType;
-  formations: IFormations[]; // ! Must change to formations type
+  formations: IFormations[];
   documents: UserDocumentType;
   address: IAddress;
 }
