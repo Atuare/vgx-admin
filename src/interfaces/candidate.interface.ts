@@ -27,6 +27,7 @@ export interface ICandidate {
   complementaryInfo: ComplementaryInfoType;
   formations: any; // ! Must change to formations type
   documents: UserDocumentType;
+  address: IAddress;
 }
 
 export interface ICandidates {
@@ -34,4 +35,13 @@ export interface ICandidates {
   total: number;
   page: number;
   items: number;
+}
+
+interface IAddress {
+  zipCode: string;
+  address: string;
+  neighborhood: string;
+  number: string;
+  complement: string;
+  state: string;
 }
