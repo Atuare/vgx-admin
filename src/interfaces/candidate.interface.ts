@@ -1,4 +1,5 @@
 import { ComplementaryInfoType } from "./complementaryInfo.interface";
+import { IFormations } from "./formations.interface";
 import { UserDocumentType } from "./userDocument.interface";
 
 export interface ICandidate {
@@ -25,7 +26,7 @@ export interface ICandidate {
   createdAt: string;
   updatedAt: string;
   complementaryInfo: ComplementaryInfoType;
-  formations: any; // ! Must change to formations type
+  formations: IFormations[]; // ! Must change to formations type
   documents: UserDocumentType;
   address: IAddress;
 }
