@@ -1220,7 +1220,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             }
                             id="Chave PIX"
                             value={pix}
-                            disabled={!pixType}
+                            disabled={!pixType?.id}
                             onChange={e => {
                               handleOnChangePixKey(e.target.value);
                               onChange(e.target.value);
