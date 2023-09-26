@@ -945,7 +945,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             type="text"
                             id="Número da CTPS"
                             defaultValue={candidate?.documents?.work?.ctps}
-                            pattern="\d*"
+                            pattern="[0-9/]*"
                             maxLength={11}
                             onChange={e => {
                               if (!e.target.validity.valid) {
