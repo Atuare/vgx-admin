@@ -62,6 +62,21 @@ export const dataModalSchema = yup.object({
   }),
   // availability: yup.object().required("Campo obrigatório"),
   // // TODO: formation
+  formation: yup.object().shape({
+    type: yup
+      .mixed()
+      .oneOf(["BASICA", "TECNICA", "SUPERIOR"])
+      .required("Campo obrigatório"),
+    course: yup.string().required("Campo obrigatório"),
+    status: yup
+      .mixed()
+      .oneOf(["COMPLETO", "ANDAMENTO", "SUSPENSO"])
+      .required("Campo obrigatório"),
+    period: yup
+      .mixed()
+      .oneOf(["MATUTINO", "VESPERTINO", "NOTURNO"])
+      .required("Campo obrigatório"),
+  }),
   // result: yup.string().required("Campo obrigatório"),
   // reason: yup.string().required("Campo obrigatório"),
   // observation: yup.string().required("Campo obrigatório"),
