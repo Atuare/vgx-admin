@@ -25,7 +25,14 @@ export const dataModalSchema = yup.object({
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   // // TODO: curriculum
-  // // TODO: address
+  address: yup.object().shape({
+    zipCode: yup.string().min(9, "CEP inválido").required("Campo obrigatório"),
+    address: yup.string().required("Campo obrigatório"),
+    neighborhood: yup.string().required("Campo obrigatório"),
+    number: yup.string().required("Campo obrigatório"),
+    complement: yup.string().required("Campo obrigatório"),
+    state: yup.string().required("Campo obrigatório"),
+  }),
   complementaryInfo: yup.object().shape({
     hasCellPhone: yup.boolean().required("Campo obrigatório"),
     hasCellPc: yup.boolean().required("Campo obrigatório"),
@@ -60,8 +67,7 @@ export const dataModalSchema = yup.object({
       then: (schema: any) => schema.required("Campo obrigatório"),
     }),
   }),
-  // availability: yup.object().required("Campo obrigatório"),
-  // // TODO: formation
+  availability: yup.string().required("Campo obrigatório"),
   formation: yup.object().shape({
     type: yup
       .mixed()
@@ -79,8 +85,7 @@ export const dataModalSchema = yup.object({
   }),
   // result: yup.string().required("Campo obrigatório"),
   // reason: yup.string().required("Campo obrigatório"),
-  // observation: yup.string().required("Campo obrigatório"),
-  // interviewer: yup.string().required("Campo obrigatório"),
+  observation: yup.string().required("Campo obrigatório"),
 
   documents: yup.object().shape({
     identity: yup.object().shape({

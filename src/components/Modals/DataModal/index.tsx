@@ -217,7 +217,7 @@ export function DataModal({ children, data }: DataModalProps) {
     setAvailabilites(
       data?.candidacy?.process?.availabilities.map(item => ({
         name: formatTimeRange(item),
-        id: `${item.startDay},${item.endDay},${item.startHour},${item.endHour}}`,
+        id: item.id,
       })),
     );
   }, []);
@@ -416,7 +416,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                                candidate?.state as keyof typeof statesAccronym
+                              candidate?.state as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -659,37 +659,69 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="CEP">
-                      <input
-                        type="text"
-                        id="CEP"
-                        defaultValue={address?.zipCode}
-                        onChange={e => {
-                          e.target.value = handleOnChangeCep(e);
-                        }}
-                        maxLength={9}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="address.zipCode"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="CEP" error={error?.message}>
+                          <input
+                            type="text"
+                            id="CEP"
+                            defaultValue={address?.zipCode}
+                            onChange={e => {
+                              e.target.value = handleOnChangeCep(e);
+                              onChange(e.target.value);
+                            }}
+                            maxLength={9}
+                          />
+                        </InputContainer>
+                      )}
+                    />
 
-                    <InputContainer title="Logradouro">
-                      <input
-                        type="text"
-                        id="Logradouro"
-                        defaultValue={address?.address}
-                      />
-                    </InputContainer>
+
+                    <Controller
+                      control={control}
+                      name="address.address"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Logradouro" error={error?.message}>
+                          <input
+                            type="text"
+                            id="Logradouro"
+                            defaultValue={address?.address}
+                            onChange={e => onChange(e.target.value)}
+                          />
+                        </InputContainer>
+                      )}
+                    />
+
 
                     <InputContainer title="Endereço">
                       <input type="text" id="Endereço" />
                     </InputContainer>
 
-                    <InputContainer title="Bairro">
-                      <input
-                        type="text"
-                        id="Bairro"
-                        defaultValue={address?.neighborhood}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="address.neighborhood"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Bairro" error={error?.message}>
+                          <input
+                            type="text"
+                            id="Bairro"
+                            defaultValue={address?.neighborhood}
+                            onChange={e => onChange(e.target.value)}
+                          />
+                        </InputContainer>
+                      )}
+                    />
                   </div>
 
                   <div
@@ -697,21 +729,41 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Número">
-                      <input
-                        type="number"
-                        id="Número"
-                        defaultValue={address?.number}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="address.number"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Número" error={error?.message}>
+                          <input
+                            type="number"
+                            id="Número"
+                            defaultValue={address?.number}
+                            onChange={e => onChange(e.target.value)}
+                          />
+                        </InputContainer>
+                      )}
+                    />
 
-                    <InputContainer title="Complemento">
-                      <input
-                        type="text"
-                        id="Complemento"
-                        defaultValue={address?.complement}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="address.complement"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Complemento" error={error?.message}>
+                          <input
+                            type="text"
+                            id="Complemento"
+                            defaultValue={address?.complement}
+                            onChange={e => onChange(e.target.value)}
+                          />
+                        </InputContainer>
+                      )}
+                    />
                   </div>
                 </div>
               </section>
@@ -822,7 +874,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                                candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
+                              candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -970,7 +1022,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                                candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
+                              candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -1115,7 +1167,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             type={pixType?.id === "E-mail" ? "email" : "text"}
                             pattern={
                               pixType?.id === "CPF" ||
-                              pixType?.id === "Telefone"
+                                pixType?.id === "Telefone"
                                 ? "d*"
                                 : undefined
                             }
@@ -1580,13 +1632,22 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Disponibilidade" width={"45%"}>
-                      <Select
-                        onChange={() => {}}
-                        placeholder="Selecione"
-                        options={availabilites ?? []}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="availability"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Disponibilidade" width={"45%"} error={error?.message}>
+                          <Select
+                            onChange={({ id }) => onChange(id)}
+                            placeholder="Selecione"
+                            options={availabilites ?? []}
+                          />
+                        </InputContainer>
+                      )}
+                    />
                   </div>
                 </div>
               </section>
@@ -1603,7 +1664,7 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Escolaridade" width={"30%"}>
                       <Select
-                        onChange={() => {}}
+                        onChange={() => { }}
                         placeholder="Selecione"
                         options={schoolings ?? []}
                       />
@@ -1615,7 +1676,7 @@ export function DataModal({ children, data }: DataModalProps) {
 
                     <InputContainer title="Status" width={"20%"}>
                       <Select
-                        onChange={() => {}}
+                        onChange={() => { }}
                         options={StatusSelect}
                         placeholder="Selecione"
                       />
@@ -1628,7 +1689,7 @@ export function DataModal({ children, data }: DataModalProps) {
                   >
                     <InputContainer title="Período">
                       <Select
-                        onChange={() => {}}
+                        onChange={() => { }}
                         options={PeriodSelect}
                         placeholder="Selecione"
                       />
@@ -1686,7 +1747,7 @@ export function DataModal({ children, data }: DataModalProps) {
                     {approved && (
                       <InputContainer title="Treinamento" width={"30%"}>
                         <Select
-                          onChange={() => {}}
+                          onChange={() => { }}
                           placeholder="Selecione"
                           options={trainings ?? []}
                         />
