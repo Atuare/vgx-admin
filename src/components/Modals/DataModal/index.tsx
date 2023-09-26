@@ -13,9 +13,9 @@ import {
 } from "@/services/api/fetchApi";
 import { getCandidateById } from "@/utils/candidate";
 import {
+  FormationTypes,
   PeriodSelect,
   StatusSelect,
-  FormationTypes,
   genders,
   maritalStatus,
   pixTypes,
@@ -417,7 +417,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                              candidate?.state as keyof typeof statesAccronym
+                                candidate?.state as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -682,7 +682,6 @@ export function DataModal({ children, data }: DataModalProps) {
                       )}
                     />
 
-
                     <Controller
                       control={control}
                       name="address.address"
@@ -690,7 +689,10 @@ export function DataModal({ children, data }: DataModalProps) {
                         field: { onChange },
                         fieldState: { error },
                       }) => (
-                        <InputContainer title="Logradouro" error={error?.message}>
+                        <InputContainer
+                          title="Logradouro"
+                          error={error?.message}
+                        >
                           <input
                             type="text"
                             id="Logradouro"
@@ -700,7 +702,6 @@ export function DataModal({ children, data }: DataModalProps) {
                         </InputContainer>
                       )}
                     />
-
 
                     <InputContainer title="Endereço">
                       <input type="text" id="Endereço" />
@@ -755,7 +756,10 @@ export function DataModal({ children, data }: DataModalProps) {
                         field: { onChange },
                         fieldState: { error },
                       }) => (
-                        <InputContainer title="Complemento" error={error?.message}>
+                        <InputContainer
+                          title="Complemento"
+                          error={error?.message}
+                        >
                           <input
                             type="text"
                             id="Complemento"
@@ -875,7 +879,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                              candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
+                                candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -1023,7 +1027,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             options={states}
                             defaultValue={
                               statesAccronym[
-                              candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
+                                candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
                               ]
                             }
                           />
@@ -1168,7 +1172,7 @@ export function DataModal({ children, data }: DataModalProps) {
                             type={pixType?.id === "E-mail" ? "email" : "text"}
                             pattern={
                               pixType?.id === "CPF" ||
-                                pixType?.id === "Telefone"
+                              pixType?.id === "Telefone"
                                 ? "d*"
                                 : undefined
                             }
@@ -1640,7 +1644,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         field: { onChange },
                         fieldState: { error },
                       }) => (
-                        <InputContainer title="Disponibilidade" width={"45%"} error={error?.message}>
+                        <InputContainer
+                          title="Disponibilidade"
+                          width={"45%"}
+                          error={error?.message}
+                        >
                           <Select
                             onChange={({ id }) => onChange(id)}
                             placeholder="Selecione"
@@ -1670,7 +1678,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         field: { onChange },
                         fieldState: { error },
                       }) => (
-                        <InputContainer title="Escolaridade" width={"30%"} error={error?.message}>
+                        <InputContainer
+                          title="Escolaridade"
+                          width={"30%"}
+                          error={error?.message}
+                        >
                           <Select
                             onChange={({ id }) => onChange(id)}
                             placeholder="Selecione"
@@ -1688,7 +1700,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         fieldState: { error },
                       }) => (
                         <InputContainer title="Curso" error={error?.message}>
-                          <input type="text" id="Curso" onChange={e => onChange(e.target.value)} />
+                          <input
+                            type="text"
+                            id="Curso"
+                            onChange={e => onChange(e.target.value)}
+                          />
                         </InputContainer>
                       )}
                     />
@@ -1700,7 +1716,11 @@ export function DataModal({ children, data }: DataModalProps) {
                         field: { onChange },
                         fieldState: { error },
                       }) => (
-                        <InputContainer title="Status" width={"20%"} error={error?.message}>
+                        <InputContainer
+                          title="Status"
+                          width={"20%"}
+                          error={error?.message}
+                        >
                           <Select
                             onChange={({ id }) => onChange(id)}
                             options={StatusSelect}
@@ -1784,7 +1804,7 @@ export function DataModal({ children, data }: DataModalProps) {
                     {approved && (
                       <InputContainer title="Treinamento" width={"30%"}>
                         <Select
-                          onChange={() => { }}
+                          onChange={() => {}}
                           placeholder="Selecione"
                           options={trainings ?? []}
                         />
