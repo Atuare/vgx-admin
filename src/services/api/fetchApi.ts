@@ -549,6 +549,15 @@ export const fetchApi = createApi({
         body: { id },
       }),
     }),
+    updateCandidateDocuments: builder.mutation<any, { id: string }>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/candidate-documents",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -604,4 +613,5 @@ export const {
   useCreateContractMutation,
   useUpdateContractMutation,
   useDeleteContractMutation,
+  useUpdateCandidateDocumentsMutation,
 } = fetchApi;
