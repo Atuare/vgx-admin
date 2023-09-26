@@ -10,7 +10,7 @@ export function AccountInput({ defaultValue, onChange }: AccountInputProps) {
     defaultValue?.slice(0, 7) ?? "",
   );
   const [secondAccount, setSecondAccount] = useState(
-    defaultValue?.slice(7) ?? "",
+    defaultValue?.slice(8) ?? "",
   );
 
   const bankAccountFirstInput = useRef<HTMLInputElement | null>(null);
