@@ -76,7 +76,7 @@ export const dataModalSchema = yup.object({
     course: yup.string().required("Campo obrigatório"),
     status: yup
       .mixed()
-      .oneOf(["COMPLETO", "ANDAMENTO", "SUSPENSO"])
+      .oneOf(["COMPLETO", "EMANDAMENTO", "SUSPENSO"])
       .required("Campo obrigatório"),
     period: yup
       .mixed()

@@ -15,6 +15,7 @@ import { getCandidateById } from "@/utils/candidate";
 import {
   PeriodSelect,
   StatusSelect,
+  FormationTypes,
   genders,
   maritalStatus,
   pixTypes,
@@ -1662,38 +1663,74 @@ export function DataModal({ children, data }: DataModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Escolaridade" width={"30%"}>
-                      <Select
-                        onChange={() => { }}
-                        placeholder="Selecione"
-                        options={schoolings ?? []}
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="formation.type"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Escolaridade" width={"30%"} error={error?.message}>
+                          <Select
+                            onChange={({ id }) => onChange(id)}
+                            placeholder="Selecione"
+                            options={FormationTypes}
+                          />
+                        </InputContainer>
+                      )}
+                    />
 
-                    <InputContainer title="Curso">
-                      <input type="text" id="Curso" />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="formation.course"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Curso" error={error?.message}>
+                          <input type="text" id="Curso" onChange={e => onChange(e.target.value)} />
+                        </InputContainer>
+                      )}
+                    />
 
-                    <InputContainer title="Status" width={"20%"}>
-                      <Select
-                        onChange={() => { }}
-                        options={StatusSelect}
-                        placeholder="Selecione"
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="formation.status"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Status" width={"20%"} error={error?.message}>
+                          <Select
+                            onChange={({ id }) => onChange(id)}
+                            options={StatusSelect}
+                            placeholder="Selecione"
+                          />
+                        </InputContainer>
+                      )}
+                    />
                   </div>
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Período">
-                      <Select
-                        onChange={() => { }}
-                        options={PeriodSelect}
-                        placeholder="Selecione"
-                      />
-                    </InputContainer>
+                    <Controller
+                      control={control}
+                      name="formation.period"
+                      render={({
+                        field: { onChange },
+                        fieldState: { error },
+                      }) => (
+                        <InputContainer title="Período" error={error?.message}>
+                          <Select
+                            onChange={({ id }) => onChange(id)}
+                            options={PeriodSelect}
+                            placeholder="Selecione"
+                          />
+                        </InputContainer>
+                      )}
+                    />
                   </div>
 
                   {data?.candidacy?.process?.requestCv && (

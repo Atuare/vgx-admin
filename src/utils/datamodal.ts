@@ -232,3 +232,18 @@ export const PeriodSelect = [
     id: "NOTURNO",
   },
 ];
+
+export const FormationTypes = [
+  {
+    name: "Básica",
+    id: "BASICA",
+  },
+  {
+    name: "Técnica",
+    id: "TECNICA",
+  },
+  {
+    name: "Superior",
+    id: "SUPERIOR",
+  },
+]
