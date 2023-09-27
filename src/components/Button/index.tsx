@@ -3,7 +3,7 @@ import styles from "./Button.module.scss";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
-  buttonType: "primary" | "secondary" | "error" | "default";
+  buttonType: "primary" | "secondary" | "error" | "default" | "warning";
   icon?: React.ReactNode;
 }
 

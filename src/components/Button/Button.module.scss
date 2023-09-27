@@ -72,3 +72,15 @@
     fill: var(--primary-1);
   }
 }
+
+.warning {
+  background: var(--attention);
+  color: var(--primary-1);
+  &:hover {
+    background: var(--hover-attention);
+  }
+
+  svg path {
+    fill: var(--primary-1);
+  }
+}
