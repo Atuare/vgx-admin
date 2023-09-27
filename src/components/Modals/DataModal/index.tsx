@@ -54,7 +54,7 @@ type SelectType = {
 }[];
 
 export function DataModal({ children, data }: DataModalProps) {
-  const { control, handleSubmit } = useForm({
+  const { control, reset, handleSubmit } = useForm({
     resolver: yupResolver(dataModalSchema),
   });
 
@@ -246,6 +246,13 @@ export function DataModal({ children, data }: DataModalProps) {
       );
       setTransportVoucher(candidate?.complementaryInfo?.transportVoucher);
     }
+
+    reset({
+      ...candidate,
+      cpf: formatCpf(candidate?.cpf || ""),
+      whatsapp: formatPhoneNumber(candidate?.whatsapp ?? ""),
+      phone: formatPhoneNumber(candidate?.phone ?? ""),
+    });
   }, [candidate]);
 
   return (
