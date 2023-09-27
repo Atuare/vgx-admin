@@ -26,12 +26,22 @@ export function SalaryClaimModal({
 }: SalaryClaimModalProps) {
   const [data, setData] = useState<ISalaryClaim | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
+  const [toAmount, setToAmount] = useState(
+    data?.toAmount
+      ? formatCurrency(String(data?.toAmount))
+      : formatCurrency("0"),
+  );
+  const [fromAmount, setFromAmount] = useState(
+    data?.fromAmount
+      ? formatCurrency(String(data?.fromAmount))
+      : formatCurrency("0"),
+  );
 
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(salaryClaimModalConfigSchema),
     defaultValues: {
-      fromAmount: data?.fromAmount ? String(data?.fromAmount) : "",
-      toAmount: data?.toAmount ? String(data?.toAmount) : "",
+      fromAmount: data?.fromAmount ? data?.fromAmount : 0,
+      toAmount: data?.toAmount ? data?.toAmount : 0,
     },
   });
 
@@ -41,6 +51,26 @@ export function SalaryClaimModal({
       fromAmount: Number(data.fromAmount),
       toAmount: Number(data.toAmount),
     });
+    setToAmount(formatCurrency("0"));
+    setFromAmount(formatCurrency("0"));
+  }
+
+  function formatCurrency(value: string) {
+    const numericValue = value.replace(/\D/g, "");
+
+    const formattedValue = (+numericValue / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    return formattedValue;
+  }
+
+  function parseCurrency(currencyString: string): number {
+    const numericString = currencyString.replace(/\D/g, "");
+    const numericValue = parseFloat(numericString) / 100;
+
+    return numericValue;
   }
 
   return (
@@ -80,9 +110,12 @@ export function SalaryClaimModal({
                     <label htmlFor="fromAmount">De</label>
                     <input
                       id="fromAmount"
-                      type="number"
-                      defaultValue={data?.fromAmount}
-                      onChange={e => onChange(String(e.target.value))}
+                      type="text"
+                      onChange={e => {
+                        onChange(parseCurrency(e.target.value));
+                        setFromAmount(formatCurrency(e.target.value));
+                      }}
+                      value={fromAmount}
                     />
                     <span className={styles.error}>
                       {error?.message && error.message}
@@ -99,9 +132,12 @@ export function SalaryClaimModal({
                     <label htmlFor="toAmount">Até</label>
                     <input
                       id="toAmount"
-                      type="number"
-                      defaultValue={data?.toAmount}
-                      onChange={e => onChange(String(e.target.value))}
+                      type="text"
+                      onChange={e => {
+                        onChange(parseCurrency(e.target.value));
+                        setToAmount(formatCurrency(e.target.value));
+                      }}
+                      value={toAmount}
                     />
                     <span className={styles.error}>
                       {error?.message && error.message}
