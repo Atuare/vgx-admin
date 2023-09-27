@@ -558,6 +558,25 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllTests: builder.query<
+      any,
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
+    >({
+      query: ({ page, size, orderBy, direction }) => ({
+        url: "/test/findAll",
+        params: {
+          page,
+          size,
+          orderBy,
+          direction,
+        },
+      }),
+    }),
   }),
 });
 
@@ -614,4 +633,5 @@ export const {
   useUpdateContractMutation,
   useDeleteContractMutation,
   useUpdateCandidateDocumentsMutation,
+  useGetAllTestsQuery,
 } = fetchApi;
