@@ -21,8 +21,8 @@ export function DataInput({
   return (
     <div className={styles.dataInput} style={{ width }}>
       <label htmlFor={name}>
-        {name}{" "}
-        {lightName && <span className={styles.lightName}>{lightName}</span>}
+        {name}
+        {lightName && <span className={styles.lightName}> {lightName}</span>}
         {required && <span className={styles.required}>*</span>}
       </label>
       <label htmlFor={name}>{optional && <p>(opcional)</p>}</label>

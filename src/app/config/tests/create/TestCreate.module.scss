@@ -9,4 +9,37 @@
     font-size: 22px;
     font-weight: 700;
   }
+
+  &__subtitle {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--neutral-4);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    button {
+      padding: 16px;
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    align-self: flex-end;
+
+    button {
+      padding: 16px;
+    }
+  }
 }

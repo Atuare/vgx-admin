@@ -8,6 +8,7 @@ interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
 export function IconButton({ icon, buttonType, ...props }: IconButtonProps) {
   return (
     <button
+      type="button"
       className={`${styles.iconButton} ${
         buttonType === "delete"
           ? styles.iconButton__delete

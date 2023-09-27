@@ -14,11 +14,11 @@ export interface ITest {
   disapprovedMessage: string;
   createdAt: string;
   updatedAt: string;
-  questions: Question[];
+  questions: IQuestion[];
   unit: IUnit;
 }
 
-interface Question {
+export interface IQuestion {
   id: string;
   text: string;
   type: string;

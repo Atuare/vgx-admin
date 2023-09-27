@@ -1,12 +1,20 @@
 "use client";
 
+import { Publish, SystemUpdate } from "@/assets/Icons";
+import { Button } from "@/components/Button";
 import { DataInput } from "@/components/DataInput";
+import { TestCreateModal } from "@/components/Modals/TestCreateModal";
 import { Select } from "@/components/Select";
+import { TestsCreateTable } from "@/components/Tables/TestsCreateTable";
+import { TipTap } from "@/components/TipTap";
 import { useGetAllUnitsQuery } from "@/services/api/fetchApi";
-import { ReactNode } from "react";
+import { Table } from "@tanstack/react-table";
+import { ReactNode, useState } from "react";
 import styles from "./TestCreate.module.scss";
 
 export default function TestCreate() {
+  const [table, setTable] = useState<Table<any>>();
+
   const { data: units } = useGetAllUnitsQuery({
     page: 1,
     size: 1000,
@@ -134,6 +142,45 @@ export default function TestCreate() {
           />
         </DataInput>
       </Container>
+
+      <h3 className={styles.form__title}>Questões prova</h3>
+
+      <div className={styles.form__actions}>
+        <Button
+          buttonType="secondary"
+          text="Exportar dados"
+          icon={<SystemUpdate />}
+          type="button"
+        />
+
+        <div className={styles.form__actions__right}>
+          <Button
+            buttonType="warning"
+            text="Importar dados"
+            icon={<Publish />}
+            type="button"
+          />
+
+          <TestCreateModal handleOnSubmit={() => {}} create />
+        </div>
+      </div>
+
+      <TestsCreateTable setTable={setTable} />
+
+      <h3 className={styles.form__title}>Orientação para a prova</h3>
+      <TipTap getContentFromEditor={() => {}} />
+
+      <h3 className={styles.form__title}>Mensagem final</h3>
+      <h4 className={styles.form__subtitle}>Aprovação*</h4>
+      <TipTap getContentFromEditor={() => {}} />
+
+      <h4 className={styles.form__subtitle}>Reprovação*</h4>
+      <TipTap getContentFromEditor={() => {}} />
+
+      <div className={styles.form__buttons}>
+        <Button buttonType="default" text="Cancelar" />
+        <Button buttonType="primary" text="Salvar" />
+      </div>
     </form>
   );
 }
