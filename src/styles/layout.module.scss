@@ -22,6 +22,16 @@
         font-size: 34px;
         color: var(--primary-1);
       }
+
+      button {
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+
+        svg path {
+          fill: var(--primary-1);
+        }
+      }
     }
   }
 }

@@ -14,10 +14,6 @@
     font-weight: 700;
     color: var(--neutral-4);
 
-    span {
-      color: var(--error);
-    }
-
     p {
       font-weight: 400;
     }
@@ -30,4 +26,13 @@
     border-radius: 8px;
     box-shadow: 0px 5px 20px 0px #00000033;
   }
+}
+
+.required {
+  color: var(--error);
+}
+
+.lightName {
+  font-size: 17px;
+  font-weight: 400;
 }

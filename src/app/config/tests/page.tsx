@@ -8,7 +8,7 @@ import { ITest, ITests } from "@/interfaces/tests.interface";
 import { useGetAllTestsQuery } from "@/services/api/fetchApi";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./TestsConfig.module.scss";
 
@@ -17,6 +17,8 @@ const defaultTableSize = 10;
 export default function TestsConfigPage() {
   const [tests, setTests] = useState<ITests>();
   const [table, setTable] = useState<Table<any>>();
+
+  const { push } = useRouter();
 
   const { setParams } = useTableParams();
   const { get } = useSearchParams();
@@ -134,7 +136,12 @@ export default function TestsConfigPage() {
           icon={<SystemUpdate />}
         />
 
-        <Button buttonType="primary" text="Nova Prova" icon={<AddCircle />} />
+        <Button
+          buttonType="primary"
+          text="Nova Prova"
+          icon={<AddCircle />}
+          onClick={() => push("/config/tests/create")}
+        />
       </section>
 
       {tests && (
