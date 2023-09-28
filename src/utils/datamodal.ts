@@ -246,4 +246,4 @@ export const FormationTypes = [
     name: "Superior",
     id: "SUPERIOR",
   },
-]
+];
