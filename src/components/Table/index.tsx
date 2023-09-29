@@ -32,6 +32,7 @@ interface DataTableProps {
   globalFilterValue?: string;
   loading?: boolean;
   tableName?: string;
+  scroll?: boolean;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -104,46 +105,55 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
 
     return (
       <>
-        <Table ref={tableRef} id={props.tableName}>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+        <div
+          style={{
+            width: props.scroll ? "83.2vw" : "100%",
+            overflowX: props.scroll ? "scroll" : "hidden",
+          }}
+        >
+          <Table ref={tableRef} id={props.tableName}>
+            <TableHeader>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map(header => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length}>Sem resultados.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length}>
+                    Sem resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
         <DataTablePagination
           size={props.size}
           handleTogglePage={props.handleTogglePage}

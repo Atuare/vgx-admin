@@ -9,3 +9,9 @@ export enum AdmissionsStatusEnum {
   CONCLUÍDO = "CONCLUÍDO",
   CANCELADO = "CANCELADO",
 }
+
+export enum AdmissionContractStatusEnum {
+  PENDENTE = "PENDENTE",
+  ASSINADO = "ASSINADO",
+  NAOASSINADO = "NÃO ASSINADO",
+}

@@ -1,4 +1,10 @@
-import { AdmissionsStatusEnum, StatusEnum } from "@/enums/status.enum";
+import {
+  AdmissionContractStatusEnum,
+  AdmissionsStatusEnum,
+  StatusEnum,
+} from "@/enums/status.enum";
+import { IAvailability } from "./availability.interface";
+import { ICandidate } from "./candidate.interface";
 import { ProcessType } from "./process.interface";
 
 export interface IAdmission {
@@ -28,7 +34,7 @@ export interface IAdmissionCandidate {
   status: AdmissionsStatusEnum;
   accessContract: boolean;
   document: string;
-  contractStatus: AdmissionsStatusEnum;
+  contractStatus: AdmissionContractStatusEnum;
   createdAt: string;
   updatedAt: string;
   candidacy: {
@@ -36,49 +42,9 @@ export interface IAdmissionCandidate {
     status: AdmissionsStatusEnum;
     createdAt: string;
     updatedAt: string;
-    candidate: Candidate;
+    candidate: ICandidate;
     process: ProcessType;
-  };
-}
-
-interface Candidate {
-  id: string;
-  name: string;
-  cpf: string;
-  email: string;
-  phone: string;
-  whatsapp: string;
-  birthdate: string;
-  firstAccess: boolean;
-  notifyEmail: boolean;
-  notifyWhats: boolean;
-  acceptTerms: boolean;
-  gender: string;
-  civilStatus: string;
-  state: string;
-  county: string;
-  motherName: string;
-  fatherName: string;
-  childUnderfourteen: boolean;
-  childCount: number;
-  curriculum: string;
-  createdAt: string;
-  updatedAt: string;
-  documents: string;
-  complementaryInfo: {
-    hasCellPhone: boolean;
-    hasCellPc: boolean;
-    hasInternet: boolean;
-    weekendObjection: boolean;
-    haveDisability: boolean;
-    disabilityDescription: string;
-    hasMedicalReport: boolean;
-    transportVoucher: boolean;
-    transportCompany: string;
-    transportLine: string;
-    transportTaxGoing: string;
-    transportTaxReturn: string;
-    transportTaxDaily: string;
+    availability: IAvailability;
   };
 }
 

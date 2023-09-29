@@ -9,10 +9,14 @@ import {
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import { FilterButton } from "@/components/FilterButton";
+import FlatText from "@/components/FlatText";
 import { SaveModal } from "@/components/SaveModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
-import { AdmissionsStatusEnum } from "@/enums/status.enum";
+import {
+  AdmissionContractStatusEnum,
+  AdmissionsStatusEnum,
+} from "@/enums/status.enum";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
   IAdmission,
@@ -22,8 +26,12 @@ import {
   useGetAdmissionQuery,
   useGetAllUnitsQuery,
 } from "@/services/api/fetchApi";
-import { getAdmissionById } from "@/utils/admissions";
+import { admissionsStatus, getAdmissionById } from "@/utils/admissions";
 import { formatCpf } from "@/utils/formatCpf";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { formatRG } from "@/utils/formatRg";
+import { formatTimeRange } from "@/utils/formatTimeRange";
+import { formatWhatsappNumber } from "@/utils/phoneFormating";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -102,31 +110,47 @@ export default function AdmissionClass() {
     }),
     columnHelper.accessor("candidacy.candidate.name", {
       header: "Nome",
-      cell: row => <div>{row.getValue()}</div>,
+      cell: row => <div style={{ width: 256 }}>{row.getValue()}</div>,
     }),
     columnHelper.accessor(value => formatCpf(value.candidacy.candidate.cpf), {
       header: "CPF",
-      cell: row => <div>{formatCpf(row.getValue())}</div>,
+      cell: row => (
+        <div style={{ width: 144 }}>{formatCpf(row.getValue())}</div>
+      ),
     }),
-    columnHelper.accessor(value => formatCpf(value.candidacy.candidate.cpf), {
-      header: "RG (COLOCAR O CERTO)",
-      cell: row => <div>{formatCpf(row.getValue())}</div>,
-    }),
+    columnHelper.accessor(
+      value => formatRG(value.candidacy.candidate.documents.identity.rg),
+      {
+        header: "RG",
+        cell: row => (
+          <div style={{ width: 128 }}>{formatRG(row.getValue())}</div>
+        ),
+      },
+    ),
     columnHelper.accessor(
       value =>
         dayjs(value.candidacy.candidate.birthdate).utc().format("DD/MM/YYYY"),
       {
         header: "Data de nascimento",
-        cell: row => <div>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
       },
     ),
-    // columnHelper.accessor(
-    //   value => formatPhoneNumber(value.candidacy.candidate.phone),
-    //   {
-    //     header: "Telefone",
-    //     cell: row => <div>{formatPhoneNumber(row.getValue())}</div>,
-    //   },
-    // ),
+    columnHelper.accessor(
+      value => formatWhatsappNumber(value.candidacy.candidate.phone),
+      {
+        header: "Telefone",
+        cell: row => (
+          <div style={{ width: 144 }}>
+            {formatWhatsappNumber(row.getValue())}
+          </div>
+        ),
+      },
+    ),
+
+    columnHelper.accessor("candidacy.process.role.roleText", {
+      header: "Função",
+      cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+    }),
     columnHelper.accessor("candidacy.process.unit.unitName", {
       header: () => (
         <FilterButton
@@ -137,16 +161,129 @@ export default function AdmissionClass() {
         />
       ),
       cell: row => {
-        return <div>{row.getValue()}</div>;
+        return <div style={{ width: 152 }}>{row.getValue()}</div>;
       },
       filterFn: (row, id, value) => {
         return value.length !== 0 ? value.includes(row.getValue(id)) : true;
       },
     }),
+    columnHelper.accessor(
+      value =>
+        value.candidacy.candidate.complementaryInfo.transportVoucher
+          ? "SIM"
+          : "NÃO",
+      {
+        header: "Optante VT",
+        cell: row => (
+          <div style={{ width: 144 }}>{row.getValue() ? "SIM" : "NÃO"}</div>
+        ),
+      },
+    ),
+    columnHelper.accessor(
+      value => `${formatTimeRange(value.candidacy.availability)}`,
+      {
+        header: "Disponibilidade",
+        cell: row => (
+          <div style={{ width: 180, margin: "0 auto" }}>{row.getValue()}</div>
+        ),
+      },
+    ),
+    columnHelper.accessor(
+      value =>
+        formatCurrency(
+          Number(value.candidacy.candidate.complementaryInfo.transportTaxGoing),
+        ),
+      {
+        header: "Tarifa trecho",
+        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+      },
+    ),
+    columnHelper.accessor(
+      value =>
+        formatCurrency(
+          Number(
+            value.candidacy.candidate.complementaryInfo.transportTaxReturn,
+          ),
+        ),
+      {
+        header: "Tarifa integração",
+        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+      },
+    ),
+    columnHelper.accessor(
+      value =>
+        formatCurrency(
+          Number(value.candidacy.candidate.complementaryInfo.transportTaxDaily),
+        ),
+      {
+        header: "Tarifa dia",
+        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+      },
+    ),
+    columnHelper.accessor(
+      ({ contractStatus }) => {
+        const accessor =
+          AdmissionContractStatusEnum[
+            contractStatus as keyof typeof AdmissionContractStatusEnum
+          ];
+        return accessor;
+      },
+      {
+        id: "contractStatus",
+        header: () => (
+          <FilterButton
+            title="Status"
+            table={table}
+            column="contractStatus"
+            options={admissionsStatus}
+          />
+        ),
+        cell: row => {
+          const value = row.getValue().replace(/\s/g, "");
+
+          const status =
+            AdmissionContractStatusEnum[
+              String(value) as keyof typeof AdmissionContractStatusEnum
+            ];
+
+          return (
+            <div style={{ width: 184 }}>
+              <FlatText text={status} type={status} />
+            </div>
+          );
+        },
+        filterFn: (row: any, id: string, value: string) => {
+          const status: { [key: string]: string } = {
+            PENDENTE: "Pendente",
+            ASSINADO: "Assinado",
+            NAOASSINADO: "Não Assinado",
+          };
+
+          const rowValue =
+            status[row.getValue(id).replace(/\s/g, "") as keyof typeof status];
+          return value.length !== 0 ? value.includes(rowValue) : true;
+        },
+      },
+    ),
+    columnHelper.accessor("document", {
+      header: "Documento",
+      cell: row => (
+        <div style={{ width: 180 }}>
+          <a
+            style={{ fontSize: 14, fontWeight: 400 }}
+            href="https://www.clicksign.com/"
+            target="_blank"
+          >
+            Acessar documento
+          </a>
+        </div>
+      ),
+    }),
   ];
 
   useEffect(() => {
     getFilterValues("unit_unitName");
+    getFilterValues("contractStatus");
   }, [table]);
 
   useEffect(() => {
@@ -220,6 +357,7 @@ export default function AdmissionClass() {
           setTable={setTable}
           size={totalCount}
           globalFilterValue={globalFilter}
+          scroll
         />
       )}
     </div>

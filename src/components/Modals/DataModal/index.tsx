@@ -24,6 +24,7 @@ import {
   statesAccronym,
 } from "@/utils/datamodal";
 import { formatCpf } from "@/utils/formatCpf";
+import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -102,13 +103,6 @@ export function DataModal({ children, data }: DataModalProps) {
   function handleOnSave(data: any) {
     setOpen(false);
   }
-
-  const formatRG = (rg: string) => {
-    if (!rg) return "";
-    const numericRG = rg.replace(/\D/g, "");
-
-    return numericRG.replace(/(\d{2})(\d{3})(\d{3})(\d{1})$/, "$1.$2.$3-$4");
-  };
 
   function formatCurrency(value: string) {
     const numericValue = value.replace(/\D/g, "");

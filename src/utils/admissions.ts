@@ -27,3 +27,5 @@ export async function getAdmissionById(
 
   return data;
 }
+
+export const admissionsStatus = ["Assinado", "Não Assinado", "Pendente"];
