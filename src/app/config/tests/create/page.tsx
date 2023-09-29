@@ -7,22 +7,42 @@ import { TestCreateModal } from "@/components/Modals/TestCreateModal";
 import { Select } from "@/components/Select";
 import { TestsCreateTable } from "@/components/Tables/TestsCreateTable";
 import { TipTap } from "@/components/TipTap";
+import { QuestionTypeEnum } from "@/enums/test.enum";
+import { IQuestion } from "@/interfaces/tests.interface";
 import { testsCreateConfigSchema } from "@/schemas/configTestsSchema";
-import { useGetAllUnitsQuery } from "@/services/api/fetchApi";
+import {
+  useCreateTestMutation,
+  useGetAllUnitsQuery,
+} from "@/services/api/fetchApi";
+import { Toast } from "@/utils/toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Table } from "@tanstack/react-table";
-import { ReactNode, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { downloadExcel } from "react-export-table-to-excel";
 import { Controller, useForm } from "react-hook-form";
+import * as XLSX from "xlsx";
 import styles from "./TestCreate.module.scss";
 
-export default function TestCreate() {
-  const [table, setTable] = useState<Table<any>>();
+const types = {
+  Português: "PORTUGUESE",
+  Matemática: "MATHEMATICS",
+  Informática: "COMPUTING",
+};
 
-  const { control, handleSubmit } = useForm({
+export default function TestCreate() {
+  const [questions, setQuestions] = useState<IQuestion[]>([]);
+  const [table, setTable] = useState<Table<any>>();
+  const [units, setUnits] = useState<any>();
+
+  const { control, handleSubmit, setValue } = useForm({
     resolver: yupResolver(testsCreateConfigSchema),
   });
 
-  const { data: units } = useGetAllUnitsQuery({
+  const { push } = useRouter();
+
+  const [createTest] = useCreateTestMutation();
+  const { data: unitsData, isSuccess: unitsIsSuccess } = useGetAllUnitsQuery({
     page: 1,
     size: 1000,
     orderBy: "unitName",
@@ -30,8 +50,105 @@ export default function TestCreate() {
   });
 
   const handleCreateTest = (data: any) => {
-    // console.log(data);
+    createTest(data)
+      .then(() => {
+        Toast("success", "Prova criada com sucesso!");
+        push("/config/tests");
+      })
+      .catch(() => {
+        Toast("error", "Não foi possível criar a prova.");
+      });
   };
+
+  const handleCreateQuestion = (data: any) => {
+    const newQuestions = [...questions, data];
+    setQuestions(newQuestions);
+    Toast("success", "Questão criada com sucesso!");
+  };
+
+  const downloadTableExcelHandler = () => {
+    const columnHeaders = ["Número", "Texto", "Tipo"];
+
+    const rows = table?.getRowModel().flatRows.map(row => row.original);
+
+    if (rows && rows.length > 0) {
+      const excelData = rows.map((row, index) => ({
+        number: `Questão ${index + 1}`,
+        text: row.text,
+        type: QuestionTypeEnum[row.type as keyof typeof QuestionTypeEnum],
+      }));
+
+      downloadExcel({
+        fileName: `Questões prova`,
+        sheet: `Questões prova`,
+        tablePayload: {
+          header: columnHeaders,
+          body: excelData,
+        },
+      });
+    }
+  };
+
+  const handleImportExcel = (event: ChangeEvent<HTMLInputElement>) => {
+    const allowedExtensions = [".xls", ".xlsx"];
+    const selectedFile = event?.target?.files?.[0];
+
+    if (selectedFile) {
+      const fileName = selectedFile.name;
+      const fileExtension = fileName.substring(fileName.lastIndexOf("."));
+      if (allowedExtensions.includes(fileExtension.toLowerCase())) {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(selectedFile);
+        reader.onload = e => {
+          const workbook = XLSX.read(e.target?.result, { type: "buffer" });
+          const worksheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[worksheetName];
+          const data = XLSX.utils.sheet_to_json(worksheet);
+
+          data.map((row: any) => {
+            const newQuestion: IQuestion = {
+              text: row.QUESTION,
+              type: types[row.TYPE as keyof typeof types],
+              alternatives: [
+                {
+                  alternative: row.FIRST_OPTION,
+                  isCorrect: row.CORRECT_OPTION === 1,
+                },
+                {
+                  alternative: row.SECOND_OPTION,
+                  isCorrect: row.CORRECT_OPTION === 2,
+                },
+                {
+                  alternative: row.THIRD_OPTION,
+                  isCorrect: row.CORRECT_OPTION === 3,
+                },
+                {
+                  alternative: row.FOURTH_OPTION,
+                  isCorrect: row.CORRECT_OPTION === 4,
+                },
+              ],
+            };
+            handleCreateQuestion(newQuestion);
+          });
+        };
+      } else {
+        Toast("error", "Formato de arquivo inválido.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    setValue("questions", questions);
+  }, [questions]);
+
+  useEffect(() => {
+    unitsIsSuccess &&
+      setUnits(
+        unitsData.units.map(value => {
+          return { id: value.id, name: value.unitName };
+        }),
+      );
+  }, [unitsIsSuccess]);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(handleCreateTest)}>
@@ -49,13 +166,7 @@ export default function TestCreate() {
             >
               <Select
                 onChange={({ id }) => onChange(id)}
-                options={
-                  units
-                    ? units.units.map(value => {
-                        return { id: value.id, name: value.unitName };
-                      })
-                    : []
-                }
+                options={units ?? []}
                 placeholder="Selecione"
               />
             </DataInput>
@@ -250,21 +361,46 @@ export default function TestCreate() {
           text="Exportar dados"
           icon={<SystemUpdate />}
           type="button"
+          onClick={downloadTableExcelHandler}
         />
 
         <div className={styles.form__actions__right}>
-          <Button
-            buttonType="warning"
-            text="Importar dados"
-            icon={<Publish />}
-            type="button"
+          <label htmlFor="uploadExcelFile" style={{ cursor: "pointer" }}>
+            <Button
+              buttonType="warning"
+              text="Importar dados"
+              icon={<Publish />}
+              type="button"
+              style={{ pointerEvents: "none" }}
+            />
+          </label>
+
+          <input
+            type="file"
+            id="uploadExcelFile"
+            style={{ display: "none" }}
+            onChange={handleImportExcel}
+            accept=".xls, .xlsx"
           />
 
-          <TestCreateModal handleOnSubmit={() => {}} create />
+          <TestCreateModal handleOnSubmit={handleCreateQuestion} create />
         </div>
       </div>
 
-      <TestsCreateTable setTable={setTable} />
+      <Controller
+        control={control}
+        name="questions"
+        render={({ fieldState: { error } }) => (
+          <div>
+            <TestsCreateTable
+              setTable={setTable}
+              questions={questions}
+              handleSetQuestions={setQuestions}
+            />
+            <p className={styles.error}>{error?.message}</p>
+          </div>
+        )}
+      />
 
       <h3 className={styles.form__title}>Orientação para a prova</h3>
       <Controller

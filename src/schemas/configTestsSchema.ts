@@ -33,20 +33,26 @@ export const testsCreateConfigSchema = yup.object({
   aproveMessage: yup.string().required("Campo obrigatório"),
   disapprovedMessage: yup.string().required("Campo obrigatório"),
   unitId: yup.string().required("Campo obrigatório"),
-  // questions: yup.array().required("Campo obrigatório"),
+  questions: yup
+    .array()
+    .test({
+      message: "É necessário no mínimo criar uma questão",
+      test: arr => arr && arr.length > 0,
+    })
+    .required("É necessário no mínimo criar uma questão"),
 });
 
 export const testsModalConfigSchema = yup
   .object({
     text: yup.string().required("Campo obrigatório"),
-    type: yup
-      .string()
-      .oneOf(["PORTUGUESE", "MATHEMATICS", "COMPUTING"], "Tipo inválido")
-      .required("Campo obrigatório"),
+    type: yup.string().required("Campo obrigatório"),
     firstOption: yup.string().required("Campo obrigatório"),
     secondOption: yup.string().required("Campo obrigatório"),
     thirdOption: yup.string().required("Campo obrigatório"),
     fourthOption: yup.string().required("Campo obrigatório"),
-    correctOption: yup.number().required("Selecione uma alternativa correta"),
+    correctOption: yup
+      .number()
+      .nullable()
+      .required("Selecione uma alternativa correta"),
   })
   .required();

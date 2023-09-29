@@ -64,4 +64,12 @@
   a {
     cursor: pointer;
   }
+
+  p.tiptap-placeholder:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }

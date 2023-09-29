@@ -38,14 +38,15 @@ export function DataTablePagination({
           truncableClassName=""
           truncableText="..."
         >
-          <PrevButton>&lt; Anterior</PrevButton>
+          <PrevButton type="button">&lt; Anterior</PrevButton>
           <div className={styles.footer__pages}>
             <PageButton
               activeClassName={styles.footer__pages__item__active}
               className={styles.footer__pages__item}
+              type="button"
             />
           </div>
-          <NextButton>Próximo &gt;</NextButton>
+          <NextButton type="button">Próximo &gt;</NextButton>
         </Pagination>
       </div>
       <div className={styles.disabled} />

@@ -19,19 +19,20 @@ export interface ITest {
 }
 
 export interface IQuestion {
-  id: string;
+  id?: string;
   text: string;
   type: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   alternatives: Alternative[];
 }
 
 interface Alternative {
-  id: string;
+  id?: string;
   alternative: string;
-  createdAt: string;
-  updatedAt: string;
+  isCorrect: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export interface ITests {
   tests: ITest[];

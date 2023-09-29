@@ -577,6 +577,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    createTest: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/test",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -634,4 +643,5 @@ export const {
   useDeleteContractMutation,
   useUpdateCandidateDocumentsMutation,
   useGetAllTestsQuery,
+  useCreateTestMutation,
 } = fetchApi;

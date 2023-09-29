@@ -41,13 +41,44 @@ export function TestCreateModal({
     formState: { errors },
   } = useForm({
     resolver: yupResolver(testsModalConfigSchema),
+    defaultValues: {
+      firstOption: data?.alternatives[0].alternative,
+      secondOption: data?.alternatives[1].alternative,
+      thirdOption: data?.alternatives[2].alternative,
+      fourthOption: data?.alternatives[3].alternative,
+      text: data?.text,
+      type: data?.type,
+    },
   });
 
   function handleOnSave(data: any) {
     setCorrect(undefined);
     setOpen(false);
     reset();
-    handleOnSubmit(data);
+    const question = {
+      id: crypto.randomUUID(),
+      text: data.text,
+      type: data.type,
+      alternatives: [
+        {
+          alternative: data.firstOption,
+          isCorrect: data.correctOption === 0,
+        },
+        {
+          alternative: data.secondOption,
+          isCorrect: data.correctOption === 1,
+        },
+        {
+          alternative: data.thirdOption,
+          isCorrect: data.correctOption === 2,
+        },
+        {
+          alternative: data.fourthOption,
+          isCorrect: data.correctOption === 3,
+        },
+      ],
+    };
+    handleOnSubmit(question);
   }
 
   useEffect(() => {
@@ -61,6 +92,16 @@ export function TestCreateModal({
       Toast("error", errors.correctOption.message);
     }
   }, [errors]);
+
+  useEffect(() => {
+    if (data) {
+      setCorrect(
+        data.alternatives
+          .map(alternative => alternative.isCorrect)
+          .indexOf(true),
+      );
+    }
+  }, [data]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -82,9 +123,9 @@ export function TestCreateModal({
         <div className={styles.modal}>
           <Dialog.Overlay className={styles.modal__overlay} />
           <Dialog.Content className={styles.modal__content}>
-            <form onSubmit={handleSubmit(handleOnSave)}>
+            <div>
               <Dialog.Title className={styles.modal__title}>
-                Nova questão
+                {create ? " Nova questão" : "Editar questão"}
                 <Dialog.Close asChild>
                   <span>
                     <Close />
@@ -118,7 +159,11 @@ export function TestCreateModal({
                   render={({ field: { onChange }, fieldState: { error } }) => (
                     <div className={styles.modal__content__form__item}>
                       <label htmlFor="description">Tipo questão</label>
-                      <RadioSelect onChange={onChange} options={RadioOptions} />
+                      <RadioSelect
+                        onChange={onChange}
+                        options={RadioOptions}
+                        defaultValue={data?.type}
+                      />
                       <span className={styles.error}>
                         {error?.message && error.message}
                       </span>
@@ -140,6 +185,7 @@ export function TestCreateModal({
                         onChangeAlternative={setCorrect}
                         onChangeText={onChange}
                         error={error?.message}
+                        alternative={data?.alternatives[0].alternative}
                       />
                     )}
                   />
@@ -157,6 +203,7 @@ export function TestCreateModal({
                         onChangeAlternative={setCorrect}
                         onChangeText={onChange}
                         error={error?.message}
+                        alternative={data?.alternatives[1].alternative}
                       />
                     )}
                   />
@@ -174,6 +221,7 @@ export function TestCreateModal({
                         onChangeAlternative={setCorrect}
                         onChangeText={onChange}
                         error={error?.message}
+                        alternative={data?.alternatives[2].alternative}
                       />
                     )}
                   />
@@ -191,6 +239,7 @@ export function TestCreateModal({
                         onChangeAlternative={setCorrect}
                         onChangeText={onChange}
                         error={error?.message}
+                        alternative={data?.alternatives[3].alternative}
                       />
                     )}
                   />
@@ -209,9 +258,14 @@ export function TestCreateModal({
                   <Button text="Cancelar" buttonType="default" type="button" />
                 </Dialog.Close>
 
-                <Button text="Salvar" buttonType="primary" type="submit" />
+                <Button
+                  text="Salvar"
+                  buttonType="primary"
+                  type="button"
+                  onClick={handleSubmit(handleOnSave)}
+                />
               </div>
-            </form>
+            </div>
           </Dialog.Content>
         </div>
       </Dialog.Portal>
