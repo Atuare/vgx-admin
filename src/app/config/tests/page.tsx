@@ -10,6 +10,7 @@ import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./TestsConfig.module.scss";
 
 const defaultTableSize = 10;
@@ -35,6 +36,43 @@ export default function TestsConfigPage() {
 
   const handleTogglePage = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const downloadTableExcelHandler = () => {
+    const columnHeaders = [
+      "Unidade",
+      "Total de questões português",
+      "Total de questões matemática",
+      "Total de questões noções informática",
+      "Nota mínima para aprovação",
+      "Tempo máx prova (minutos)",
+      "Atualizado em",
+    ];
+
+    const rows = table?.getRowModel().flatRows.map(row => row.original);
+
+    if (rows && rows.length > 0) {
+      const excelData = rows.map(row => ({
+        unit: row.unit.unitName,
+        portTotal: row.portTotal,
+        matTotal: row.matTotal,
+        compTotal: row.compTotal,
+        minGrade: `${
+          (row.portMinScore + row.matMinScore + row.compMinScore) / 3
+        }`,
+        maxTime: row.maxTime,
+        updatedAt: dayjs(row.updatedAt).format("DD/MM/YYYY HH:mm:ss"),
+      }));
+
+      downloadExcel({
+        fileName: `Prova`,
+        sheet: `Prova`,
+        tablePayload: {
+          header: columnHeaders,
+          body: excelData,
+        },
+      });
+    }
   };
 
   const columnHelper = createColumnHelper<ITest>();
@@ -134,6 +172,7 @@ export default function TestsConfigPage() {
           buttonType="secondary"
           text="Exportar dados"
           icon={<SystemUpdate />}
+          onClick={downloadTableExcelHandler}
         />
 
         <Button
