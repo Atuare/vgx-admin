@@ -57,9 +57,12 @@ export default function TestsConfigPage() {
         portTotal: row.portTotal,
         matTotal: row.matTotal,
         compTotal: row.compTotal,
-        minGrade: `${
-          (row.portMinScore + row.matMinScore + row.compMinScore) / 3
-        }`,
+        minGrade: `${(
+          (row.portMinScore + row.matMinScore + row.compMinScore) /
+          3
+        )
+          .toFixed(2)
+          .replace(/[.,]00$/, "")}`,
         maxTime: row.maxTime,
         updatedAt: dayjs(row.updatedAt).format("DD/MM/YYYY HH:mm:ss"),
       }));
@@ -113,11 +116,14 @@ export default function TestsConfigPage() {
         </div>
       ),
       cell: (row: any) => {
-        const media =
+        const media = (
           (row.row.original?.portMinScore +
             row.row.original?.matMinScore +
             row.row.original?.compMinScore) /
-          3;
+          3
+        )
+          .toFixed(2)
+          .replace(/[.,]00$/, "");
 
         return <div>{media}</div>;
       },
