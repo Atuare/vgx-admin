@@ -166,9 +166,7 @@ export default function ContractsConfigPage() {
       value => dayjs(value.updatedAt).format("DD/MM/YYYY HH:mm"),
       {
         header: "Atualizado em",
-        cell: row => (
-          <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm")}</div>
-        ),
+        cell: row => <div>{row.getValue()}</div>,
       },
     ),
   ];
