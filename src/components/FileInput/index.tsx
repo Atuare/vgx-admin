@@ -41,7 +41,10 @@ export function FileInput({
     const fileType = file.type;
     const fileSize = file.size;
 
-    if (!allowedTypes.some(type => fileType.includes(type))) {
+    if (
+      allowedTypes.length > 0 &&
+      !allowedTypes.some(type => fileType.includes(type))
+    ) {
       const allowedTypesString = allowedTypes.join(", ");
       Toast(
         "error",
@@ -51,7 +54,7 @@ export function FileInput({
       return;
     }
 
-    if (fileSize > maxSize * 1e6) {
+    if (fileSize && fileSize > maxSize * 1e6) {
       Toast("error", `O arquivo deve ter no máximo ${maxSize}MB.`);
       event.target.value = "";
       return;

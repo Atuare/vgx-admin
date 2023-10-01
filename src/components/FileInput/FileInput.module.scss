@@ -17,6 +17,7 @@
     gap: 8px;
 
     &__label {
+      width: 145px;
       height: 37px;
       padding: 0 8px;
       background: var(--primary-4);
@@ -35,8 +36,7 @@
     }
 
     &__fileName {
-      width: 82px;
-
+      width: 150px;
       font-size: 14px;
       font-weight: 400;
       color: var(--neutral-4);
