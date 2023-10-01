@@ -18,7 +18,6 @@ import {
   useGetAllDocumentsQuery,
   useUpdateDocumentMutation,
 } from "@/services/api/fetchApi";
-import { getAllDocuments } from "@/utils/documents";
 import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -51,7 +50,6 @@ export default function DocumentsConfigPage() {
   const {
     data: documentsData,
     isSuccess,
-    isLoading,
     isFetching,
     refetch,
   } = useGetAllDocumentsQuery({
@@ -63,14 +61,8 @@ export default function DocumentsConfigPage() {
   const [createDocument] = useCreateDocumentMutation();
   const [updateDocument] = useUpdateDocumentMutation();
 
-  const getDocuments = async (page: number) => {
-    const data = await getAllDocuments(page, defaultTableSize);
-    setDocuments(data);
-  };
-
   const handleTogglePage = (page: number) => {
     setCurrentPage(page + 1);
-    getDocuments(page + 1);
   };
 
   const handleDeleteDocument = async (id: string) => {
@@ -278,6 +270,10 @@ export default function DocumentsConfigPage() {
   }
 
   useEffect(() => {
+    refetch();
+  }, [currentPage]);
+
+  useEffect(() => {
     if (isSuccess) {
       setDocuments(documentsData);
     }
@@ -306,6 +302,7 @@ export default function DocumentsConfigPage() {
         handleTogglePage={handleTogglePage}
         setTable={setTable}
         size={documents?.totalCount}
+        loading={isFetching}
       />
 
       <ToastContainer />
