@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "VGX - Configurações Atualizações de dados",
-  description: "VGX - Configurações ",
+  description: "VGX - Configurações Atualizações de dados",
 };
 
 export default function UpdateConfigLayout({
