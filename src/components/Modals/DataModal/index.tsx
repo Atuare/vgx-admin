@@ -66,9 +66,6 @@ export function DataModal({ children, data }: DataModalProps) {
   );
 
   const [haveDisability, setHaveDisability] = useState<boolean | null>(null);
-  const [disabilityDescription, setDisabilityDescription] = useState<
-    string | null
-  >(null);
   const [hasMedicalReport, setHasMedicalReport] = useState<boolean | null>(
     null,
   );
@@ -220,9 +217,6 @@ export function DataModal({ children, data }: DataModalProps) {
         number: candidate?.address?.number,
       });
       setHaveDisability(candidate?.complementaryInfo?.haveDisability);
-      setDisabilityDescription(
-        candidate?.complementaryInfo?.disabilityDescription,
-      );
       setTransportVoucher(candidate?.complementaryInfo?.transportVoucher);
     }
 
