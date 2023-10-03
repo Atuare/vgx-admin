@@ -5,6 +5,7 @@ import styles from "./Select.module.scss";
 interface SelectProps {
   options: { name: string; id: string }[];
   defaultValue?: string | undefined;
+  value?: string | undefined;
   onChange: (value: { name: string; id: string }) => void;
   placeholder: string;
   width?: string | number;
@@ -18,12 +19,13 @@ export function Select({
   defaultValue,
   width,
   maxHeight,
+  value,
 }: SelectProps) {
   const [openSelect, setOpenSelect] = useState(false);
-  const [select, setSelect] = useState<string>(defaultValue ?? "");
+  const [select, setSelect] = useState<string>(value ?? defaultValue ?? "");
 
   useEffect(() => {
-    setSelect(defaultValue ?? "");
+    setSelect(value ?? defaultValue ?? "");
     setOpenSelect(false);
   }, [options]);
 
@@ -35,8 +37,6 @@ export function Select({
         }`}
         onClick={() => setOpenSelect(prev => !prev)}
         type="button"
-        disabled={options.length === 0}
-        style={{ cursor: options.length === 0 ? "not-allowed" : "pointer" }}
       >
         <span>{select ? select : placeholder}</span>
         <ChevronDown />
