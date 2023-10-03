@@ -15,7 +15,7 @@ export default function ConfigUpdate() {
         maxHeight={250}
         width={296}
       />
-      <FileInput width="383px" />
+      <FileInput width="390px" />
       <p>
         Baixe a planilha modelo, preencha e selecione o arquivo com os dados
         para importação.
