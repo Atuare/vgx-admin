@@ -83,9 +83,6 @@ export const dataModalSchema = yup.object({
       .oneOf(["MATUTINO", "VESPERTINO", "NOTURNO"])
       .required("Campo obrigatório"),
   }),
-  // result: yup.string().required("Campo obrigatório"),
-  // reason: yup.string().required("Campo obrigatório"),
-  observation: yup.string().required("Campo obrigatório"),
 
   documents: yup.object().shape({
     identity: yup.object().shape({
@@ -138,5 +135,18 @@ export const dataModalSchema = yup.object({
         })
         .required("Campo obrigatório"),
     }),
+  }),
+
+  results: yup.object().shape({
+    result: yup.string().required("Campo obrigatório"),
+    reason: yup.string().when("result", {
+      is: (value: string) => value === "REPROVADO",
+      then: (schema: any) => schema.required("Campo obrigatório"),
+    }),
+    training: yup.string().when("result", {
+      is: (value: string) => value === "APROVADO",
+      then: (schema: any) => schema.required("Campo obrigatório"),
+    }),
+    observation: yup.string().required("Campo obrigatório"),
   }),
 });

@@ -35,11 +35,11 @@ export const maritalStatus = [
 export const results = [
   {
     name: "Aprovado",
-    id: "Aprovado",
+    id: "APROVADO",
   },
   {
     name: "Reprovado",
-    id: "Reprovado",
+    id: "REPROVADO",
   },
 ];
 
@@ -205,8 +205,8 @@ export const pixTypes = [
 
 export const StatusSelect = [
   {
-    name: "Concluído",
-    id: "CONCLUÍDO",
+    name: "Completo",
+    id: "COMPLETO",
   },
   {
     name: "Em andamento",

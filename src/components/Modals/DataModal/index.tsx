@@ -55,6 +55,7 @@ type SelectType = {
 }[];
 
 export function DataModal({ children, data }: DataModalProps) {
+  const { user } = useUser();
   const { control, reset, handleSubmit } = useForm({
     resolver: yupResolver(dataModalSchema),
   });
@@ -88,7 +89,6 @@ export function DataModal({ children, data }: DataModalProps) {
 
   const pixRef = useRef<HTMLInputElement | null>(null);
 
-  const { user } = useUser();
   const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
     useGetAllSchoolingsQuery({
       page: 1,
@@ -1830,30 +1830,72 @@ export function DataModal({ children, data }: DataModalProps) {
                         styles.modal__content__form__item__inputs__container
                       }
                     >
-                      <InputContainer title="Resultado">
-                        <Select
-                          onChange={({ name }) => {
-                            setApproved(name === "Aprovado");
-                          }}
-                          options={results}
-                          placeholder="Selecione"
-                        />
-                      </InputContainer>
+                      <Controller
+                        control={control}
+                        name="results.result"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Resultado"
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ name, id }) => {
+                                setApproved(name === "Aprovado");
+                                onChange(id);
+                              }}
+                              options={results}
+                              placeholder="Selecione"
+                            />
+                          </InputContainer>
+                        )}
+                      />
 
                       {approved && (
-                        <InputContainer title="Treinamento" width={"30%"}>
-                          <Select
-                            onChange={() => {}}
-                            placeholder="Selecione"
-                            options={trainings ?? []}
-                          />
-                        </InputContainer>
+                        <Controller
+                          control={control}
+                          name="results.training"
+                          render={({
+                            field: { onChange },
+                            fieldState: { error },
+                          }) => (
+                            <InputContainer
+                              title="Treinamento"
+                              width={"30%"}
+                              error={error?.message}
+                            >
+                              <Select
+                                onChange={({ id }) => onChange(id)}
+                                placeholder="Selecione"
+                                options={trainings ?? []}
+                              />
+                            </InputContainer>
+                          )}
+                        />
                       )}
 
                       {approved === false && (
-                        <InputContainer title="Motivo">
-                          <input type="text" id="Motivo" />
-                        </InputContainer>
+                        <Controller
+                          control={control}
+                          name="results.reason"
+                          render={({
+                            field: { onChange },
+                            fieldState: { error },
+                          }) => (
+                            <InputContainer
+                              title="Motivo"
+                              error={error?.message}
+                            >
+                              <input
+                                type="text"
+                                id="Motivo"
+                                onChange={e => onChange(e.target.value)}
+                              />
+                            </InputContainer>
+                          )}
+                        />
                       )}
                     </div>
                     <div
@@ -1861,10 +1903,28 @@ export function DataModal({ children, data }: DataModalProps) {
                         styles.modal__content__form__item__inputs__container
                       }
                     >
-                      <InputContainer title="Observação" width={"100%"}>
-                        <input type="text" id="Observação" />
-                      </InputContainer>
+                      <Controller
+                        control={control}
+                        name="results.observation"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Observação"
+                            width={"100%"}
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Observação"
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
                     </div>
+
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
