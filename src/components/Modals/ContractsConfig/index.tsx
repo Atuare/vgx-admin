@@ -25,7 +25,7 @@ export function ContractConfigModal({
   create,
 }: ContractModalProps) {
   const [open, setOpen] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(contractConfigModalConfigSchema),
     defaultValues: {
       name: defaultValue?.name ?? "",
@@ -40,6 +40,7 @@ export function ContractConfigModal({
   function handleOnSave(data: any) {
     setOpen(false);
     handleOnSubmit(data);
+    reset();
   }
 
   async function convertBase64ToFile(base64: string, filename: string) {
