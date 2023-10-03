@@ -242,6 +242,7 @@ export function StepOneProcessEdit({
                       ? currentProcessData?.banner
                       : undefined
                   }
+                  width="301px"
                 />
               </DataInput>
             )}

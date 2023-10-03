@@ -4,12 +4,13 @@ import { StepThreeProcessEdit } from "@/components/ProcessEdit/StepThreeProcessE
 import { StepTwoProcessEdit } from "@/components/ProcessEdit/StepTwoProcessEdit";
 import { Stepper } from "@/components/Stepper";
 import { useProcessEdit } from "@/hooks/useProcess";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "./ProcessEdit.module.scss";
 
 export default function ProcessEdit() {
   const [step, setStep] = useState(1);
+  const pathname = usePathname();
   const { push } = useRouter();
   const { processEdit } = useProcessEdit();
   const [processData, setProcessData] = useState<any>(processEdit);
@@ -22,7 +23,7 @@ export default function ProcessEdit() {
     setStep(page);
   };
 
-  if (!processEdit) return push("/process");
+  if (!processData) return;
 
   return (
     <div className={styles.process}>
