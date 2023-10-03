@@ -224,6 +224,8 @@ export function DataModal({ children, data }: DataModalProps) {
       const candidateId = data?.candidacy.candidate.id;
       getCandidateData(candidateId);
     }
+
+    if (!open) reset();
   }, [open, data]);
 
   useEffect(() => {
