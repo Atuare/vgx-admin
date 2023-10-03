@@ -43,7 +43,7 @@ export default function Interviews() {
 
   const { data, isSuccess, isFetching, refetch } = useGetAllInterviewsQuery({
     page: currentPage,
-    size: 1,
+    size: 5,
   });
 
   const { data: units, isSuccess: unitsSuccess } = useGetAllUnitsQuery({
@@ -247,7 +247,7 @@ export default function Interviews() {
       <DataTable
         ref={tableRef}
         currentPage={currentPage}
-        defaultTableSize={1}
+        defaultTableSize={5}
         handleTogglePage={handleTogglePage}
         setTable={setTable}
         columns={columns}
