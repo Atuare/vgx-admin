@@ -7,10 +7,7 @@ import useUser from "@/hooks/useUser";
 import { ICandidate } from "@/interfaces/candidate.interface";
 import { InterviewType } from "@/interfaces/interviews.interface";
 import { dataModalSchema } from "@/schemas/dataModalSchema";
-import {
-  useGetAllSchoolingsQuery,
-  useGetAllTrainingsQuery,
-} from "@/services/api/fetchApi";
+import { useGetAllTrainingsQuery } from "@/services/api/fetchApi";
 import { getCandidateById } from "@/utils/candidate";
 import {
   FormationTypes,
@@ -80,7 +77,6 @@ export function DataModal({ children, data }: DataModalProps) {
   );
   const [address, setAddress] = useState<AddressProps>();
   const [approved, setApproved] = useState<boolean | null>(null);
-  const [schoolings, setSchoolings] = useState<SelectType>();
   const [trainings, setTrainings] = useState<SelectType>();
   const [availabilites, setAvailabilites] = useState<SelectType>();
   const [salaryClaim, setSalaryClaim] = useState<string>(formatCurrency("0"));
@@ -90,11 +86,6 @@ export function DataModal({ children, data }: DataModalProps) {
 
   const pixRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: schoolingsData, isSuccess: isSchoolingsSuccess } =
-    useGetAllSchoolingsQuery({
-      page: 1,
-      size: 999999,
-    });
   const { data: trainingsData, isSuccess: isTrainingsSuccess } =
     useGetAllTrainingsQuery({
       page: 1,
@@ -189,16 +180,6 @@ export function DataModal({ children, data }: DataModalProps) {
     const { data } = await getCandidateById({ id });
     setCandidate(data);
   }
-
-  useEffect(() => {
-    isSchoolingsSuccess &&
-      setSchoolings(
-        schoolingsData.schoolings.map(item => ({
-          name: item.schoolingName,
-          id: item.schoolingName,
-        })),
-      );
-  }, [isSchoolingsSuccess]);
 
   useEffect(() => {
     isTrainingsSuccess &&
