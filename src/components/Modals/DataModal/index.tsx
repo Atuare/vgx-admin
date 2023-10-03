@@ -129,7 +129,8 @@ export function DataModal({ children, data }: DataModalProps) {
     setSalaryClaim(formatCurrency(event.target.value));
   }
 
-  function handleOnChangePixKey(value: string, type?: string) {
+  function handleOnChangePixKey(value?: string, type?: string) {
+    if (!value) return;
     const numericValue = value?.replace(/\D/g, "");
 
     switch (pixType?.name ?? type) {
@@ -227,7 +228,7 @@ export function DataModal({ children, data }: DataModalProps) {
   useEffect(() => {
     if (candidate) {
       setAddress({
-        zipCode: candidate?.address?.zipCode,
+        zipCode: formatCEP(candidate?.address?.zipCode ?? ""),
         address: candidate?.address?.address,
         neighborhood: candidate?.address?.neighborhood,
         complement: candidate?.address?.complement,
@@ -241,11 +242,29 @@ export function DataModal({ children, data }: DataModalProps) {
       setTransportVoucher(candidate?.complementaryInfo?.transportVoucher);
     }
 
+    getCitiesByState(candidate?.state ?? "");
+
+    if (candidate?.documents?.bank?.pixKey) {
+      setPixType({
+        id: candidate?.documents?.bank?.pixKeyType,
+        name: candidate?.documents?.bank?.pixKeyType,
+      });
+    }
+
+    handleOnChangePixKey(
+      candidate?.documents?.bank?.pixKey,
+      candidate?.documents?.bank?.pixKeyType,
+    );
+
     reset({
       ...candidate,
       cpf: formatCpf(candidate?.cpf || ""),
       whatsapp: formatPhoneNumber(candidate?.whatsapp ?? ""),
       phone: formatPhoneNumber(candidate?.phone ?? ""),
+      address: {
+        ...candidate?.address,
+        zipCode: formatCEP(candidate?.address?.zipCode ?? ""),
+      },
     });
   }, [candidate]);
 
@@ -254,1619 +273,1639 @@ export function DataModal({ children, data }: DataModalProps) {
       <Dialog.Trigger asChild>
         <span>{children}</span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
-        <Dialog.Overlay className={styles.modal__overlay} />
-        <Dialog.Content className={styles.modal__content}>
-          <form onSubmit={handleSubmit(handleOnSave)}>
-            <Dialog.Title className={styles.modal__title}>
-              {data?.candidacy.candidate.name} -{" "}
-              {data?.candidacy?.process?.role?.roleText}
-              <Dialog.Close asChild>
-                <span>
-                  <Close />
-                </span>
-              </Dialog.Close>
-            </Dialog.Title>
+      <Dialog.Portal>
+        <div className={styles.modal}>
+          <Dialog.Overlay className={styles.modal__overlay} />
+          <Dialog.Content className={styles.modal__content}>
+            <form onSubmit={handleSubmit(handleOnSave)}>
+              <Dialog.Title className={styles.modal__title}>
+                {data?.candidacy.candidate.name} -{" "}
+                {data?.candidacy?.process?.role?.roleText}
+                <Dialog.Close asChild>
+                  <span>
+                    <Close />
+                  </span>
+                </Dialog.Close>
+              </Dialog.Title>
 
-            <div className={styles.modal__content__form}>
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Informações pessoais
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="name"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Nome" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Nome"
-                            style={{ width: 272 }}
-                            defaultValue={data?.candidacy?.candidate?.name}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="cpf"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="CPF" error={error?.message}>
-                          <input
-                            type="text"
-                            id="CPF"
-                            defaultValue={formatCpf(candidate?.cpf ?? "")}
-                            onChange={e => {
-                              onChange(e.target.value);
-                              e.target.value = formatCpf(e.target.value);
-                            }}
-                            maxLength={14}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="gender"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Sexo"
-                          width={"100%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={genders}
-                            width="100%"
-                            defaultValue={candidate?.gender}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="civilStatus"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Estado civil"
-                          width={"100%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={maritalStatus}
-                            maxHeight={250}
-                            defaultValue={candidate?.civilStatus}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="birthdate"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Data de nascimento"
-                          htmlFor="birthdate"
-                          error={error?.message}
-                        >
-                          <input
-                            type="date"
-                            id="birthdate"
-                            defaultValue={data?.candidacy?.candidate?.birthdate}
-                            onChange={e => {
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="state"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Estado"
-                          htmlFor="state"
-                          width={"30%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => {
-                              onChange(id);
-                              getCitiesByState(id);
-                            }}
-                            placeholder="Selecione"
-                            options={states}
-                            defaultValue={
-                              statesAccronym[
-                                candidate?.state as keyof typeof statesAccronym
-                              ]
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="county"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Município"
-                          htmlFor="city"
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={cities ?? []}
-                            width={200}
-                            defaultValue={candidate?.county}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="whatsapp"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Whatsapp"
-                          htmlFor="whatsapp"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="whatsapp"
-                            defaultValue={formatPhoneNumber(
-                              candidate?.whatsapp ?? "",
-                            )}
-                            onChange={e => {
-                              onChange(e.target.value);
-                              e.target.value = formatPhoneNumber(
-                                e.target.value,
-                              );
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="phone"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Telefone"
-                          htmlFor="phone"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="phone"
-                            defaultValue={candidate?.phone}
-                            onChange={e => {
-                              onChange(e.target.value);
-                              e.target.value = formatPhoneNumber(
-                                e.target.value,
-                              );
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="email"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="E-mail"
-                          htmlFor="email"
-                          width={272}
-                          error={error?.message}
-                        >
-                          <input
-                            type="email"
-                            id="email"
-                            defaultValue={data?.candidacy?.candidate?.email}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="motherName"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Nome completo da mãe"
-                          htmlFor="motherName"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            style={{ width: 272 }}
-                            id="motherName"
-                            defaultValue={
-                              data?.candidacy?.candidate?.motherName
-                            }
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="fatherName"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Nome completo do pai"
-                          htmlFor="fatherName"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            style={{ width: 272 }}
-                            id="fatherName"
-                            defaultValue={
-                              data?.candidacy?.candidate?.fatherName
-                            }
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="childUnderfourteen"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui filhos menores de 14 anos?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            defaultValue={
-                              data?.candidacy?.candidate?.childUnderfourteen
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="childCount"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Número de filhos"
-                          error={error?.message}
-                        >
-                          <input
-                            type="number"
-                            style={{ width: 80 }}
-                            min={0}
-                            defaultValue={
-                              data?.candidacy?.candidate?.childCount
-                            }
-                            onChange={e => {
-                              if (!e.target.validity.valid) {
-                                e.target.value = "";
-                                return;
-                              }
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Endereço
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="address.zipCode"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="CEP" error={error?.message}>
-                          <input
-                            type="text"
-                            id="CEP"
-                            defaultValue={address?.zipCode}
-                            onChange={e => {
-                              e.target.value = handleOnChangeCep(e);
-                              onChange(e.target.value);
-                            }}
-                            maxLength={9}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="address.address"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Logradouro"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="Logradouro"
-                            defaultValue={address?.address}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <InputContainer title="Endereço">
-                      <input type="text" id="Endereço" />
-                    </InputContainer>
-
-                    <Controller
-                      control={control}
-                      name="address.neighborhood"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Bairro" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Bairro"
-                            defaultValue={address?.neighborhood}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="address.number"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Número" error={error?.message}>
-                          <input
-                            type="number"
-                            id="Número"
-                            defaultValue={address?.number}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="address.complement"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Complemento"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="Complemento"
-                            defaultValue={address?.complement}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Documentos pessoais
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.identity.rg"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="RG" error={error?.message}>
-                          <input
-                            type="text"
-                            id="RG"
-                            defaultValue={candidate?.documents?.identity?.rg}
-                            onChange={e => {
-                              if (!e.target.validity.valid) {
-                                e.target.value = "";
-                                return;
-                              }
-                              onChange(e.target.value);
-                              e.target.value = formatRG(e.target.value);
-                            }}
-                            maxLength={9}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.identity.identityShippingDate"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Data de expedição"
-                          htmlFor="expeditionDate"
-                          error={error?.message}
-                        >
-                          <input
-                            type="date"
-                            id="expeditionDate"
-                            defaultValue={
-                              candidate?.documents?.identity
-                                ?.identityShippingDate
-                            }
-                            onChange={e => {
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.identity.federalUnit"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Órgão expedidor"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="Órgão expedidor"
-                            defaultValue={
-                              candidate?.documents?.identity?.federalUnit
-                            }
-                            onChange={e => {
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.identity.uf"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="UF"
-                          width={"30%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={states}
-                            defaultValue={
-                              statesAccronym[
-                                candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
-                              ]
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.work.pis"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Número do PIS"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="Número do PIS"
-                            defaultValue={candidate?.documents?.work?.pis}
-                            maxLength={11}
-                            pattern="\d*"
-                            onChange={e => {
-                              if (!e.target.validity.valid) {
-                                e.target.value = "";
-                                return;
-                              }
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <h1 style={{ fontSize: 17 }}>CTPS</h1>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.work.ctps"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Número da CTPS"
-                          error={error?.message}
-                        >
-                          <input
-                            type="text"
-                            id="Número da CTPS"
-                            defaultValue={candidate?.documents?.work?.ctps}
-                            pattern="[0-9/]*"
-                            maxLength={11}
-                            onChange={e => {
-                              if (!e.target.validity.valid) {
-                                e.target.value = "";
-                                return;
-                              }
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.work.shippingDate"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Data de expedição"
-                          htmlFor="expeditionDateWork"
-                          error={error?.message}
-                        >
-                          <input
-                            type="date"
-                            id="expeditionDateWork"
-                            defaultValue={
-                              candidate?.documents?.work?.shippingDate
-                            }
-                            onChange={e => {
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.work.serie"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Série" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Série"
-                            defaultValue={candidate?.documents?.work?.serie}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.work.uf"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="UF"
-                          width={"30%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={states}
-                            defaultValue={
-                              statesAccronym[
-                                candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
-                              ]
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <h1 style={{ fontSize: 17 }}>Conta corrente</h1>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.bank.bank"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Banco" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Banco"
-                            defaultValue={candidate?.documents?.bank?.bank}
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.bank.agency"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Agência" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Agência"
-                            value={candidate?.documents?.bank?.agency}
-                            maxLength={4}
-                            pattern="\d*"
-                            onChange={e => {
-                              if (!e.target.validity.valid) {
-                                e.target.value = "";
-                                return;
-                              }
-                              onChange(e.target.value);
-                            }}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.bank.account"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Conta" error={error?.message}>
-                          <AccountInput
-                            defaultValue={
-                              candidate?.documents?.bank?.account ?? ""
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="documents.bank.pixKeyType"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Tipo chave PIX"
-                          width={"20%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={value => {
-                              if (!value) return;
-                              if (value?.id === pixType?.id) return;
-                              setPixType(value);
-                              if (pixRef && pixRef.current) {
-                                const nativeInputValueSetter =
-                                  Object.getOwnPropertyDescriptor(
-                                    window.HTMLInputElement.prototype,
-                                    "value",
-                                  )?.set;
-                                nativeInputValueSetter?.call(
-                                  pixRef.current,
-                                  "",
-                                );
-
-                                const ev2 = new Event("input", {
-                                  bubbles: true,
-                                });
-                                pixRef.current.dispatchEvent(ev2);
-                              }
-                              onChange(value.id);
-                            }}
-                            options={pixTypes}
-                            placeholder="Selecione"
-                            maxHeight={250}
-                            defaultValue={
-                              candidate?.documents?.bank?.pixKeyType
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="documents.bank.pixKey"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Chave PIX"
-                          error={error?.message}
-                        >
-                          <input
-                            type={pixType?.id === "E-mail" ? "email" : "text"}
-                            pattern={
-                              pixType?.id === "CPF" ||
-                              pixType?.id === "Telefone"
-                                ? "d*"
-                                : undefined
-                            }
-                            maxLength={
-                              pixType?.id === "Chave aleatória" ? 32 : undefined
-                            }
-                            id="Chave PIX"
-                            defaultValue={handleOnChangePixKey(
-                              candidate?.documents?.bank?.pixKey ?? "",
-                            )}
-                            disabled={!pixType?.id}
-                            onChange={e => {
-                              e.target.value = handleOnChangePixKey(
-                                e.target.value,
-                              );
-                              onChange(e.target.value);
-                            }}
-                            style={{
-                              cursor: !pixType ? "not-allowed" : "text",
-                            }}
-                            ref={pixRef}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Informações complementares
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.hasCellPhone"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui celular?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            defaultValue={
-                              candidate?.complementaryInfo?.hasCellPhone
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.hasCellPc"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui computador?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            defaultValue={
-                              candidate?.complementaryInfo?.hasCellPc
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.hasInternet"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui internet?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            defaultValue={
-                              candidate?.complementaryInfo?.hasInternet
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.weekendObjection"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui objeção em trabalhar algum dia da semana?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            defaultValue={
-                              candidate?.complementaryInfo?.weekendObjection
-                            }
-                            onChange={onChange}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  {data?.candidacy?.process?.requestCv && (
+              <div className={styles.modal__content__form}>
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Informações pessoais
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
                       }
                     >
-                      <InputContainer title="Pretensão salarial">
-                        <input
-                          type="text"
-                          id="Pretensão salarial"
-                          onChange={handleOnSalaryClaimChange}
-                          value={salaryClaim}
-                        />
-                      </InputContainer>
-                    </div>
-                  )}
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.haveDisability"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui alguma deficiência?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            onChange={val => {
-                              onChange(val);
-                              setHaveDisability(val);
-                            }}
-                            defaultValue={
-                              candidate?.complementaryInfo?.haveDisability
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    {haveDisability && (
                       <Controller
                         control={control}
-                        name="complementaryInfo.disabilityDescription"
+                        name="name"
                         render={({
                           field: { onChange },
                           fieldState: { error },
                         }) => (
-                          <InputContainer title="Qual?" error={error?.message}>
+                          <InputContainer title="Nome" error={error?.message}>
                             <input
                               type="text"
-                              id="Qual?"
+                              id="Nome"
+                              style={{ width: 272 }}
+                              defaultValue={data?.candidacy?.candidate?.name}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="cpf"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="CPF" error={error?.message}>
+                            <input
+                              type="text"
+                              id="CPF"
+                              defaultValue={formatCpf(candidate?.cpf ?? "")}
+                              onChange={e => {
+                                onChange(e.target.value);
+                                e.target.value = formatCpf(e.target.value);
+                              }}
+                              maxLength={14}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="gender"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Sexo"
+                            width={"100%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={genders}
+                              width="100%"
+                              defaultValue={candidate?.gender}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="civilStatus"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Estado civil"
+                            width={"100%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={maritalStatus}
+                              maxHeight={250}
+                              defaultValue={candidate?.civilStatus}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="birthdate"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Data de nascimento"
+                            htmlFor="birthdate"
+                            error={error?.message}
+                          >
+                            <input
+                              type="date"
+                              id="birthdate"
                               defaultValue={
-                                candidate?.complementaryInfo
-                                  ?.disabilityDescription
+                                data?.candidacy?.candidate?.birthdate
+                              }
+                              onChange={e => {
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="state"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Estado"
+                            htmlFor="state"
+                            width={"30%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => {
+                                onChange(id);
+                                getCitiesByState(id);
+                              }}
+                              placeholder="Selecione"
+                              options={states}
+                              defaultValue={
+                                statesAccronym[
+                                  candidate?.state as keyof typeof statesAccronym
+                                ]
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="county"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Município"
+                            htmlFor="city"
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={cities ?? []}
+                              width={200}
+                              defaultValue={candidate?.county}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="whatsapp"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Whatsapp"
+                            htmlFor="whatsapp"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="whatsapp"
+                              defaultValue={formatPhoneNumber(
+                                candidate?.whatsapp ?? "",
+                              )}
+                              onChange={e => {
+                                onChange(e.target.value);
+                                e.target.value = formatPhoneNumber(
+                                  e.target.value,
+                                );
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="phone"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Telefone"
+                            htmlFor="phone"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="phone"
+                              defaultValue={candidate?.phone}
+                              onChange={e => {
+                                onChange(e.target.value);
+                                e.target.value = formatPhoneNumber(
+                                  e.target.value,
+                                );
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="email"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="E-mail"
+                            htmlFor="email"
+                            width={272}
+                            error={error?.message}
+                          >
+                            <input
+                              type="email"
+                              id="email"
+                              defaultValue={data?.candidacy?.candidate?.email}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="motherName"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Nome completo da mãe"
+                            htmlFor="motherName"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              style={{ width: 272 }}
+                              id="motherName"
+                              defaultValue={
+                                data?.candidacy?.candidate?.motherName
                               }
                               onChange={e => onChange(e.target.value)}
                             />
                           </InputContainer>
                         )}
                       />
-                    )}
-                  </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.hasMedicalReport"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Possui laudo médico?"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            onChange={val => {
-                              onChange(val);
-                              setHasMedicalReport(val);
-                            }}
-                            defaultValue={
-                              candidate?.complementaryInfo?.hasMedicalReport
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    {hasMedicalReport && (
-                      <InputContainer title="Anexar arquivo">
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 8,
-                          }}
-                        >
-                          <FileInput
-                            onChange={file => setMedicalReportPdf(file)}
-                            maxSize={5}
-                            allowedTypes={["pdf"]}
-                          />
-                          <a
-                            href={
-                              medicalReportPdf &&
-                              URL.createObjectURL(medicalReportPdf)
-                            }
-                            target="_blank"
-                            style={{ alignSelf: "flex-end", cursor: "pointer" }}
+                      <Controller
+                        control={control}
+                        name="fatherName"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Nome completo do pai"
+                            htmlFor="fatherName"
+                            error={error?.message}
                           >
-                            Visualizar documento
-                          </a>
-                        </div>
-                      </InputContainer>
-                    )}
-                  </div>
+                            <input
+                              type="text"
+                              style={{ width: 272 }}
+                              id="fatherName"
+                              defaultValue={
+                                data?.candidacy?.candidate?.fatherName
+                              }
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
 
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="complementaryInfo.transportVoucher"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Opta por receber vale transporte?"
-                          lightTitle="(vagas presenciais)"
-                          error={error?.message}
-                        >
-                          <Radio
-                            column
-                            lightTheme
-                            onChange={val => {
-                              onChange(val);
-                              setTransportVoucher(val);
-                            }}
-                            defaultValue={
-                              candidate?.complementaryInfo?.transportVoucher
-                            }
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  {transportVoucher && (
-                    <>
-                      <div
-                        className={
-                          styles.modal__content__form__item__inputs__container
-                        }
-                      >
-                        <Controller
-                          control={control}
-                          name="complementaryInfo.transportCompany"
-                          render={({
-                            field: { onChange },
-                            fieldState: { error },
-                          }) => (
-                            <InputContainer
-                              title="Empresa"
-                              error={error?.message}
-                            >
-                              <input
-                                type="text"
-                                id="Empresa"
-                                defaultValue={
-                                  candidate?.complementaryInfo?.transportCompany
-                                }
-                                onChange={e => onChange(e.target.value)}
-                              />
-                            </InputContainer>
-                          )}
-                        />
-
-                        <Controller
-                          control={control}
-                          name="complementaryInfo.transportLine"
-                          render={({
-                            field: { onChange },
-                            fieldState: { error },
-                          }) => (
-                            <InputContainer
-                              title="Linha"
-                              error={error?.message}
-                            >
-                              <input
-                                type="text"
-                                id="Linha"
-                                defaultValue={
-                                  candidate?.complementaryInfo?.transportLine
-                                }
-                                onChange={e => onChange(e.target.value)}
-                              />
-                            </InputContainer>
-                          )}
-                        />
-                      </div>
-
-                      <div
-                        className={
-                          styles.modal__content__form__item__inputs__container
-                        }
-                      >
-                        <Controller
-                          control={control}
-                          name="complementaryInfo.transportTaxGoing"
-                          render={({
-                            field: { onChange },
-                            fieldState: { error },
-                          }) => (
-                            <InputContainer
-                              title="Tarifa de ida"
-                              error={error?.message}
-                            >
-                              <input
-                                type="text"
-                                id="Tarifa de ida"
-                                defaultValue={
-                                  candidate?.complementaryInfo
-                                    ?.transportTaxGoing
-                                }
-                                onChange={e => {
-                                  e.target.value = formatCurrency(
-                                    e.target.value,
-                                  );
-                                  onChange(e.target.value);
-                                }}
-                              />
-                            </InputContainer>
-                          )}
-                        />
-
-                        <Controller
-                          control={control}
-                          name="complementaryInfo.transportTaxReturn"
-                          render={({
-                            field: { onChange },
-                            fieldState: { error },
-                          }) => (
-                            <InputContainer
-                              title="Tarifa de volta"
-                              error={error?.message}
-                            >
-                              <input
-                                type="text"
-                                id="Tarifa de volta"
-                                defaultValue={
-                                  candidate?.complementaryInfo
-                                    ?.transportTaxReturn
-                                }
-                                onChange={e => {
-                                  e.target.value = formatCurrency(
-                                    e.target.value,
-                                  );
-                                  onChange(e.target.value);
-                                }}
-                              />
-                            </InputContainer>
-                          )}
-                        />
-
-                        <Controller
-                          control={control}
-                          name="complementaryInfo.transportTaxDaily"
-                          render={({
-                            field: { onChange },
-                            fieldState: { error },
-                          }) => (
-                            <InputContainer
-                              title="Tarifa diária"
-                              error={error?.message}
-                            >
-                              <input
-                                type="text"
-                                id="Tarifa diária"
-                                value={
-                                  candidate?.complementaryInfo
-                                    ?.transportTaxDaily
-                                }
-                                onChange={e => {
-                                  e.target.value = formatCurrency(
-                                    e.target.value,
-                                  );
-                                  onChange(e.target.value);
-                                }}
-                              />
-                            </InputContainer>
-                          )}
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </section>
-
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Disponibilidade
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="availability"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Disponibilidade"
-                          width={"45%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={availabilites ?? []}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className={styles.modal__content__form__item}>
-                <h2 className={styles.modal__content__form__item__title}>
-                  Formação
-                </h2>
-                <div className={styles.modal__content__form__item__inputs}>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="formation.type"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Escolaridade"
-                          width={"30%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            placeholder="Selecione"
-                            options={FormationTypes}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="formation.course"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Curso" error={error?.message}>
-                          <input
-                            type="text"
-                            id="Curso"
-                            onChange={e => onChange(e.target.value)}
-                          />
-                        </InputContainer>
-                      )}
-                    />
-
-                    <Controller
-                      control={control}
-                      name="formation.status"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer
-                          title="Status"
-                          width={"20%"}
-                          error={error?.message}
-                        >
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            options={StatusSelect}
-                            placeholder="Selecione"
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <Controller
-                      control={control}
-                      name="formation.period"
-                      render={({
-                        field: { onChange },
-                        fieldState: { error },
-                      }) => (
-                        <InputContainer title="Período" error={error?.message}>
-                          <Select
-                            onChange={({ id }) => onChange(id)}
-                            options={PeriodSelect}
-                            placeholder="Selecione"
-                          />
-                        </InputContainer>
-                      )}
-                    />
-                  </div>
-
-                  {data?.candidacy?.process?.requestCv && (
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
                       }
                     >
-                      <InputContainer title="Currículo">
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 8,
-                          }}
-                        >
-                          <FileInput
-                            onChange={file => setCurriculumPdf(file)}
-                            maxSize={5}
-                            allowedTypes={["pdf"]}
-                          />
-                          <a
-                            href={
-                              curriculumPdf &&
-                              URL.createObjectURL(curriculumPdf)
-                            }
-                            target="_blank"
-                            style={{ alignSelf: "flex-end", cursor: "pointer" }}
+                      <Controller
+                        control={control}
+                        name="childUnderfourteen"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui filhos menores de 14 anos?"
+                            error={error?.message}
                           >
-                            Visualizar documento
-                          </a>
-                        </div>
-                      </InputContainer>
-                    </div>
-                  )}
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Resultado">
-                      <Select
-                        onChange={({ name }) => {
-                          setApproved(name === "Aprovado");
-                        }}
-                        options={results}
-                        placeholder="Selecione"
+                            <Radio
+                              column
+                              lightTheme
+                              defaultValue={
+                                data?.candidacy?.candidate?.childUnderfourteen
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
                       />
-                    </InputContainer>
+                      <Controller
+                        control={control}
+                        name="childCount"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Número de filhos"
+                            error={error?.message}
+                          >
+                            <input
+                              type="number"
+                              style={{ width: 80 }}
+                              min={0}
+                              defaultValue={
+                                data?.candidacy?.candidate?.childCount
+                              }
+                              onChange={e => {
+                                if (!e.target.validity.valid) {
+                                  e.target.value = "";
+                                  return;
+                                }
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
 
-                    {approved && (
-                      <InputContainer title="Treinamento" width={"30%"}>
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Endereço
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="address.zipCode"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="CEP" error={error?.message}>
+                            <input
+                              type="text"
+                              id="CEP"
+                              defaultValue={address?.zipCode}
+                              onChange={e => {
+                                e.target.value = handleOnChangeCep(e);
+                                onChange(e.target.value);
+                              }}
+                              maxLength={9}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="address.address"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Logradouro"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Logradouro"
+                              defaultValue={address?.address}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <InputContainer title="Endereço">
+                        <input type="text" id="Endereço" />
+                      </InputContainer>
+
+                      <Controller
+                        control={control}
+                        name="address.neighborhood"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Bairro" error={error?.message}>
+                            <input
+                              type="text"
+                              id="Bairro"
+                              defaultValue={address?.neighborhood}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="address.number"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Número" error={error?.message}>
+                            <input
+                              type="number"
+                              id="Número"
+                              defaultValue={address?.number}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="address.complement"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Complemento"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Complemento"
+                              defaultValue={address?.complement}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Documentos pessoais
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.identity.rg"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="RG" error={error?.message}>
+                            <input
+                              type="text"
+                              id="RG"
+                              defaultValue={candidate?.documents?.identity?.rg}
+                              onChange={e => {
+                                if (!e.target.validity.valid) {
+                                  e.target.value = "";
+                                  return;
+                                }
+                                onChange(e.target.value);
+                                e.target.value = formatRG(e.target.value);
+                              }}
+                              maxLength={9}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.identity.identityShippingDate"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Data de expedição"
+                            htmlFor="expeditionDate"
+                            error={error?.message}
+                          >
+                            <input
+                              type="date"
+                              id="expeditionDate"
+                              defaultValue={
+                                candidate?.documents?.identity
+                                  ?.identityShippingDate
+                              }
+                              onChange={e => {
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.identity.federalUnit"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Órgão expedidor"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Órgão expedidor"
+                              defaultValue={
+                                candidate?.documents?.identity?.federalUnit
+                              }
+                              onChange={e => {
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.identity.uf"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="UF"
+                            width={"30%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={states}
+                              defaultValue={
+                                statesAccronym[
+                                  candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
+                                ]
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.work.pis"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Número do PIS"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Número do PIS"
+                              defaultValue={candidate?.documents?.work?.pis}
+                              maxLength={11}
+                              pattern="\d*"
+                              onChange={e => {
+                                if (!e.target.validity.valid) {
+                                  e.target.value = "";
+                                  return;
+                                }
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <h1 style={{ fontSize: 17 }}>CTPS</h1>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.work.ctps"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Número da CTPS"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Número da CTPS"
+                              defaultValue={candidate?.documents?.work?.ctps}
+                              pattern="[0-9\/]*"
+                              maxLength={11}
+                              onChange={e => {
+                                if (!e.target.validity.valid) {
+                                  e.target.value = "";
+                                  return;
+                                }
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.work.shippingDate"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Data de expedição"
+                            htmlFor="expeditionDateWork"
+                            error={error?.message}
+                          >
+                            <input
+                              type="date"
+                              id="expeditionDateWork"
+                              defaultValue={
+                                candidate?.documents?.work?.shippingDate
+                              }
+                              onChange={e => {
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.work.serie"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Série" error={error?.message}>
+                            <input
+                              type="text"
+                              id="Série"
+                              defaultValue={candidate?.documents?.work?.serie}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.work.uf"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="UF"
+                            width={"30%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={states}
+                              defaultValue={
+                                statesAccronym[
+                                  candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
+                                ]
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <h1 style={{ fontSize: 17 }}>Conta corrente</h1>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.bank.bank"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Banco" error={error?.message}>
+                            <input
+                              type="text"
+                              id="Banco"
+                              defaultValue={candidate?.documents?.bank?.bank}
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.bank.agency"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Agência"
+                            error={error?.message}
+                          >
+                            <input
+                              type="text"
+                              id="Agência"
+                              value={candidate?.documents?.bank?.agency}
+                              maxLength={4}
+                              pattern="\d*"
+                              onChange={e => {
+                                if (!e.target.validity.valid) {
+                                  e.target.value = "";
+                                  return;
+                                }
+                                onChange(e.target.value);
+                              }}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.bank.account"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Conta" error={error?.message}>
+                            <AccountInput
+                              defaultValue={
+                                candidate?.documents?.bank?.account ?? ""
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="documents.bank.pixKeyType"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Tipo chave PIX"
+                            width={"20%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={value => {
+                                if (!value) return;
+                                if (value?.id === pixType?.id) return;
+                                setPixType(value);
+                                if (pixRef && pixRef.current) {
+                                  const nativeInputValueSetter =
+                                    Object.getOwnPropertyDescriptor(
+                                      window.HTMLInputElement.prototype,
+                                      "value",
+                                    )?.set;
+                                  nativeInputValueSetter?.call(
+                                    pixRef.current,
+                                    "",
+                                  );
+
+                                  const ev2 = new Event("input", {
+                                    bubbles: true,
+                                  });
+                                  pixRef.current.dispatchEvent(ev2);
+                                }
+                                onChange(value.id);
+                              }}
+                              options={pixTypes}
+                              placeholder="Selecione"
+                              maxHeight={250}
+                              defaultValue={
+                                candidate?.documents?.bank?.pixKeyType
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="documents.bank.pixKey"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Chave PIX"
+                            error={error?.message}
+                          >
+                            <input
+                              type={pixType?.id === "E-mail" ? "email" : "text"}
+                              maxLength={
+                                pixType?.id === "Chave aleatória"
+                                  ? 32
+                                  : undefined
+                              }
+                              id="Chave PIX"
+                              defaultValue={handleOnChangePixKey(
+                                candidate?.documents?.bank?.pixKey ?? "",
+                              )}
+                              disabled={!pixType?.id}
+                              onChange={e => {
+                                const newValue = handleOnChangePixKey(
+                                  e.target.value,
+                                );
+                                if (newValue) {
+                                  e.target.value = newValue;
+                                }
+
+                                onChange(e.target.value);
+                              }}
+                              style={{
+                                cursor: !pixType ? "not-allowed" : "text",
+                              }}
+                              ref={pixRef}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Informações complementares
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.hasCellPhone"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui celular?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              defaultValue={
+                                candidate?.complementaryInfo?.hasCellPhone
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.hasCellPc"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui computador?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              defaultValue={
+                                candidate?.complementaryInfo?.hasCellPc
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.hasInternet"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui internet?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              defaultValue={
+                                candidate?.complementaryInfo?.hasInternet
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.weekendObjection"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui objeção em trabalhar algum dia da semana?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              defaultValue={
+                                candidate?.complementaryInfo?.weekendObjection
+                              }
+                              onChange={onChange}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    {data?.candidacy?.process?.requestCv && (
+                      <div
+                        className={
+                          styles.modal__content__form__item__inputs__container
+                        }
+                      >
+                        <InputContainer title="Pretensão salarial">
+                          <input
+                            type="text"
+                            id="Pretensão salarial"
+                            onChange={handleOnSalaryClaimChange}
+                            value={salaryClaim}
+                          />
+                        </InputContainer>
+                      </div>
+                    )}
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.haveDisability"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui alguma deficiência?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              onChange={val => {
+                                onChange(val);
+                                setHaveDisability(val);
+                              }}
+                              defaultValue={
+                                candidate?.complementaryInfo?.haveDisability
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      {haveDisability && (
+                        <Controller
+                          control={control}
+                          name="complementaryInfo.disabilityDescription"
+                          render={({
+                            field: { onChange },
+                            fieldState: { error },
+                          }) => (
+                            <InputContainer
+                              title="Qual?"
+                              error={error?.message}
+                            >
+                              <input
+                                type="text"
+                                id="Qual?"
+                                defaultValue={
+                                  candidate?.complementaryInfo
+                                    ?.disabilityDescription
+                                }
+                                onChange={e => onChange(e.target.value)}
+                              />
+                            </InputContainer>
+                          )}
+                        />
+                      )}
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.hasMedicalReport"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Possui laudo médico?"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              onChange={val => {
+                                onChange(val);
+                                setHasMedicalReport(val);
+                              }}
+                              defaultValue={
+                                candidate?.complementaryInfo?.hasMedicalReport
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      {hasMedicalReport && (
+                        <InputContainer title="Anexar arquivo">
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: 8,
+                            }}
+                          >
+                            <FileInput
+                              onChange={file => setMedicalReportPdf(file)}
+                              maxSize={5}
+                              allowedTypes={["pdf"]}
+                            />
+                            <a
+                              href={
+                                medicalReportPdf &&
+                                URL.createObjectURL(medicalReportPdf)
+                              }
+                              target="_blank"
+                              style={{
+                                alignSelf: "flex-end",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Visualizar documento
+                            </a>
+                          </div>
+                        </InputContainer>
+                      )}
+                    </div>
+
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="complementaryInfo.transportVoucher"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Opta por receber vale transporte?"
+                            lightTitle="(vagas presenciais)"
+                            error={error?.message}
+                          >
+                            <Radio
+                              column
+                              lightTheme
+                              onChange={val => {
+                                onChange(val);
+                                setTransportVoucher(val);
+                              }}
+                              defaultValue={
+                                candidate?.complementaryInfo?.transportVoucher
+                              }
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    {transportVoucher && (
+                      <>
+                        <div
+                          className={
+                            styles.modal__content__form__item__inputs__container
+                          }
+                        >
+                          <Controller
+                            control={control}
+                            name="complementaryInfo.transportCompany"
+                            render={({
+                              field: { onChange },
+                              fieldState: { error },
+                            }) => (
+                              <InputContainer
+                                title="Empresa"
+                                error={error?.message}
+                              >
+                                <input
+                                  type="text"
+                                  id="Empresa"
+                                  defaultValue={
+                                    candidate?.complementaryInfo
+                                      ?.transportCompany
+                                  }
+                                  onChange={e => onChange(e.target.value)}
+                                />
+                              </InputContainer>
+                            )}
+                          />
+
+                          <Controller
+                            control={control}
+                            name="complementaryInfo.transportLine"
+                            render={({
+                              field: { onChange },
+                              fieldState: { error },
+                            }) => (
+                              <InputContainer
+                                title="Linha"
+                                error={error?.message}
+                              >
+                                <input
+                                  type="text"
+                                  id="Linha"
+                                  defaultValue={
+                                    candidate?.complementaryInfo?.transportLine
+                                  }
+                                  onChange={e => onChange(e.target.value)}
+                                />
+                              </InputContainer>
+                            )}
+                          />
+                        </div>
+
+                        <div
+                          className={
+                            styles.modal__content__form__item__inputs__container
+                          }
+                        >
+                          <Controller
+                            control={control}
+                            name="complementaryInfo.transportTaxGoing"
+                            render={({
+                              field: { onChange },
+                              fieldState: { error },
+                            }) => (
+                              <InputContainer
+                                title="Tarifa de ida"
+                                error={error?.message}
+                              >
+                                <input
+                                  type="text"
+                                  id="Tarifa de ida"
+                                  defaultValue={formatCurrency(
+                                    candidate?.complementaryInfo
+                                      ?.transportTaxGoing ?? "",
+                                  )}
+                                  onChange={e => {
+                                    e.target.value = formatCurrency(
+                                      e.target.value,
+                                    );
+                                    onChange(e.target.value);
+                                  }}
+                                />
+                              </InputContainer>
+                            )}
+                          />
+
+                          <Controller
+                            control={control}
+                            name="complementaryInfo.transportTaxReturn"
+                            render={({
+                              field: { onChange },
+                              fieldState: { error },
+                            }) => (
+                              <InputContainer
+                                title="Tarifa de volta"
+                                error={error?.message}
+                              >
+                                <input
+                                  type="text"
+                                  id="Tarifa de volta"
+                                  defaultValue={formatCurrency(
+                                    candidate?.complementaryInfo
+                                      ?.transportTaxReturn ?? "",
+                                  )}
+                                  onChange={e => {
+                                    e.target.value = formatCurrency(
+                                      e.target.value,
+                                    );
+                                    onChange(e.target.value);
+                                  }}
+                                />
+                              </InputContainer>
+                            )}
+                          />
+
+                          <Controller
+                            control={control}
+                            name="complementaryInfo.transportTaxDaily"
+                            render={({
+                              field: { onChange },
+                              fieldState: { error },
+                            }) => (
+                              <InputContainer
+                                title="Tarifa diária"
+                                error={error?.message}
+                              >
+                                <input
+                                  type="text"
+                                  id="Tarifa diária"
+                                  value={formatCurrency(
+                                    candidate?.complementaryInfo
+                                      ?.transportTaxDaily ?? "",
+                                  )}
+                                  onChange={e => {
+                                    e.target.value = formatCurrency(
+                                      e.target.value,
+                                    );
+                                    onChange(e.target.value);
+                                  }}
+                                />
+                              </InputContainer>
+                            )}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </section>
+
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Disponibilidade
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="availability"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Disponibilidade"
+                            width={"45%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={availabilites ?? []}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <section className={styles.modal__content__form__item}>
+                  <h2 className={styles.modal__content__form__item__title}>
+                    Formação
+                  </h2>
+                  <div className={styles.modal__content__form__item__inputs}>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="formation.type"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Escolaridade"
+                            width={"30%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              placeholder="Selecione"
+                              options={FormationTypes}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="formation.course"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer title="Curso" error={error?.message}>
+                            <input
+                              type="text"
+                              id="Curso"
+                              onChange={e => onChange(e.target.value)}
+                            />
+                          </InputContainer>
+                        )}
+                      />
+
+                      <Controller
+                        control={control}
+                        name="formation.status"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Status"
+                            width={"20%"}
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              options={StatusSelect}
+                              placeholder="Selecione"
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <Controller
+                        control={control}
+                        name="formation.period"
+                        render={({
+                          field: { onChange },
+                          fieldState: { error },
+                        }) => (
+                          <InputContainer
+                            title="Período"
+                            error={error?.message}
+                          >
+                            <Select
+                              onChange={({ id }) => onChange(id)}
+                              options={PeriodSelect}
+                              placeholder="Selecione"
+                            />
+                          </InputContainer>
+                        )}
+                      />
+                    </div>
+
+                    {data?.candidacy?.process?.requestCv && (
+                      <div
+                        className={
+                          styles.modal__content__form__item__inputs__container
+                        }
+                      >
+                        <InputContainer title="Currículo">
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: 8,
+                            }}
+                          >
+                            <FileInput
+                              onChange={file => setCurriculumPdf(file)}
+                              maxSize={5}
+                              allowedTypes={["pdf"]}
+                            />
+                            <a
+                              href={
+                                curriculumPdf &&
+                                URL.createObjectURL(curriculumPdf)
+                              }
+                              target="_blank"
+                              style={{
+                                alignSelf: "flex-end",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Visualizar documento
+                            </a>
+                          </div>
+                        </InputContainer>
+                      </div>
+                    )}
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <InputContainer title="Resultado">
                         <Select
-                          onChange={() => {}}
+                          onChange={({ name }) => {
+                            setApproved(name === "Aprovado");
+                          }}
+                          options={results}
                           placeholder="Selecione"
-                          options={trainings ?? []}
                         />
                       </InputContainer>
-                    )}
 
-                    {approved === false && (
-                      <InputContainer title="Motivo">
-                        <input type="text" id="Motivo" />
-                      </InputContainer>
-                    )}
-                  </div>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Observação" width={"100%"}>
-                      <input type="text" id="Observação" />
-                    </InputContainer>
-                  </div>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer
-                      title="Entrevistador responsável"
-                      width={"100%"}
+                      {approved && (
+                        <InputContainer title="Treinamento" width={"30%"}>
+                          <Select
+                            onChange={() => {}}
+                            placeholder="Selecione"
+                            options={trainings ?? []}
+                          />
+                        </InputContainer>
+                      )}
+
+                      {approved === false && (
+                        <InputContainer title="Motivo">
+                          <input type="text" id="Motivo" />
+                        </InputContainer>
+                      )}
+                    </div>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
                     >
-                      <input
-                        type="text"
-                        id="Entrevistador responsável"
-                        disabled
-                        defaultValue={user?.employee.name}
-                      />
-                    </InputContainer>
+                      <InputContainer title="Observação" width={"100%"}>
+                        <input type="text" id="Observação" />
+                      </InputContainer>
+                    </div>
+                    <div
+                      className={
+                        styles.modal__content__form__item__inputs__container
+                      }
+                    >
+                      <InputContainer
+                        title="Entrevistador responsável"
+                        width={"100%"}
+                      >
+                        <input
+                          type="text"
+                          id="Entrevistador responsável"
+                          disabled
+                          defaultValue={user?.employee.name}
+                        />
+                      </InputContainer>
+                    </div>
                   </div>
-                </div>
-              </section>
-            </div>
+                </section>
+              </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "flex-end",
-                padding: 10,
-                marginTop: 24,
-              }}
-            >
-              <Dialog.Close asChild>
-                <span>
-                  <Button text="Cancelar" buttonType="default" />
-                </span>
-              </Dialog.Close>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                  padding: 10,
+                  marginTop: 24,
+                }}
+              >
+                <Dialog.Close asChild>
+                  <span>
+                    <Button text="Cancelar" buttonType="default" />
+                  </span>
+                </Dialog.Close>
 
-              <Button text="Salvar" buttonType="primary" type="submit" />
-            </div>
-          </form>
-        </Dialog.Content>
+                <Button text="Salvar" buttonType="primary" type="submit" />
+              </div>
+            </form>
+          </Dialog.Content>
+        </div>
       </Dialog.Portal>
     </Dialog.Root>
   );
