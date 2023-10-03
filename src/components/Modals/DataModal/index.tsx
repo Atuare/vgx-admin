@@ -32,6 +32,7 @@ import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import styles from "./DataModal.module.scss";
 import { AccountInput } from "./components/AccountInput";
+import { InputContainer } from "./components/InputContainer";
 
 interface DataModalProps {
   children: ReactNode;
@@ -1963,32 +1964,5 @@ export function DataModal({ children, data }: DataModalProps) {
         </div>
       </Dialog.Portal>
     </Dialog.Root>
-  );
-}
-
-function InputContainer({
-  title,
-  children,
-  htmlFor,
-  width,
-  lightTitle,
-  error,
-}: {
-  title: string;
-  children: ReactNode;
-  htmlFor?: string;
-  width?: number | string;
-  lightTitle?: string;
-  error?: string;
-}) {
-  return (
-    <div className={styles.modal__content__form__input} style={{ width }}>
-      <div className={styles.label__container}>
-        <label htmlFor={htmlFor || title}>{title}</label>
-        {lightTitle && <span>{lightTitle}</span>}
-      </div>
-      {children}
-      {error && <span className="error-message">{error}</span>}
-    </div>
   );
 }
