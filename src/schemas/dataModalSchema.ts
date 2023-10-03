@@ -44,7 +44,10 @@ export const dataModalSchema = yup.object({
       then: (schema: any) => schema.required("Campo obrigatório"),
     }),
     hasMedicalReport: yup.boolean().required("Campo obrigatório"),
-    // TODO: medicalReport
+    medicalReport: yup.string().when("hasMedicalReport", {
+      is: true,
+      then: (schema: any) => schema.required("Campo obrigatório"),
+    }),
     transportVoucher: yup.boolean().required("Campo obrigatório"),
     transportCompany: yup.string().when("transportVoucher", {
       is: true,

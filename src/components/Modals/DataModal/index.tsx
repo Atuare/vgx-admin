@@ -26,6 +26,7 @@ import {
 import { formatCpf } from "@/utils/formatCpf";
 import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
+import { getBase64 } from "@/utils/getBase64";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -1444,34 +1445,51 @@ export function DataModal({ children, data }: DataModalProps) {
                       />
 
                       {hasMedicalReport && (
-                        <InputContainer title="Anexar arquivo">
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              gap: 8,
-                            }}
-                          >
-                            <FileInput
-                              onChange={file => setMedicalReportPdf(file)}
-                              maxSize={5}
-                              allowedTypes={["pdf"]}
-                            />
-                            <a
-                              href={
-                                medicalReportPdf &&
-                                URL.createObjectURL(medicalReportPdf)
-                              }
-                              target="_blank"
-                              style={{
-                                alignSelf: "flex-end",
-                                cursor: "pointer",
-                              }}
+                        <Controller
+                          control={control}
+                          name="complementaryInfo.medicalReport"
+                          render={({
+                            field: { onChange },
+                            fieldState: { error },
+                          }) => (
+                            <InputContainer
+                              title="Anexar arquivo"
+                              error={error?.message}
                             >
-                              Visualizar documento
-                            </a>
-                          </div>
-                        </InputContainer>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  gap: 8,
+                                }}
+                              >
+                                <FileInput
+                                  onChange={async file => {
+                                    setMedicalReportPdf(file);
+                                    const medicalReportBase64 =
+                                      await getBase64(file);
+                                    onChange(medicalReportBase64);
+                                  }}
+                                  maxSize={5}
+                                  allowedTypes={["pdf"]}
+                                />
+                                <a
+                                  href={
+                                    medicalReportPdf &&
+                                    URL.createObjectURL(medicalReportPdf)
+                                  }
+                                  target="_blank"
+                                  style={{
+                                    alignSelf: "flex-end",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  Visualizar documento
+                                </a>
+                              </div>
+                            </InputContainer>
+                          )}
+                        />
                       )}
                     </div>
 
