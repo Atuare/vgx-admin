@@ -7,7 +7,13 @@ import useUser from "@/hooks/useUser";
 import { ICandidate } from "@/interfaces/candidate.interface";
 import { InterviewType } from "@/interfaces/interviews.interface";
 import { dataModalSchema } from "@/schemas/dataModalSchema";
-import { useGetAllTrainingsQuery } from "@/services/api/fetchApi";
+import {
+  useGetAllTrainingsQuery,
+  useUpdateCandidateAddressMutation,
+  useUpdateCandidateComplementaryInfoMutation,
+  useUpdateCandidateDocumentsMutation,
+  useUpdateCandidateMutation,
+} from "@/services/api/fetchApi";
 import { getCandidateById } from "@/utils/candidate";
 import {
   FormationTypes,
@@ -90,7 +96,82 @@ export function DataModal({ children, data }: DataModalProps) {
       size: 999999,
     });
 
-  function handleOnSave(data: any) {
+  const [updateCandidate] = useUpdateCandidateMutation();
+  const [updateComplementaryInfo] =
+    useUpdateCandidateComplementaryInfoMutation();
+  const [updateAddress] = useUpdateCandidateAddressMutation();
+  const [updateDocuments] = useUpdateCandidateDocumentsMutation();
+
+  function handleOnSave(data: ICandidate) {
+    updateCandidate({
+      id: data.id,
+      name: data.name,
+      cpf: data.cpf,
+      birthdate: data.birthdate,
+      gender: data.gender,
+      civilStatus: data.civilStatus,
+      state: data.state,
+      county: data.county,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      email: data.email,
+      fatherName: data.fatherName,
+      motherName: data.motherName,
+      childUnderfourteen: data.childUnderfourteen,
+      childCount: data.childCount,
+    });
+
+    updateAddress({
+      id: data.address.id,
+      zipCode: data.address.zipCode,
+      address: data.address.address,
+      neighborhood: data.address.neighborhood,
+      complement: data.address.complement,
+      state: data.address.state,
+      number: data.address.number,
+    });
+
+    updateComplementaryInfo({
+      id: data.complementaryInfo.id,
+      hasCellPhone: data.complementaryInfo.hasCellPhone,
+      hasCellPc: data.complementaryInfo.hasCellPc,
+      hasInternet: data.complementaryInfo.hasInternet,
+      weekendObjection: data.complementaryInfo.weekendObjection,
+      haveDisability: data.complementaryInfo.haveDisability,
+      disabilityDescription: data.complementaryInfo.disabilityDescription,
+      hasMedicalReport: data.complementaryInfo.hasMedicalReport,
+      medicalReport: data.complementaryInfo.medicalReport,
+      transportVoucher: data.complementaryInfo.transportVoucher,
+      transportCompany: data.complementaryInfo.transportCompany,
+      transportLine: data.complementaryInfo.transportLine,
+      transportTaxGoing: data.complementaryInfo.transportTaxGoing,
+      transportTaxReturn: data.complementaryInfo.transportTaxReturn,
+      transportTaxDaily: data.complementaryInfo.transportTaxDaily,
+    });
+
+    updateDocuments({
+      id: data.documents.id,
+      identity: {
+        rg: data.documents.identity.rg,
+        identityShippingDate: data.documents.identity.identityShippingDate,
+        federalUnit: data.documents.identity.federalUnit,
+        uf: data.documents.identity.uf,
+      },
+      work: {
+        pis: data.documents.work.pis,
+        ctps: data.documents.work.ctps,
+        shippingDate: data.documents.work.shippingDate,
+        serie: data.documents.work.serie,
+        uf: data.documents.work.uf,
+      },
+      bank: {
+        pixKey: data.documents.bank.pixKey,
+        pixKeyType: data.documents.bank.pixKeyType,
+        bank: data.documents.bank.bank,
+        agency: data.documents.bank.agency,
+        account: data.documents.bank.account,
+      },
+    });
     setOpen(false);
   }
 

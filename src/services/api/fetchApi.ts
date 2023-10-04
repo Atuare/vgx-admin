@@ -549,12 +549,63 @@ export const fetchApi = createApi({
         body: { id },
       }),
     }),
-    updateCandidateDocuments: builder.mutation<any, { id: string }>({
+    updateCandidate: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/candidate",
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
+    updateCandidateDocuments: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         return {
           url: "/candidate-documents",
           method: "PUT",
           body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
+    updateCandidateComplementaryInfo: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/candidate-complementary-info",
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
+    updateCandidateFormation: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/formation",
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
+    updateCandidateAddress: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/candidate-address",
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
         };
       },
     }),
@@ -650,6 +701,10 @@ export const {
   useUpdateContractMutation,
   useDeleteContractMutation,
   useUpdateCandidateDocumentsMutation,
+  useUpdateCandidateAddressMutation,
+  useUpdateCandidateComplementaryInfoMutation,
+  useUpdateCandidateFormationMutation,
+  useUpdateCandidateMutation,
   useGetAllTestsQuery,
   useCreateTestMutation,
   useGetAvailabilityByIdQuery,

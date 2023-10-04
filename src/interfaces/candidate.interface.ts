@@ -46,6 +46,7 @@ export interface ICandidates {
 }
 
 interface IAddress {
+  id: string;
   zipCode: string;
   address: string;
   neighborhood: string;
