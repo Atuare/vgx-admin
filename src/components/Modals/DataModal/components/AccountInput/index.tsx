@@ -2,10 +2,15 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface AccountInputProps {
   defaultValue: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
 }
 
-export function AccountInput({ defaultValue, onChange }: AccountInputProps) {
+export function AccountInput({
+  defaultValue,
+  onChange,
+  disabled = false,
+}: AccountInputProps) {
   const [firstAccount, setFirstAccount] = useState(
     defaultValue?.slice(0, 7) ?? "",
   );
@@ -33,7 +38,7 @@ export function AccountInput({ defaultValue, onChange }: AccountInputProps) {
 
   useEffect(() => {
     const account = `${firstAccount}${secondAccount}`;
-    onChange(account);
+    onChange?.(account);
   }, [firstAccount, secondAccount]);
 
   return (
@@ -48,6 +53,7 @@ export function AccountInput({ defaultValue, onChange }: AccountInputProps) {
         onChange={e => {
           handleChangeBankAccount(e, 0);
         }}
+        disabled={disabled}
       />
 
       <input
@@ -65,6 +71,7 @@ export function AccountInput({ defaultValue, onChange }: AccountInputProps) {
             }, 1);
           }
         }}
+        disabled={disabled}
         ref={bankAccountSecondInput}
       />
     </div>
