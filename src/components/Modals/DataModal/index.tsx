@@ -257,15 +257,19 @@ export function DataModal({ children, data }: DataModalProps) {
           <Dialog.Overlay className={styles.modal__overlay} />
           <Dialog.Content className={styles.modal__content}>
             <form onSubmit={handleSubmit(handleOnSave)}>
-              <Dialog.Title className={styles.modal__title}>
-                {data?.candidacy.candidate.name} -{" "}
-                {data?.candidacy?.process?.role?.roleText}
-                <Dialog.Close asChild>
+              <div className={styles.modal__titleContainer}>
+                <Dialog.Title className={styles.modal__title}>
                   <span>
-                    <Close />
+                    {data?.candidacy.candidate.name} -{" "}
+                    {data?.candidacy?.process?.role?.roleText}
                   </span>
-                </Dialog.Close>
-              </Dialog.Title>
+                  <Dialog.Close asChild>
+                    <span>
+                      <Close />
+                    </span>
+                  </Dialog.Close>
+                </Dialog.Title>
+              </div>
 
               <div className={styles.modal__content__form}>
                 <section className={styles.modal__content__form__item}>
@@ -500,7 +504,9 @@ export function DataModal({ children, data }: DataModalProps) {
                             <input
                               type="text"
                               id="phone"
-                              defaultValue={candidate?.phone}
+                              defaultValue={formatPhoneNumber(
+                                candidate?.phone ?? "",
+                              )}
                               onChange={e => {
                                 onChange(e.target.value);
                                 e.target.value = formatPhoneNumber(
@@ -692,12 +698,12 @@ export function DataModal({ children, data }: DataModalProps) {
                           fieldState: { error },
                         }) => (
                           <InputContainer
-                            title="Logradouro"
+                            title="Endereço"
                             error={error?.message}
                           >
                             <input
                               type="text"
-                              id="Logradouro"
+                              id="Endereço"
                               defaultValue={address?.address}
                               onChange={e => onChange(e.target.value)}
                             />
@@ -705,8 +711,8 @@ export function DataModal({ children, data }: DataModalProps) {
                         )}
                       />
 
-                      <InputContainer title="Endereço">
-                        <input type="text" id="Endereço" />
+                      <InputContainer title="Logradouro">
+                        <input type="text" id="Logradouro" />
                       </InputContainer>
 
                       <Controller

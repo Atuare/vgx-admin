@@ -112,12 +112,16 @@
     }
   }
 
+  &__titleContainer {
+    width: 100%;
+    border-bottom: 2px solid var(--primary-1);
+  }
+
   &__title {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    border-bottom: 2px solid var(--primary-1);
     padding-bottom: 16px;
 
     svg {

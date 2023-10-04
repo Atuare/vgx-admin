@@ -586,6 +586,14 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAvailabilityById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/availability/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
   }),
 });
 
@@ -644,4 +652,5 @@ export const {
   useUpdateCandidateDocumentsMutation,
   useGetAllTestsQuery,
   useCreateTestMutation,
+  useGetAvailabilityByIdQuery,
 } = fetchApi;

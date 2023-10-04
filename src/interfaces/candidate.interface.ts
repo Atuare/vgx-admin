@@ -26,9 +26,16 @@ export interface ICandidate {
   createdAt: string;
   updatedAt: string;
   complementaryInfo: ComplementaryInfoType;
-  formations: IFormations[];
+  formations: IFormations;
   documents: UserDocumentType;
   address: IAddress;
+  results: {
+    result: "APROVADO" | "REPROVADO";
+    reason: string;
+    observation: string;
+    interviewer: string;
+  };
+  availabilityId: string;
 }
 
 export interface ICandidates {

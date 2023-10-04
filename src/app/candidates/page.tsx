@@ -2,6 +2,7 @@
 import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
+import { CandidateModal } from "@/components/Modals/CandidateModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
@@ -64,7 +65,11 @@ export default function Candidates() {
     }),
     columnHelper.accessor("name", {
       header: "Nome",
-      cell: row => <span>{row.getValue()}</span>,
+      cell: row => (
+        <CandidateModal candidateId={row.row.original.id}>
+          <span>{row.getValue()}</span>
+        </CandidateModal>
+      ),
     }),
     columnHelper.accessor("createdAt", {
       header: "Data cadastro",
