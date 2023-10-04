@@ -35,7 +35,7 @@ export function Radio({
           onClick={() => setValue(item)}
           disabled={item !== value && disabled}
           style={{
-            cursor: disabled ? "not-allowed" : "pointer",
+            cursor: disabled ? "default" : "pointer",
             flexDirection: column ? "column" : "row",
           }}
         >

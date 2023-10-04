@@ -6,10 +6,11 @@ interface SelectProps {
   options: { name: string; id: string }[];
   defaultValue?: string | undefined;
   value?: string | undefined;
-  onChange: (value: { name: string; id: string }) => void;
+  onChange?: (value: { name: string; id: string }) => void;
   placeholder: string;
   width?: string | number;
   maxHeight?: string | number;
+  disabled?: boolean;
 }
 
 export function Select({
@@ -20,6 +21,7 @@ export function Select({
   width,
   maxHeight,
   value,
+  disabled = false,
 }: SelectProps) {
   const [openSelect, setOpenSelect] = useState(false);
   const [select, setSelect] = useState<string>(value ?? defaultValue ?? "");
@@ -37,9 +39,11 @@ export function Select({
         }`}
         onClick={() => setOpenSelect(prev => !prev)}
         type="button"
+        disabled={disabled}
+        style={{ cursor: disabled ? "default" : "pointer" }}
       >
         <span>{select ? select : placeholder}</span>
-        <ChevronDown />
+        {!disabled && <ChevronDown />}
       </button>
       {openSelect && (
         <div
@@ -66,7 +70,7 @@ export function Select({
               key={crypto.randomUUID()}
               onClick={() => {
                 setSelect(option.name);
-                onChange(option);
+                onChange?.(option);
                 setOpenSelect(false);
               }}
               type="button"
