@@ -122,55 +122,15 @@ export function DataModal({ children, data }: DataModalProps) {
     });
 
     updateAddress({
-      id: data.address.id,
-      zipCode: data.address.zipCode,
-      address: data.address.address,
-      neighborhood: data.address.neighborhood,
-      complement: data.address.complement,
-      state: data.address.state,
-      number: data.address.number,
+      ...data.address,
     });
 
     updateComplementaryInfo({
-      id: data.complementaryInfo.id,
-      hasCellPhone: data.complementaryInfo.hasCellPhone,
-      hasCellPc: data.complementaryInfo.hasCellPc,
-      hasInternet: data.complementaryInfo.hasInternet,
-      weekendObjection: data.complementaryInfo.weekendObjection,
-      haveDisability: data.complementaryInfo.haveDisability,
-      disabilityDescription: data.complementaryInfo.disabilityDescription,
-      hasMedicalReport: data.complementaryInfo.hasMedicalReport,
-      medicalReport: data.complementaryInfo.medicalReport,
-      transportVoucher: data.complementaryInfo.transportVoucher,
-      transportCompany: data.complementaryInfo.transportCompany,
-      transportLine: data.complementaryInfo.transportLine,
-      transportTaxGoing: data.complementaryInfo.transportTaxGoing,
-      transportTaxReturn: data.complementaryInfo.transportTaxReturn,
-      transportTaxDaily: data.complementaryInfo.transportTaxDaily,
+      ...data.complementaryInfo,
     });
 
     updateDocuments({
-      id: data.documents.id,
-      identity: {
-        rg: data.documents.identity.rg,
-        identityShippingDate: data.documents.identity.identityShippingDate,
-        federalUnit: data.documents.identity.federalUnit,
-        uf: data.documents.identity.uf,
-      },
-      work: {
-        pis: data.documents.work.pis,
-        ctps: data.documents.work.ctps,
-        shippingDate: data.documents.work.shippingDate,
-        serie: data.documents.work.serie,
-        uf: data.documents.work.uf,
-      },
-      bank: {
-        pixKey: data.documents.bank.pixKey,
-        pixKeyType: data.documents.bank.pixKeyType,
-        bank: data.documents.bank.bank,
-        agency: data.documents.bank.agency,
-        account: data.documents.bank.account,
-      },
+      ...data.documents,
     });
     setOpen(false);
   }
