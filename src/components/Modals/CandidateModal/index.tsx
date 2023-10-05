@@ -13,7 +13,6 @@ import {
   genders,
   maritalStatus,
   pixTypes,
-  results,
   states,
   statesAccronym,
 } from "@/utils/datamodal";
@@ -916,70 +915,6 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
                       </InputContainer>
                     </div>
                   )}
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Resultado">
-                      <Select
-                        disabled
-                        options={results}
-                        placeholder="Selecione"
-                        defaultValue={candidate?.results?.result}
-                      />
-                    </InputContainer>
-
-                    {candidate?.results?.result === "APROVADO" && (
-                      <InputContainer title="Treinamento" width={"30%"}>
-                        <Select disabled placeholder="Selecione" options={[]} />
-                        RESOLVER ESSA PARTE
-                      </InputContainer>
-                    )}
-
-                    {candidate?.results?.result === "REPROVADO" && (
-                      <InputContainer title="Motivo">
-                        <input
-                          type="text"
-                          id="Motivo"
-                          disabled
-                          defaultValue={candidate?.results?.reason}
-                        />
-                      </InputContainer>
-                    )}
-                  </div>
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer title="Observação" width={"100%"}>
-                      <input
-                        type="text"
-                        id="Observação"
-                        disabled
-                        defaultValue={candidate?.results?.observation}
-                      />
-                    </InputContainer>
-                  </div>
-
-                  <div
-                    className={
-                      styles.modal__content__form__item__inputs__container
-                    }
-                  >
-                    <InputContainer
-                      title="Entrevistador responsável"
-                      width={"100%"}
-                    >
-                      <input
-                        type="text"
-                        id="Entrevistador responsável"
-                        disabled
-                        defaultValue={user?.employee.name}
-                      />
-                    </InputContainer>
-                  </div>
                 </div>
               </section>
             </div>
