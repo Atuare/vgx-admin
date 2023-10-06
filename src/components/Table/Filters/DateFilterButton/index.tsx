@@ -1,27 +1,25 @@
-import { Close, FilterAlt, Search } from "@/assets/Icons";
+import { Close, FilterAlt } from "@/assets/Icons";
 import { useTableParams } from "@/hooks/useTableParams";
+import { Toast } from "@/utils/toast";
 import * as Popover from "@radix-ui/react-popover";
 import { Table } from "@tanstack/react-table";
+import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import { ReactNode, useState } from "react";
-import { Button } from "../Button";
-import { Checkbox } from "../Checkbox";
-import { SearchInput } from "../SearchInput";
-import styles from "./FilterButton.module.scss";
+import { Button } from "../../../Button";
+import styles from "./DateFilterButton.module.scss";
 
-interface FilterButtonProps {
+interface DateFilterButtonProps {
   title: string;
   table: Table<any> | undefined;
-  options: string[];
   column: string;
 }
 
-export function FilterButton({
+export function DateFilterButton({
   title,
   table,
-  options,
   column,
-}: FilterButtonProps) {
+}: DateFilterButtonProps) {
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = (value: boolean) => setOpenFilter(value);
@@ -33,7 +31,6 @@ export function FilterButton({
     >
       <PopoverFilter
         handleOpenFilter={handleOpenFilter}
-        options={options}
         table={table}
         column={column}
       >
@@ -54,44 +51,43 @@ export function FilterButton({
 export function PopoverFilter({
   children,
   handleOpenFilter,
-  options,
   table,
   column,
 }: {
   children: ReactNode;
   handleOpenFilter: (value: boolean) => void;
-  options: string[];
   table: Table<any> | undefined;
   column: string;
 }) {
-  const [inputValue, setInputValue] = useState<string>("");
+  const [firstDate, setFirstDate] = useState<string>("");
+  const [secondDate, setSecondDate] = useState<string>("");
   const [selected, setSelected] = useState<string[]>([]);
 
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
 
-  const filteredOptions = options.filter(option =>
-    option.toLowerCase().includes(inputValue.toLowerCase()),
-  );
-
-  const handleCreateFilter = (_value: boolean, name?: string) => {
-    if (selected.includes(name!)) {
-      setSelected(prev => prev.filter(item => item !== name));
-    } else {
-      setSelected(prev => [...prev, name!]);
-    }
-  };
-
   const handleToggleFilter = () => {
-    table?.getColumn(column)?.setFilterValue(selected);
+    if (!firstDate && !secondDate) return;
 
-    setParams(column, selected.join(","));
+    if (dayjs(firstDate).isAfter(dayjs(secondDate))) {
+      Toast("error", "A data inicial não pode ser maior que a data final");
+      return;
+    } else if (dayjs(secondDate).isBefore(dayjs(firstDate))) {
+      Toast("error", "A data final não pode ser menor que a data inicial");
+      return;
+    }
+
+    setSelected([firstDate, secondDate]);
+    table?.getColumn(column)?.setFilterValue([firstDate, secondDate]);
+    setParams(column, [firstDate, secondDate].join(","));
   };
 
   const getFilterValues = () => {
     const paramsValue = get(column);
     if (paramsValue) {
       const paramsArray = paramsValue.split(",");
+      setFirstDate(paramsArray[0]);
+      setSecondDate(paramsArray[1]);
       setSelected(paramsArray);
     }
   };
@@ -109,22 +105,29 @@ export function PopoverFilter({
       <Popover.Portal className={styles.popover}>
         <Popover.Content className={styles.popover__content} sideOffset={5}>
           <header>
-            <SearchInput handleChangeValue={setInputValue} icon={<Search />} />
             <Popover.Close className={styles.popover__close} aria-label="Close">
               <Close />
             </Popover.Close>
           </header>
 
           <div className={styles.popover__content__list}>
-            {filteredOptions?.map(option => (
-              <Checkbox
-                iconType="solid"
-                isActive={selected.includes(option)}
-                value={option}
-                onChangeCheckbox={handleCreateFilter}
-                key={crypto.randomUUID()}
+            <div>
+              De{" "}
+              <input
+                type="date"
+                onChange={e => setFirstDate(e.target.value)}
+                value={firstDate}
               />
-            ))}
+            </div>
+
+            <div>
+              Até{" "}
+              <input
+                type="date"
+                onChange={e => setSecondDate(e.target.value)}
+                value={secondDate}
+              />
+            </div>
           </div>
 
           <div className={styles.popover__content__buttons}>

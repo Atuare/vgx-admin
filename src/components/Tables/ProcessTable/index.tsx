@@ -12,9 +12,9 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FilterButton } from "../../FilterButton";
 import { Switch } from "../../Switch";
 import { DataTable } from "../../Table";
+import { FilterButton } from "../../Table/Filters/FilterButton";
 import styles from "./ProcessTable.module.scss";
 dayjs.extend(utc);
 

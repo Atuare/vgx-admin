@@ -2,10 +2,10 @@
 import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
-import { FilterButton } from "@/components/FilterButton";
 import FlatText from "@/components/FlatText";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
+import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { AdmissionsStatusEnum } from "@/enums/status.enum";
 import { useTableParams } from "@/hooks/useTableParams";
 import { IAdmission, IAdmissions } from "@/interfaces/admissions.interface";

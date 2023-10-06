@@ -1,4 +1,4 @@
-import { FilterButton } from "@/components/FilterButton";
+import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
   TrainingStatusEnum,

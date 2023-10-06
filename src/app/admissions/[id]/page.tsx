@@ -8,11 +8,11 @@ import {
 } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
-import { FilterButton } from "@/components/FilterButton";
 import FlatText from "@/components/FlatText";
 import { SaveModal } from "@/components/SaveModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
+import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import {
   AdmissionContractStatusEnum,
   AdmissionsStatusEnum,

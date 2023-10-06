@@ -2,11 +2,11 @@
 import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
-import { DateFilterButton } from "@/components/DateFilterButton";
-import { FilterButton } from "@/components/FilterButton";
 import { DataModal } from "@/components/Modals/DataModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
+import { DateFilterButton } from "@/components/Table/Filters/DateFilterButton";
+import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
   IInterviewsType,
