@@ -18,8 +18,9 @@ export interface CandidacyType {
   interview: InterviewType;
   admissionResult: AdmissionResultType;
   availability: IAvailability;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+  testResult: any;
 }
 
 enum CandidacyStatusEnum {
@@ -27,4 +28,9 @@ enum CandidacyStatusEnum {
   REPROVADO = "REPROVADO",
   DESISTENTE = "DESISTENTE",
   PENDENTE = "PENDENTE",
+}
+
+export interface CandidacysType {
+  candidacys: CandidacyType[];
+  totalCount: number;
 }

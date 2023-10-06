@@ -645,6 +645,25 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getAllCandidacys: builder.query<
+      any,
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
+    >({
+      query: ({ page, size, orderBy, direction }) => ({
+        url: "/candidacy/findAll",
+        params: {
+          page,
+          size,
+          orderBy,
+          direction,
+        },
+      }),
+    }),
   }),
 });
 
@@ -708,4 +727,5 @@ export const {
   useGetAllTestsQuery,
   useCreateTestMutation,
   useGetAvailabilityByIdQuery,
+  useGetAllCandidacysQuery,
 } = fetchApi;

@@ -10,6 +10,8 @@ export interface InterviewType {
     candidate: ICandidate;
     process: ProcessType;
   };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IInterviewsType {

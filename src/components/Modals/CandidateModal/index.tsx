@@ -2,10 +2,7 @@ import { Close } from "@/assets/Icons";
 import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
 import { Select } from "@/components/Select";
-import useUser from "@/hooks/useUser";
-import { ICandidate } from "@/interfaces/candidate.interface";
-import { useGetAvailabilityByIdQuery } from "@/services/api/fetchApi";
-import { getCandidateById } from "@/utils/candidate";
+import { CandidacyType } from "@/interfaces/candidacy.interface";
 import {
   FormationTypes,
   PeriodSelect,
@@ -20,11 +17,10 @@ import { formatCEP } from "@/utils/formatCep";
 import { formatCpf } from "@/utils/formatCpf";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
-import { formatTimeRange } from "@/utils/formatTimeRange";
 import { getBase64 } from "@/utils/getBase64";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import styles from "../DataModal/DataModal.module.scss";
 import { AccountInput } from "../DataModal/components/AccountInput";
 import { InputContainer } from "../DataModal/components/InputContainer";
@@ -32,22 +28,16 @@ import { ModalStatus } from "./components/ModalStatus";
 
 interface CandidateModalProps {
   children: ReactNode;
-  candidateId: string;
+  data: CandidacyType;
 }
 
-export function CandidateModal({ children, candidateId }: CandidateModalProps) {
-  const { user } = useUser();
-
+export function CandidateModal({ children, data }: CandidateModalProps) {
   const [open, setOpen] = useState(false);
-  const [candidate, setCandidate] = useState<ICandidate>();
+
+  const { candidate, process } = data;
 
   const [medicalReportPdf, setMedicalReportPdf] = useState<File>();
   const [curriculumPdf, setCurriculumPdf] = useState<File>();
-
-  const { data: availability, isSuccess: availabilitySuccess } =
-    useGetAvailabilityByIdQuery({
-      id: candidate?.availabilityId ?? "",
-    });
 
   function handleOnChangePixKey(value?: string, type?: string) {
     if (!value && !type) return;
@@ -64,14 +54,7 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
     }
   }
 
-  async function getCandidateData(id: string) {
-    const { data } = await getCandidateById({ id });
-    setCandidate(data);
-  }
-
-  useEffect(() => {
-    candidateId && !candidate && getCandidateData(candidateId);
-  }, [candidateId]);
+  console.log(candidate?.documents?.bank?.account);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -84,14 +67,14 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
           <Dialog.Content className={styles.modal__content}>
             <div className={styles.modal__titleContainer}>
               <Dialog.Title className={styles.modal__title}>
-                {candidate?.name} - {"PEGAR CARGO ORIGINAL"}
+                {candidate?.name} - {process.role.roleText}
                 <Dialog.Close asChild>
                   <span>
                     <Close />
                   </span>
                 </Dialog.Close>
               </Dialog.Title>
-              <ModalStatus />
+              <ModalStatus data={data} />
             </div>
 
             <div className={styles.modal__content__form}>
@@ -810,16 +793,7 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
                     }
                   >
                     <InputContainer title="Disponibilidade" width={"45%"}>
-                      <Select
-                        disabled
-                        placeholder="Selecione"
-                        options={[]}
-                        defaultValue={
-                          availabilitySuccess
-                            ? formatTimeRange(availability)
-                            : ""
-                        }
-                      />
+                      <Select disabled placeholder="Selecione" options={[]} />
                       RESOLVER ESSA PARTE
                     </InputContainer>
                   </div>
@@ -850,7 +824,7 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
                         type="text"
                         id="Curso"
                         disabled
-                        defaultValue={candidate?.formations.course}
+                        defaultValue={candidate?.formations?.course}
                       />
                     </InputContainer>
 
@@ -859,7 +833,7 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
                         disabled
                         options={StatusSelect}
                         placeholder="Selecione"
-                        defaultValue={candidate?.formations.status}
+                        defaultValue={candidate?.formations?.status}
                       />
                     </InputContainer>
                   </div>
@@ -873,7 +847,7 @@ export function CandidateModal({ children, candidateId }: CandidateModalProps) {
                         disabled
                         options={PeriodSelect}
                         placeholder="Selecione"
-                        defaultValue={candidate?.formations.period}
+                        defaultValue={candidate?.formations?.period}
                       />
                     </InputContainer>
                   </div>

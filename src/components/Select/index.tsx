@@ -42,7 +42,7 @@ export function Select({
         disabled={disabled}
         style={{ cursor: disabled ? "default" : "pointer" }}
       >
-        <span>{select ? select : placeholder}</span>
+        <span>{select ? select : disabled ? "" : placeholder}</span>
         {!disabled && <ChevronDown />}
       </button>
       {openSelect && (

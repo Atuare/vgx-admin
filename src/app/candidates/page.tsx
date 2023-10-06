@@ -1,13 +1,22 @@
 "use client";
 import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { CandidateStatus } from "@/components/CandidateStatus";
 import { Checkbox } from "@/components/Checkbox";
+import { FilterButton } from "@/components/FilterButton";
 import { CandidateModal } from "@/components/Modals/CandidateModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
-import { ICandidate, ICandidates } from "@/interfaces/candidate.interface";
-import { useGetAllCandidatesQuery } from "@/services/api/fetchApi";
+import {
+  CandidacyType,
+  CandidacysType,
+} from "@/interfaces/candidacy.interface";
+import {
+  useGetAllCandidacysQuery,
+  useGetAllRolesQuery,
+  useGetAllUnitsQuery,
+} from "@/services/api/fetchApi";
 import { formatCpf } from "@/utils/formatCpf";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -18,9 +27,19 @@ import styles from "./Candidates.module.scss";
 
 const defaultTableSize = 2;
 
+const convertDateFilter = {
+  "Data Cadastro": "CADASTRO",
+  "Data Prova": "PROVA",
+  "Data Entrevista": "ENTREVISTA",
+  "Data Treinamento": "TREINAMENTO",
+};
+
 export default function Candidates() {
-  const [candidates, setCandidates] = useState<ICandidates>();
+  const [candidates, setCandidates] = useState<CandidacysType>();
+  const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
+  const [rolesOptions, setRolesOptions] = useState<string[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState<string>("CADASTRO");
   const [table, setTable] = useState<Table<any>>();
 
   const { get } = useSearchParams();
@@ -29,9 +48,19 @@ export default function Candidates() {
     get("page") ? Number(get("page")) : 1,
   );
 
-  const { data, isFetching, isSuccess, refetch } = useGetAllCandidatesQuery({
+  const { data, isFetching, isSuccess, refetch } = useGetAllCandidacysQuery({
     page: currentPage,
     size: defaultTableSize,
+  });
+
+  const { data: unitsData, isSuccess: unitsIsSuccess } = useGetAllUnitsQuery({
+    page: 1,
+    size: 99999,
+  });
+
+  const { data: rolesData, isSuccess: rolesIsSuccess } = useGetAllRolesQuery({
+    page: 1,
+    size: 99999,
   });
 
   const handleTogglePage = (page: number) => {
@@ -42,7 +71,7 @@ export default function Candidates() {
     setGlobalFilter(value);
   };
 
-  const columnHelper = createColumnHelper<ICandidate>();
+  const columnHelper = createColumnHelper<CandidacyType>();
   const columns = [
     columnHelper.accessor("id", {
       id: "select",
@@ -59,22 +88,65 @@ export default function Candidates() {
         />
       ),
     }),
-    columnHelper.accessor(value => formatCpf(value.cpf), {
+    columnHelper.accessor(value => formatCpf(value.candidate.cpf), {
       header: "CPF",
       cell: row => <span>{row.getValue()}</span>,
     }),
-    columnHelper.accessor("name", {
+    columnHelper.accessor("candidate.name", {
       header: "Nome",
       cell: row => (
-        <CandidateModal candidateId={row.row.original.id}>
-          <span>{row.getValue()}</span>
+        <CandidateModal data={row.row.original}>
+          <span style={{ cursor: "pointer" }}>{row.getValue()}</span>
         </CandidateModal>
       ),
     }),
-    columnHelper.accessor("createdAt", {
-      header: "Data cadastro",
+    columnHelper.accessor("candidate.createdAt", {
+      id: "createdAt",
+      header: "Data Cadastro",
       cell: row => <div>{dayjs(row.getValue()).format("DD/MM/YYYY")}</div>,
+      filterFn: (row, id, value) => {
+        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+      },
     }),
+    columnHelper.accessor("process.role.roleText", {
+      id: "role",
+      header: () => (
+        <FilterButton
+          title="Vaga"
+          table={table}
+          options={rolesOptions ?? []}
+          column="role"
+        />
+      ),
+      cell: row => <div>{row.getValue()}</div>,
+      filterFn: (row, id, value) => {
+        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+      },
+    }),
+    columnHelper.accessor("process.unit.unitName", {
+      id: "unit",
+      header: () => (
+        <FilterButton
+          title="Unidade/Site"
+          table={table}
+          options={unitsOptions ?? []}
+          column="unit"
+        />
+      ),
+      cell: row => <div>{row.getValue()}</div>,
+      filterFn: (row, id, value) => {
+        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+      },
+    }),
+    {
+      id: "status",
+      header: "Status",
+      cell: (row: any) => (
+        <div>
+          <CandidateStatus data={row.row.original} />
+        </div>
+      ),
+    },
   ];
 
   function downloadTableExcelHandler() {
@@ -130,6 +202,20 @@ export default function Candidates() {
     isSuccess && setCandidates(data);
   }, [isSuccess, isFetching]);
 
+  useEffect(() => {
+    unitsIsSuccess &&
+      setUnitsOptions(unitsData.units.map(unit => unit.unitName));
+  }, [unitsIsSuccess]);
+
+  useEffect(() => {
+    rolesIsSuccess &&
+      setRolesOptions(rolesData.roles.map(role => role.roleText));
+  }, [rolesIsSuccess]);
+
+  useEffect(() => {
+    refetch();
+  }, [dateFilter]);
+
   if (!candidates) return;
 
   return (
@@ -148,12 +234,12 @@ export default function Candidates() {
       <DataTable
         columns={columns}
         currentPage={currentPage}
-        data={candidates.data}
+        data={candidates.candidacys}
         globalFilterValue={globalFilter}
         defaultTableSize={defaultTableSize}
         handleTogglePage={handleTogglePage}
         setTable={setTable}
-        size={candidates.total}
+        size={candidates.totalCount}
         loading={isFetching}
       />
     </div>

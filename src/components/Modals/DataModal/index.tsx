@@ -1683,7 +1683,7 @@ export function DataModal({ children, data }: DataModalProps) {
                                 <input
                                   type="text"
                                   id="Tarifa diária"
-                                  value={formatCurrency(
+                                  defaultValue={formatCurrency(
                                     candidate?.complementaryInfo
                                       ?.transportTaxDaily ?? "",
                                   )}

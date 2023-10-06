@@ -11,11 +11,12 @@ export function AccountInput({
   onChange,
   disabled = false,
 }: AccountInputProps) {
+  console.log(defaultValue);
   const [firstAccount, setFirstAccount] = useState(
     defaultValue?.slice(0, 7) ?? "",
   );
   const [secondAccount, setSecondAccount] = useState(
-    defaultValue?.slice(8) ?? "",
+    defaultValue?.slice(7, 8) ?? "",
   );
 
   const bankAccountFirstInput = useRef<HTMLInputElement | null>(null);

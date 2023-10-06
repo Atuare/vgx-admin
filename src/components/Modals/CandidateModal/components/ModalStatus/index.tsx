@@ -1,15 +1,20 @@
 import { Cancel, CheckCircle, Unchecked, Warning } from "@/assets/Icons";
+import { CandidacyType } from "@/interfaces/candidacy.interface";
 import styles from "./ModalStatus.module.scss";
 
-export function ModalStatus() {
+interface ModalStatusProps {
+  data: CandidacyType;
+}
+
+export function ModalStatus({ data }: ModalStatusProps) {
   return (
     <section className={styles.container}>
-      <StatusItem title="Prova" type="APROVADO" />
-      <StatusItem title="Entrevista" type="AREALIZAR" />
-      <StatusItem title="Documentos" type="VERIFICACAO" />
-      <StatusItem title="Treinamento" type="NAOREALIZADO" />
-      <StatusItem title="Exame adm." type="NAOREALIZADO" />
-      <StatusItem title="Ass. Contrato" type="NAOREALIZADO" />
+      <StatusItem title="Prova" type={data.testResult} />
+      <StatusItem title="Entrevista" type={data.interview?.status} />
+      <StatusItem title="Documentos" type="AREALIZAR" />
+      <StatusItem title="Treinamento" type={data.training?.status} />
+      <StatusItem title="Exame adm." type="AREALIZAR" />
+      <StatusItem title="Ass. Contrato" type="AREALIZAR" />
     </section>
   );
 }
@@ -19,27 +24,61 @@ function StatusItem({
   type,
 }: {
   title: string;
-  type: "APROVADO" | "AREALIZAR" | "VERIFICACAO" | "NAOREALIZADO";
+  type:
+    | "APROVADO"
+    | "ASSINADO"
+    | "AREALIZAR"
+    | "PENDENTE"
+    | "VERIFICACAO"
+    | "ANDAMENTO"
+    | "EM_ANDAMENTO"
+    | "EM ANDAMENTO"
+    | "NAOREALIZADO"
+    | "NAOASSINADO"
+    | "CANCELADO"
+    | "SUSPENSO"
+    | "REPROVADO"
+    | "CONCLUIDO";
 }) {
   const messages = {
     APROVADO: "Aprovado",
+    ASSINADO: "Assinado",
+    CONCLUIDO: "Concluído",
+    ANDAMENTO: "Em Andamento",
+    PENDENTE: "Pendente",
+    EM_ANDAMENTO: "Em Andamento",
+    "EM ANDAMENTO": "Em Andamento",
     AREALIZAR: "A Realizar",
     VERIFICACAO: "Em Verificação",
     NAOREALIZADO: "Não Realizado",
+    NAOASSINADO: "Não Assinado",
+    CANCELADO: "Cancelado",
+    SUSPENSO: "Suspenso",
+    REPROVADO: "Reprovado",
   };
 
   const icons = {
     APROVADO: <CheckCircle />,
+    ASSINADO: <CheckCircle />,
+    CONCLUIDO: <CheckCircle />,
     AREALIZAR: <Unchecked />,
     VERIFICACAO: <Warning />,
+    ANDAMENTO: <Warning />,
+    PENDENTE: <Warning />,
+    EM_ANDAMENTO: <Warning />,
+    "EM ANDAMENTO": <Warning />,
     NAOREALIZADO: <Cancel />,
+    NAOASSINADO: <Cancel />,
+    CANCELADO: <Cancel />,
+    SUSPENSO: <Cancel />,
+    REPROVADO: <Cancel />,
   };
 
   return (
     <div className={styles.item}>
       <h4 className={styles.item__title}>{title}</h4>
-      {icons[type]}
-      <p className={styles.item__message}>{messages[type]}</p>
+      {icons[type] ?? icons.AREALIZAR}
+      <p className={styles.item__message}>{messages[type] ?? "A Realizar"}</p>
     </div>
   );
 }
