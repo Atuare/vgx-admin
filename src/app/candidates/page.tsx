@@ -32,8 +32,6 @@ const defaultTableSize = 2;
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<CandidacysType>();
-  const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
-  const [rolesOptions, setRolesOptions] = useState<string[]>([]);
   const [tableColumns, setTableColumns] = useState<any[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [table, setTable] = useState<Table<any>>();
@@ -70,6 +68,14 @@ export default function Candidates() {
 
   const handleInputValue = (value: string) => {
     setGlobalFilter(value);
+  };
+
+  const getFilterValues = (column: string) => {
+    const paramsValue = get(column);
+    if (paramsValue) {
+      const paramsArray = paramsValue.split(",");
+      table?.getColumn(column)?.setFilterValue(paramsArray);
+    }
   };
 
   const columnHelper = createColumnHelper<CandidacyType>();
@@ -111,6 +117,9 @@ export default function Candidates() {
   };
 
   const getColumns = async () => {
+    const units = unitsData?.units?.map(unit => unit.unitName) ?? [];
+    const roles = rolesData?.roles?.map(role => role.roleText) ?? [];
+
     const columns = [
       columnHelper.accessor("id", {
         id: "select",
@@ -146,7 +155,7 @@ export default function Candidates() {
           <FilterButton
             title="Vaga"
             table={table}
-            options={rolesOptions ?? []}
+            options={roles}
             column="role"
           />
         ),
@@ -161,7 +170,7 @@ export default function Candidates() {
           <FilterButton
             title="Unidade/Site"
             table={table}
-            options={unitsOptions ?? []}
+            options={units}
             column="unit"
           />
         ),
@@ -238,14 +247,14 @@ export default function Candidates() {
   }, [isSuccess, isFetching]);
 
   useEffect(() => {
-    unitsIsSuccess &&
-      setUnitsOptions(unitsData.units.map(unit => unit.unitName));
-  }, [unitsIsSuccess]);
+    if (unitsIsSuccess || rolesIsSuccess) getColumns();
+  }, [unitsIsSuccess, rolesIsSuccess]);
 
   useEffect(() => {
-    rolesIsSuccess &&
-      setRolesOptions(rolesData.roles.map(role => role.roleText));
-  }, [rolesIsSuccess]);
+    getFilterValues("unit");
+    getFilterValues("role");
+    getColumns();
+  }, [table]);
 
   useEffect(() => {
     refetch();

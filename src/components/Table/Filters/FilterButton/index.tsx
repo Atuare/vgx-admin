@@ -84,7 +84,6 @@ export function PopoverFilter({
 
   const handleToggleFilter = () => {
     table?.getColumn(column)?.setFilterValue(selected);
-
     setParams(column, selected.join(","));
   };
 
@@ -106,38 +105,46 @@ export function PopoverFilter({
       }}
     >
       <Popover.Trigger asChild>{children}</Popover.Trigger>
-      <Popover.Portal className={styles.popover}>
-        <Popover.Content className={styles.popover__content} sideOffset={5}>
-          <header>
-            <SearchInput handleChangeValue={setInputValue} icon={<Search />} />
-            <Popover.Close className={styles.popover__close} aria-label="Close">
-              <Close />
-            </Popover.Close>
-          </header>
-
-          <div className={styles.popover__content__list}>
-            {filteredOptions?.map(option => (
-              <Checkbox
-                iconType="solid"
-                isActive={selected.includes(option)}
-                value={option}
-                onChangeCheckbox={handleCreateFilter}
-                key={crypto.randomUUID()}
+      <Popover.Portal>
+        <div className={styles.popover}>
+          <Popover.Content className={styles.popover__content} sideOffset={5}>
+            <header>
+              <SearchInput
+                handleChangeValue={setInputValue}
+                icon={<Search />}
               />
-            ))}
-          </div>
+              <Popover.Close
+                className={styles.popover__close}
+                aria-label="Close"
+              >
+                <Close />
+              </Popover.Close>
+            </header>
 
-          <div className={styles.popover__content__buttons}>
-            <Popover.Close asChild>
-              <Button buttonType="default" text="Cancelar" />
-            </Popover.Close>
-            <Button
-              buttonType="primary"
-              text="OK"
-              onClick={handleToggleFilter}
-            />
-          </div>
-        </Popover.Content>
+            <div className={styles.popover__content__list}>
+              {filteredOptions?.map(option => (
+                <Checkbox
+                  iconType="solid"
+                  isActive={selected.includes(option)}
+                  value={option}
+                  onChangeCheckbox={handleCreateFilter}
+                  key={crypto.randomUUID()}
+                />
+              ))}
+            </div>
+
+            <div className={styles.popover__content__buttons}>
+              <Popover.Close asChild>
+                <Button buttonType="default" text="Cancelar" />
+              </Popover.Close>
+              <Button
+                buttonType="primary"
+                text="OK"
+                onClick={handleToggleFilter}
+              />
+            </div>
+          </Popover.Content>
+        </div>
       </Popover.Portal>
     </Popover.Root>
   );
