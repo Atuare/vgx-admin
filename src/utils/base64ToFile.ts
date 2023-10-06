@@ -1,5 +1,10 @@
 import mime from "mime-types";
 
+export async function convertBase64ToFile(base64: string, filename: string) {
+  const convertedFile = await base64ToFile(base64, filename);
+  return convertedFile;
+}
+
 export async function base64ToFile(
   base64String: string,
   fileName: string,

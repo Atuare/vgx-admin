@@ -1,26 +1,17 @@
 import { Close } from "@/assets/Icons";
 import { FileInput } from "@/components/FileInput";
 import { Radio } from "@/components/Radio";
-import { Select } from "@/components/Select";
 import { CandidacyType } from "@/interfaces/candidacy.interface";
-import {
-  FormationTypes,
-  PeriodSelect,
-  StatusSelect,
-  genders,
-  maritalStatus,
-  pixTypes,
-  states,
-  statesAccronym,
-} from "@/utils/datamodal";
+import { convertBase64ToFile } from "@/utils/base64ToFile";
+import { statesAccronym } from "@/utils/datamodal";
 import { formatCEP } from "@/utils/formatCep";
 import { formatCpf } from "@/utils/formatCpf";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
-import { getBase64 } from "@/utils/getBase64";
+import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatPhoneNumber } from "@/utils/phoneFormating";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import styles from "../DataModal/DataModal.module.scss";
 import { AccountInput } from "../DataModal/components/AccountInput";
 import { InputContainer } from "../DataModal/components/InputContainer";
@@ -34,7 +25,7 @@ interface CandidateModalProps {
 export function CandidateModal({ children, data }: CandidateModalProps) {
   const [open, setOpen] = useState(false);
 
-  const { candidate, process } = data;
+  const { candidate, process, availability } = data;
 
   const [medicalReportPdf, setMedicalReportPdf] = useState<File>();
   const [curriculumPdf, setCurriculumPdf] = useState<File>();
@@ -54,7 +45,29 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
     }
   }
 
-  console.log(candidate?.documents?.bank?.account);
+  const getCandidateDocuments = async () => {
+    if (candidate?.complementaryInfo?.medicalReport) {
+      setMedicalReportPdf(
+        await convertBase64ToFile(
+          candidate?.complementaryInfo?.medicalReport ?? "",
+          candidate.name + "_laudo_medico",
+        ),
+      );
+    }
+
+    if (candidate?.curriculum) {
+      setCurriculumPdf(
+        await convertBase64ToFile(
+          candidate?.curriculum ?? "",
+          candidate.name + "_curriculo",
+        ),
+      );
+    }
+  };
+
+  useEffect(() => {
+    getCandidateDocuments();
+  }, []);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -108,20 +121,17 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Sexo" width={"100%"}>
-                      <Select
-                        placeholder="Selecione"
-                        options={genders}
-                        width="100%"
+                      <input
+                        type="text"
+                        style={{ width: "100%" }}
                         defaultValue={candidate?.gender}
                         disabled
                       />
                     </InputContainer>
 
                     <InputContainer title="Estado civil" width={"100%"}>
-                      <Select
-                        placeholder="Selecione"
-                        options={maritalStatus}
-                        maxHeight={250}
+                      <input
+                        type="text"
                         defaultValue={candidate?.civilStatus}
                         disabled
                       />
@@ -150,10 +160,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                       htmlFor="state"
                       width={"30%"}
                     >
-                      <Select
+                      <input
                         disabled
-                        placeholder="Selecione"
-                        options={states}
+                        type="text"
                         defaultValue={
                           statesAccronym[
                             candidate?.state as keyof typeof statesAccronym
@@ -163,11 +172,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Município" htmlFor="city">
-                      <Select
+                      <input
                         disabled
-                        placeholder="Selecione"
-                        options={[]}
-                        width={200}
+                        style={{ width: "200px" }}
                         defaultValue={candidate?.county}
                       />
                     </InputContainer>
@@ -381,10 +388,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     </InputContainer>
 
                     <InputContainer title="UF" width={"30%"}>
-                      <Select
+                      <input
+                        type="text"
                         disabled
-                        placeholder="Selecione"
-                        options={states}
                         defaultValue={
                           statesAccronym[
                             candidate?.documents?.identity?.uf?.toUpperCase() as keyof typeof statesAccronym
@@ -453,10 +459,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     }
                   >
                     <InputContainer title="UF" width={"30%"}>
-                      <Select
+                      <input
+                        type="text"
                         disabled
-                        placeholder="Selecione"
-                        options={states}
                         defaultValue={
                           statesAccronym[
                             candidate?.documents?.work?.uf?.toUpperCase() as keyof typeof statesAccronym
@@ -505,11 +510,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     }
                   >
                     <InputContainer title="Tipo chave PIX" width={"20%"}>
-                      <Select
+                      <input
                         disabled
-                        options={pixTypes}
-                        placeholder="Selecione"
-                        maxHeight={250}
+                        type="text"
                         defaultValue={candidate?.documents?.bank?.pixKeyType}
                       />
                     </InputContainer>
@@ -585,24 +588,6 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     </InputContainer>
                   </div>
 
-                  {true && (
-                    <div
-                      className={
-                        styles.modal__content__form__item__inputs__container
-                      }
-                    >
-                      <InputContainer title="Pretensão salarial">
-                        <input
-                          type="text"
-                          id="Pretensão salarial"
-                          defaultValue={formatCurrency("0")}
-                          disabled
-                        />
-                        RESOLVER ESSA PARTE
-                      </InputContainer>
-                    </div>
-                  )}
-
                   <div
                     className={
                       styles.modal__content__form__item__inputs__container
@@ -659,13 +644,10 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                           }}
                         >
                           <FileInput
-                            onChange={async file => {
-                              setMedicalReportPdf(file);
-                              const medicalReportBase64 = await getBase64(file);
-                            }}
                             maxSize={5}
                             allowedTypes={["pdf"]}
                             disabled
+                            defaultFile={medicalReportPdf}
                           />
                           <a
                             href={
@@ -681,7 +663,6 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                             Visualizar documento
                           </a>
                         </div>
-                        RESOLVER ESSA PARTE
                       </InputContainer>
                     )}
                   </div>
@@ -793,8 +774,11 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     }
                   >
                     <InputContainer title="Disponibilidade" width={"45%"}>
-                      <Select disabled placeholder="Selecione" options={[]} />
-                      RESOLVER ESSA PARTE
+                      <input
+                        type="text"
+                        disabled
+                        defaultValue={formatTimeRange(availability ?? "")}
+                      />
                     </InputContainer>
                   </div>
                 </div>
@@ -811,10 +795,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     }
                   >
                     <InputContainer title="Escolaridade" width={"30%"}>
-                      <Select
+                      <input
+                        type="text"
                         disabled
-                        placeholder="Selecione"
-                        options={FormationTypes}
                         defaultValue={candidate?.formations?.type}
                       />
                     </InputContainer>
@@ -829,10 +812,9 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                     </InputContainer>
 
                     <InputContainer title="Status" width={"20%"}>
-                      <Select
+                      <input
                         disabled
-                        options={StatusSelect}
-                        placeholder="Selecione"
+                        type="text"
                         defaultValue={candidate?.formations?.status}
                       />
                     </InputContainer>
@@ -842,17 +824,16 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                       styles.modal__content__form__item__inputs__container
                     }
                   >
-                    <InputContainer title="Período">
-                      <Select
+                    <InputContainer title="Período" width={"20%"}>
+                      <input
+                        type="text"
                         disabled
-                        options={PeriodSelect}
-                        placeholder="Selecione"
                         defaultValue={candidate?.formations?.period}
                       />
                     </InputContainer>
                   </div>
 
-                  {true && (
+                  {candidate?.curriculum && (
                     <div
                       className={
                         styles.modal__content__form__item__inputs__container
@@ -867,7 +848,7 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                           }}
                         >
                           <FileInput
-                            onChange={file => setCurriculumPdf(file)}
+                            defaultFile={curriculumPdf}
                             maxSize={5}
                             allowedTypes={["pdf"]}
                           />
@@ -885,7 +866,6 @@ export function CandidateModal({ children, data }: CandidateModalProps) {
                             Visualizar documento
                           </a>
                         </div>
-                        RESOLVER ESSA PARTE
                       </InputContainer>
                     </div>
                   )}
