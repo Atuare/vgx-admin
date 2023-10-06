@@ -33,7 +33,6 @@ export function Checkbox({
 }: CheckboxProps) {
   const [checked, setChecked] = useState(isActive ?? false);
 
-  // Calculate whether the checkbox is indeterminate
   const isIndeterminate = checked === "indeterminate";
 
   return (
@@ -47,7 +46,7 @@ export function Checkbox({
       onClick={() => {
         if (!disabled && !isIndeterminate) {
           const newChecked = !checked;
-          setChecked(newChecked);
+          setChecked(isActive ? isActive : newChecked);
           onChangeCheckbox?.(newChecked, value);
         }
       }}

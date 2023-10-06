@@ -3,10 +3,11 @@ import { Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { CandidateStatus } from "@/components/CandidateStatus";
 import { Checkbox } from "@/components/Checkbox";
-import { FilterButton } from "@/components/FilterButton";
 import { CandidateModal } from "@/components/Modals/CandidateModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
+import { CandidateDateFilter } from "@/components/Table/Filters/CandidateDateFilter";
+import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
   CandidacyType,
@@ -20,29 +21,29 @@ import {
 import { formatCpf } from "@/utils/formatCpf";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Candidates.module.scss";
+dayjs.extend(utc);
 
 const defaultTableSize = 2;
-
-const convertDateFilter = {
-  "Data Cadastro": "CADASTRO",
-  "Data Prova": "PROVA",
-  "Data Entrevista": "ENTREVISTA",
-  "Data Treinamento": "TREINAMENTO",
-};
 
 export default function Candidates() {
   const [candidates, setCandidates] = useState<CandidacysType>();
   const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
   const [rolesOptions, setRolesOptions] = useState<string[]>([]);
+  const [tableColumns, setTableColumns] = useState<any[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState<string>("CADASTRO");
   const [table, setTable] = useState<Table<any>>();
 
   const { get } = useSearchParams();
+
+  const [dateFilter, setDateFilter] = useState<string>(
+    get("dateType") ? String(get("dateType")) : "CADASTRO",
+  );
+
   const { setParams } = useTableParams();
   const [currentPage, setCurrentPage] = useState(
     get("page") ? Number(get("page")) : 1,
@@ -72,82 +73,116 @@ export default function Candidates() {
   };
 
   const columnHelper = createColumnHelper<CandidacyType>();
-  const columns = [
-    columnHelper.accessor("id", {
-      id: "select",
-      header: "",
-      cell: ({ row }) => (
-        <Checkbox
-          {...{
-            isActive: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            onChangeCheckbox: () => row?.toggleSelected(),
-          }}
-          iconType="solid"
-          style={{ padding: 0, transform: "translateY(-2px)" }}
-        />
-      ),
-    }),
-    columnHelper.accessor(value => formatCpf(value.candidate.cpf), {
-      header: "CPF",
-      cell: row => <span>{row.getValue()}</span>,
-    }),
-    columnHelper.accessor("candidate.name", {
-      header: "Nome",
-      cell: row => (
-        <CandidateModal data={row.row.original}>
-          <span style={{ cursor: "pointer" }}>{row.getValue()}</span>
-        </CandidateModal>
-      ),
-    }),
-    columnHelper.accessor("candidate.createdAt", {
-      id: "createdAt",
-      header: "Data Cadastro",
-      cell: row => <div>{dayjs(row.getValue()).format("DD/MM/YYYY")}</div>,
-      filterFn: (row, id, value) => {
-        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
-      },
-    }),
-    columnHelper.accessor("process.role.roleText", {
-      id: "role",
+
+  const getDateTypeAccessor = () => {
+    const column = {
+      id: dateFilter,
       header: () => (
-        <FilterButton
-          title="Vaga"
-          table={table}
-          options={rolesOptions ?? []}
-          column="role"
+        <CandidateDateFilter
+          column="dateType"
+          handleOnChangeFilter={setDateFilter}
         />
       ),
-      cell: row => <div>{row.getValue()}</div>,
-      filterFn: (row, id, value) => {
-        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+      cell: (row: any) => <div>{row.getValue()}</div>,
+    };
+
+    switch (dateFilter) {
+      case "CADASTRO":
+        return columnHelper.accessor(
+          value => dayjs(value.candidate.createdAt).utc().format("DD/MM/YYYY"),
+          column,
+        );
+      case "ENTREVISTA":
+        return columnHelper.accessor(
+          value => dayjs(value.interview.createdAt).utc().format("DD/MM/YYYY"),
+          column,
+        );
+      case "TREINAMENTO":
+        return columnHelper.accessor(
+          value => dayjs(value.training.createdAt).utc().format("DD/MM/YYYY"),
+          column,
+        );
+      default:
+        return columnHelper.accessor(
+          value => dayjs(new Date()).utc().format("DD/MM/YYYY"),
+          column,
+        );
+    }
+  };
+
+  const getColumns = async () => {
+    const columns = [
+      columnHelper.accessor("id", {
+        id: "select",
+        header: "",
+        cell: ({ row }) => (
+          <Checkbox
+            {...{
+              isActive: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              onChangeCheckbox: () => row?.toggleSelected(),
+            }}
+            iconType="solid"
+            style={{ padding: 0, transform: "translateY(-2px)" }}
+          />
+        ),
+      }),
+      columnHelper.accessor(value => formatCpf(value.candidate.cpf), {
+        header: "CPF",
+        cell: row => <span>{row.getValue()}</span>,
+      }),
+      columnHelper.accessor("candidate.name", {
+        header: "Nome",
+        cell: row => (
+          <CandidateModal data={row.row.original}>
+            <span style={{ cursor: "pointer" }}>{row.getValue()}</span>
+          </CandidateModal>
+        ),
+      }),
+      getDateTypeAccessor(),
+      columnHelper.accessor("process.role.roleText", {
+        id: "role",
+        header: () => (
+          <FilterButton
+            title="Vaga"
+            table={table}
+            options={rolesOptions ?? []}
+            column="role"
+          />
+        ),
+        cell: row => <div>{row.getValue()}</div>,
+        filterFn: (row, id, value) => {
+          return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+        },
+      }),
+      columnHelper.accessor("process.unit.unitName", {
+        id: "unit",
+        header: () => (
+          <FilterButton
+            title="Unidade/Site"
+            table={table}
+            options={unitsOptions ?? []}
+            column="unit"
+          />
+        ),
+        cell: row => <div>{row.getValue()}</div>,
+        filterFn: (row, id, value) => {
+          return value.length !== 0 ? value.includes(row.getValue(id)) : true;
+        },
+      }),
+      {
+        id: "status",
+        header: "Status",
+        cell: (row: any) => (
+          <div>
+            <CandidateStatus data={row.row.original} />
+          </div>
+        ),
       },
-    }),
-    columnHelper.accessor("process.unit.unitName", {
-      id: "unit",
-      header: () => (
-        <FilterButton
-          title="Unidade/Site"
-          table={table}
-          options={unitsOptions ?? []}
-          column="unit"
-        />
-      ),
-      cell: row => <div>{row.getValue()}</div>,
-      filterFn: (row, id, value) => {
-        return value.length !== 0 ? value.includes(row.getValue(id)) : true;
-      },
-    }),
-    {
-      id: "status",
-      header: "Status",
-      cell: (row: any) => (
-        <div>
-          <CandidateStatus data={row.row.original} />
-        </div>
-      ),
-    },
-  ];
+    ];
+
+    setTableColumns(columns);
+  };
 
   function downloadTableExcelHandler() {
     const selectedRows = table
@@ -214,6 +249,7 @@ export default function Candidates() {
 
   useEffect(() => {
     refetch();
+    getColumns();
   }, [dateFilter]);
 
   if (!candidates) return;
@@ -232,7 +268,7 @@ export default function Candidates() {
       </div>
 
       <DataTable
-        columns={columns}
+        columns={tableColumns}
         currentPage={currentPage}
         data={candidates.candidacys}
         globalFilterValue={globalFilter}
