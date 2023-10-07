@@ -7,6 +7,7 @@ import { CandidateModal } from "@/components/Modals/CandidateModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
 import { CandidateDateFilter } from "@/components/Table/Filters/CandidateDateFilter";
+import { CandidateStatusFilterButton } from "@/components/Table/Filters/CandidateStatusFilterButton";
 import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
@@ -181,7 +182,7 @@ export default function Candidates() {
       }),
       {
         id: "status",
-        header: "Status",
+        header: () => <CandidateStatusFilterButton column="status" />,
         cell: (row: any) => (
           <div>
             <CandidateStatus data={row.row.original} />

@@ -14,7 +14,7 @@ export function CandidateStatus({ data }: CandidateStatusProps) {
       <StatusItem title="DOCUMENTO" type="AREALIZAR" />
       <StatusItem title="TREINAMENTO" type={data.training?.status} />
       <StatusItem title="EXAME ADM." type="AREALIZAR" />
-      <StatusItem title="CON" type="AREALIZAR" />
+      <StatusItem title="CON" type="NAOASSINADO" />
     </div>
   );
 }
@@ -60,6 +60,7 @@ function StatusItem({
   return (
     <li className={styles.status__item}>
       <h2>{title.substring(0, 3)}</h2>
+      <span>{type}</span>
       {icons[type] ?? icons.AREALIZAR}
     </li>
   );

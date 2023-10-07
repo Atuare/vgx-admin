@@ -3,7 +3,7 @@ import {
   CheckboxFill,
   CheckboxFillOutlined,
 } from "@/assets/Icons";
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes, ReactNode, useState } from "react";
 import styles from "./Checkbox.module.scss";
 
 interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -11,6 +11,7 @@ interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onChangeCheckbox?: (value: boolean, name?: string) => void;
   isActive?: boolean | "indeterminate";
   iconType: "solid" | "outline";
+  icon?: ReactNode;
   disabled?: boolean;
 }
 
@@ -22,6 +23,7 @@ interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param isActive - Estado inicial do checkbox.
  * @param disabled - Desativa o trigger do checkbox.
  * @param iconType - Enum do tipo do ícone do checkbox.
+ * @param icon- Ícone personalizado que fica do lado direito do texto.
  */
 export function Checkbox({
   value,
@@ -29,6 +31,7 @@ export function Checkbox({
   isActive,
   iconType,
   disabled = false,
+  icon,
   ...props
 }: CheckboxProps) {
   const [checked, setChecked] = useState(isActive ?? false);
@@ -53,18 +56,21 @@ export function Checkbox({
       type="button"
       {...props}
     >
-      {isIndeterminate ? (
-        <CheckboxFillOutlined /> // Use the indeterminate icon
-      ) : checked ? (
-        iconType === "solid" ? (
-          <CheckboxFill />
+      <span className={styles.checkbox__iconTrigger}>
+        {isIndeterminate ? (
+          <CheckboxFillOutlined /> // Use the indeterminate icon
+        ) : checked ? (
+          iconType === "solid" ? (
+            <CheckboxFill />
+          ) : (
+            <CheckboxFillOutlined />
+          )
         ) : (
-          <CheckboxFillOutlined />
-        )
-      ) : (
-        <CheckboxBlank />
-      )}
+          <CheckboxBlank />
+        )}
+      </span>
       {value && <span>{value}</span>}
+      {icon && <span className={styles.checkbox__icon}>{icon}</span>}
     </button>
   );
 }

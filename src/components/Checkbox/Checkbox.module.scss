@@ -12,7 +12,7 @@
   &.primaryOne {
     color: var(--neutral-4);
 
-    svg path {
+    .checkbox__iconTrigger {
       fill: var(--primary-1);
     }
   }
@@ -20,8 +20,18 @@
   &.primaryTwo {
     color: var(--primary-2);
 
-    svg path {
+    .checkbox__iconTrigger {
       fill: var(--primary-2);
+    }
+  }
+
+  &__icon {
+    svg {
+      width: 16px;
+      height: 16px;
+      g path {
+        fill: #1c1b1f;
+      }
     }
   }
 
