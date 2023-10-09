@@ -439,6 +439,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    releaseAdmissionContract: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/admission/releaseContract",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
     changeEmployeePassword: builder.mutation<
       any,
       { password: string; newPassword: string }
@@ -728,4 +737,5 @@ export const {
   useCreateTestMutation,
   useGetAvailabilityByIdQuery,
   useGetAllCandidacysQuery,
+  useReleaseAdmissionContractMutation,
 } = fetchApi;

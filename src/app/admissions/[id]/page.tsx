@@ -25,20 +25,25 @@ import {
 import {
   useGetAdmissionQuery,
   useGetAllUnitsQuery,
+  useReleaseAdmissionContractMutation,
 } from "@/services/api/fetchApi";
-import { admissionsStatus, getAdmissionById } from "@/utils/admissions";
+import { admissionsStatus } from "@/utils/admissions";
 import { formatCpf } from "@/utils/formatCpf";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatWhatsappNumber } from "@/utils/phoneFormating";
+import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Admission.module.scss";
 dayjs.extend(utc);
+
+const defaultTableSize = 5;
 
 export default function AdmissionClass() {
   const [admission, setAdmission] = useState<IAdmission>();
@@ -49,7 +54,6 @@ export default function AdmissionClass() {
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
   const pathname = usePathname();
-  const { push } = useRouter();
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
 
@@ -57,10 +61,10 @@ export default function AdmissionClass() {
     get("page") ? Number(get("page")) : 1,
   );
 
-  const { data, isSuccess } = useGetAdmissionQuery({
+  const { data, isSuccess, isFetching, refetch } = useGetAdmissionQuery({
     admissionId: pathname.split("/")[2],
-    page: 1,
-    size: 5,
+    page: currentPage,
+    size: defaultTableSize,
   });
 
   const { data: units, isSuccess: unitsSuccess } = useGetAllUnitsQuery({
@@ -68,15 +72,10 @@ export default function AdmissionClass() {
     size: 9999,
   });
 
+  const [releaseContract] = useReleaseAdmissionContractMutation();
+
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
-    const { data } = await getAdmissionById(
-      pathname.split("/")[2],
-      page + 1,
-      5,
-    );
-
-    setCandidates(data.admissionResult);
   };
 
   const getFilterValues = (column: string) => {
@@ -89,6 +88,26 @@ export default function AdmissionClass() {
 
   const handleInputValue = (value: string) => {
     setGlobalFilter(value);
+  };
+
+  const handleReleaseContract = () => {
+    const rows = table?.getSelectedRowModel().flatRows.map(row => row.original);
+    if (rows && rows.length > 0) {
+      const admissionsResultIds = rows.map(row => row.id);
+      releaseContract({
+        admissionsResultIds,
+      })
+        .then(() => {
+          Toast("success", "Contratos liberados com sucesso");
+          table?.resetRowSelection();
+          refetch();
+        })
+        .catch(() => {
+          Toast("error", "Erro ao liberar contratos");
+        });
+    } else {
+      Toast("error", "Selecione ao menos um candidato para liberar contrato");
+    }
   };
 
   const columnHelper = createColumnHelper<IAdmissionCandidate>();
@@ -281,6 +300,112 @@ export default function AdmissionClass() {
     }),
   ];
 
+  const downloadTableExcelHandler = () => {
+    const selectedRows = table
+      ?.getSelectedRowModel()
+      .flatRows.map(row => row.original);
+
+    const columnHeaders = [
+      "Nome",
+      "CPF",
+      "RG",
+      "Data de nascimento",
+      "Telefone",
+      "Função",
+      "Unidade/Site",
+      "Optante VT",
+      "Disponibilidade",
+      "Tarifa trecho",
+      "Tarifa integração",
+      "Tarifa diária",
+      "Status",
+    ];
+
+    if (selectedRows && selectedRows.length > 0) {
+      const excelData = selectedRows.map(row => ({
+        name: row.candidacy.candidate.name,
+        cpf: formatCpf(row.candidacy.candidate.cpf),
+        rg: formatRG(row.candidacy.candidate.documents.identity.rg),
+        dateofbirth: dayjs(row.candidacy.candidate.birthdate)
+          .utc()
+          .format("DD/MM/YYYY"),
+        phone: formatWhatsappNumber(row.candidacy.candidate.phone),
+        role: row.candidacy.process.role.roleText,
+        unit: row.candidacy.process.unit.unitName,
+        optedforvt: row.candidacy.candidate.complementaryInfo.transportVoucher
+          ? "SIM"
+          : "NÃO",
+        availability: formatTimeRange(row.candidacy.availability),
+        transportTaxGoing: formatCurrency(
+          Number(row.candidacy.candidate.complementaryInfo.transportTaxGoing),
+        ),
+        transportTaxReturn: formatCurrency(
+          Number(row.candidacy.candidate.complementaryInfo.transportTaxReturn),
+        ),
+        transportTaxDaily: formatCurrency(
+          Number(row.candidacy.candidate.complementaryInfo.transportTaxDaily),
+        ),
+        status:
+          AdmissionContractStatusEnum[
+            row.contractStatus as keyof typeof AdmissionContractStatusEnum
+          ],
+      }));
+
+      downloadExcel({
+        fileName: `Turma Admissão`,
+        sheet: `Turma Admissão pag. ${currentPage}`,
+        tablePayload: {
+          header: columnHeaders,
+          body: excelData,
+        },
+      });
+    } else {
+      const rows = table?.getRowModel().flatRows.map(row => row.original);
+
+      if (rows && rows.length > 0) {
+        const excelData = rows.map(row => ({
+          name: row.candidacy.candidate.name,
+          cpf: formatCpf(row.candidacy.candidate.cpf),
+          rg: formatRG(row.candidacy.candidate.documents.identity.rg),
+          dateofbirth: dayjs(row.candidacy.candidate.birthdate)
+            .utc()
+            .format("DD/MM/YYYY"),
+          phone: formatWhatsappNumber(row.candidacy.candidate.phone),
+          role: row.candidacy.process.role.roleText,
+          unit: row.candidacy.process.unit.unitName,
+          optedforvt: row.candidacy.candidate.complementaryInfo.transportVoucher
+            ? "SIM"
+            : "NÃO",
+          availability: formatTimeRange(row.candidacy.availability),
+          transportTaxGoing: formatCurrency(
+            Number(row.candidacy.candidate.complementaryInfo.transportTaxGoing),
+          ),
+          transportTaxReturn: formatCurrency(
+            Number(
+              row.candidacy.candidate.complementaryInfo.transportTaxReturn,
+            ),
+          ),
+          transportTaxDaily: formatCurrency(
+            Number(row.candidacy.candidate.complementaryInfo.transportTaxDaily),
+          ),
+          status:
+            AdmissionContractStatusEnum[
+              row.contractStatus as keyof typeof AdmissionContractStatusEnum
+            ],
+        }));
+
+        downloadExcel({
+          fileName: `Admissão`,
+          sheet: `Admissão pag. ${currentPage}`,
+          tablePayload: {
+            header: columnHeaders,
+            body: excelData,
+          },
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     getFilterValues("unit_unitName");
     getFilterValues("contractStatus");
@@ -288,12 +413,11 @@ export default function AdmissionClass() {
 
   useEffect(() => {
     setParams("page", String(currentPage));
+    refetch();
   }, [currentPage]);
 
   useEffect(() => {
-    if (unitsSuccess) {
-      setUnitsOptions(units.units.map(unit => unit.unitName));
-    }
+    unitsSuccess && setUnitsOptions(units.units.map(unit => unit.unitName));
   }, [unitsSuccess]);
 
   useEffect(() => {
@@ -302,7 +426,7 @@ export default function AdmissionClass() {
       setCandidates(data.admissionResult);
       setTotalCount(data.totalCount);
     }
-  }, [isSuccess]);
+  }, [isSuccess, isFetching]);
 
   if (!admission) return;
 
@@ -318,6 +442,7 @@ export default function AdmissionClass() {
             buttonType="secondary"
             text="Exportar dados"
             icon={<SystemUpdate />}
+            onClick={downloadTableExcelHandler}
           />
 
           <SearchInput handleChangeValue={handleInputValue} icon={<Search />} />
@@ -334,7 +459,7 @@ export default function AdmissionClass() {
         <div className={styles.buttonContract}>
           <SaveModal
             buttonText="Permitir acesso"
-            handleOnSave={() => {}}
+            handleOnSave={handleReleaseContract}
             icon={<TaskAlt />}
             text="Liberar contratos para assinatura?"
           >
@@ -357,6 +482,7 @@ export default function AdmissionClass() {
           setTable={setTable}
           size={totalCount}
           globalFilterValue={globalFilter}
+          loading={isFetching}
           scroll
         />
       )}
