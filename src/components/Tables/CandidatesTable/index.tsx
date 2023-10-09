@@ -40,7 +40,6 @@ export function CandidatesTable({
 }: CandidatesTableProps) {
   const [candidates, setCandidates] = useState<CandidacysType>();
   const [tableColumns, setTableColumns] = useState<any[]>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
 
   const { get } = useSearchParams();
 
@@ -220,10 +219,6 @@ export function CandidatesTable({
     onToggleDateType?.(dateFilter);
   }, [dateFilter]);
 
-  useEffect(() => {
-    setGlobalFilter(globalFilterValue ?? "");
-  }, [globalFilterValue]);
-
   if (!candidates) return <p>Candidatos indisponíveis</p>;
 
   return (
@@ -231,7 +226,7 @@ export function CandidatesTable({
       columns={tableColumns}
       currentPage={currentPage}
       data={candidates.candidacys}
-      globalFilterValue={globalFilter}
+      globalFilterValue={globalFilterValue ?? ""}
       defaultTableSize={defaultTableSize}
       handleTogglePage={handleTogglePage}
       setTable={setTable}
