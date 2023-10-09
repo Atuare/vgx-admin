@@ -30,6 +30,7 @@ export function FilterButton({
     <div
       className={styles.container}
       data-state={openFilter ? "active" : "inactive"}
+      style={{ width: 152 }}
     >
       <PopoverFilter
         handleOpenFilter={handleOpenFilter}

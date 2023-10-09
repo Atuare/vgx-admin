@@ -5,11 +5,18 @@ import { Input } from "@/components/Input";
 import { NumberInput } from "@/components/NumberInput";
 import { SearchInput } from "@/components/SearchInput";
 import { Select } from "@/components/Select";
+import { CreateAdmissionTable } from "@/components/Tables/CreateAdmissionTable";
 import { useGetAllUnitsQuery } from "@/services/api/fetchApi";
+import { Table } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import styles from "./AdmissionCreate.module.scss";
 
+const defaultTableSize = 5;
+
 export default function AdmissionCreate() {
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [table, setTable] = useState<Table<any>>();
+
   const [unitOptions, setUnitsOptions] = useState<
     Array<{ id: string; name: string }>
   >([]);
@@ -18,8 +25,6 @@ export default function AdmissionCreate() {
     page: 1,
     size: 9999,
   });
-
-  const handleChangeInputValue = (value: string) => {};
 
   useEffect(() => {
     if (unitsSuccess) {
@@ -60,11 +65,14 @@ export default function AdmissionCreate() {
       <section className={styles.admissionCreate__table}>
         <h1>Selecionar candidatos</h1>
         <div className={styles.admissionCreate__table__input}>
-          <SearchInput
-            handleChangeValue={handleChangeInputValue}
-            icon={<Search />}
-          />
+          <SearchInput handleChangeValue={setGlobalFilter} icon={<Search />} />
         </div>
+        <CreateAdmissionTable
+          defaultTableSize={defaultTableSize}
+          setTable={setTable}
+          table={table}
+          globalFilter={globalFilter}
+        />
       </section>
     </div>
   );

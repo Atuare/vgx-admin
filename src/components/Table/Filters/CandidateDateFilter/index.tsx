@@ -57,6 +57,7 @@ export function CandidateDateFilter({
     <div
       className={styles.container}
       data-state={openFilter ? "active" : "inactive"}
+      style={{ width: 160 }}
     >
       <PopoverFilter
         handleOpenFilter={handleOpenFilter}

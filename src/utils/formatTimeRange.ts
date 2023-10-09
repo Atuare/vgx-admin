@@ -10,6 +10,8 @@ interface TimeRangeInput {
 }
 
 export function formatTimeRange(input: TimeRangeInput): string {
+  if (!input) return "Não disponível";
+
   const dayOfWeek: Record<number, string> = {
     0: "Dom",
     1: "Seg",
