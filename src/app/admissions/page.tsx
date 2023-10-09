@@ -9,7 +9,10 @@ import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { AdmissionsStatusEnum } from "@/enums/status.enum";
 import { useTableParams } from "@/hooks/useTableParams";
 import { IAdmission, IAdmissions } from "@/interfaces/admissions.interface";
-import { useGetAllUnitsQuery } from "@/services/api/fetchApi";
+import {
+  useGetAllAdmissionsQuery,
+  useGetAllUnitsQuery,
+} from "@/services/api/fetchApi";
 import { getAllAdmissions } from "@/utils/admissions";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -19,6 +22,8 @@ import { useEffect, useState } from "react";
 import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Admissions.module.scss";
 dayjs.extend(utc);
+
+const defaultTableSize = 5;
 
 export default function Admmissions() {
   const [admissions, setAdmissions] = useState<IAdmissions>();
@@ -40,6 +45,11 @@ export default function Admmissions() {
     size: 9999,
   });
 
+  const { data, isSuccess, isFetching, refetch } = useGetAllAdmissionsQuery({
+    page: currentPage,
+    size: defaultTableSize,
+  });
+
   const handleInputValue = (value: string) => {
     setGlobalFilter(value);
   };
@@ -52,7 +62,6 @@ export default function Admmissions() {
 
   const handleTogglePage = (page: number) => {
     setCurrentPage(page + 1);
-    getAdmissions(page + 1);
   };
 
   const getFilterValues = (column: string) => {
@@ -72,9 +81,16 @@ export default function Admmissions() {
   };
 
   const getAllExaminers = () => {
-    const examiners = admissions?.admissions.map(
-      admission => admission.examiner,
-    );
+    const examiners: string[] = [];
+    admissions?.admissions.map(admission => {
+      if (examiners.length === 0) {
+        examiners.push(admission.examiner);
+      } else {
+        if (examiners.find(examiner => examiner !== admission.examiner)) {
+          examiners.push(admission.examiner);
+        }
+      }
+    });
 
     examiners && setExaminersOptions(examiners);
   };
@@ -91,7 +107,7 @@ export default function Admmissions() {
             disabled: !row.getCanSelect(),
             onChangeCheckbox: () => row?.toggleSelected(),
           }}
-          iconType="outline"
+          iconType="solid"
           style={{ padding: 0, transform: "translateY(-2px)" }}
         />
       ),
@@ -249,6 +265,7 @@ export default function Admmissions() {
 
   useEffect(() => {
     setParams("page", String(currentPage));
+    refetch();
   }, [currentPage]);
 
   useEffect(() => {
@@ -258,13 +275,12 @@ export default function Admmissions() {
   }, [unitsSuccess]);
 
   useEffect(() => {
-    admissions && getAllExaminers();
-  }, [admissions]);
+    isSuccess && setAdmissions(data);
+  }, [isSuccess, isFetching]);
 
   useEffect(() => {
-    getAdmissions(1);
     getAllExaminers();
-  }, []);
+  }, [admissions]);
 
   return (
     <div className={styles.admissions}>
@@ -291,11 +307,12 @@ export default function Admmissions() {
           data={admissions.admissions}
           columns={columns}
           currentPage={currentPage}
-          defaultTableSize={2}
+          defaultTableSize={defaultTableSize}
           handleTogglePage={handleTogglePage}
           setTable={setTable}
           size={admissions.totalCount}
           globalFilterValue={globalFilter}
+          loading={isFetching}
         />
       )}
     </div>
