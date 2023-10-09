@@ -89,7 +89,11 @@ export function CandidateStatusFilterButton({
       className={styles.container}
       data-state={openFilter ? "active" : "inactive"}
     >
-      <PopoverFilter handleOpenFilter={handleOpenFilter} column={column}>
+      <PopoverFilter
+        handleOpenFilter={handleOpenFilter}
+        openFilter={openFilter}
+        column={column}
+      >
         <button
           className={styles.button}
           onClick={() => setOpenFilter(prev => !prev)}
@@ -108,12 +112,16 @@ export function PopoverFilter({
   children,
   handleOpenFilter,
   column,
+  openFilter,
 }: {
   children: ReactNode;
   handleOpenFilter: (value: boolean) => void;
   column: string;
+  openFilter: boolean;
 }) {
   const [selected, setSelected] = useState<string[]>([]);
+
+  console.log("sel", selected);
 
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
@@ -128,12 +136,14 @@ export function PopoverFilter({
 
   const handleToggleFilter = () => {
     setParams(column, selected.join(","));
+    handleOpenFilter(false);
   };
 
   const getFilterValues = () => {
     const paramsValue = get(column);
     if (paramsValue) {
       const paramsArray = paramsValue.split(",");
+      console.log(paramsArray);
       setSelected(paramsArray);
     }
   };
@@ -146,6 +156,7 @@ export function PopoverFilter({
           getFilterValues();
         }
       }}
+      open={openFilter}
     >
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Portal>

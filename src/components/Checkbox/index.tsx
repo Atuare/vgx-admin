@@ -12,6 +12,7 @@ interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean | "indeterminate";
   iconType: "solid" | "outline";
   icon?: ReactNode;
+  singleSelect?: boolean;
   disabled?: boolean;
 }
 
@@ -24,17 +25,19 @@ interface CheckboxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * @param disabled - Desativa o trigger do checkbox.
  * @param iconType - Enum do tipo do ícone do checkbox.
  * @param icon- Ícone personalizado que fica do lado direito do texto.
+ * @param singleSelect- Quando true, o checkbox só pode ser selecionado uma vez.
  */
 export function Checkbox({
   value,
   onChangeCheckbox,
-  isActive,
+  isActive = false,
   iconType,
   disabled = false,
+  singleSelect = false,
   icon,
   ...props
 }: CheckboxProps) {
-  const [checked, setChecked] = useState(isActive ?? false);
+  const [checked, setChecked] = useState(isActive);
 
   const isIndeterminate = checked === "indeterminate";
 
@@ -49,7 +52,7 @@ export function Checkbox({
       onClick={() => {
         if (!disabled && !isIndeterminate) {
           const newChecked = !checked;
-          setChecked(isActive ? isActive : newChecked);
+          setChecked(singleSelect ? isActive : newChecked);
           onChangeCheckbox?.(newChecked, value);
         }
       }}

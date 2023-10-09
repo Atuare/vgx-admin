@@ -164,6 +164,7 @@ export function PopoverFilter({
                   value={option}
                   onChangeCheckbox={handleCreateFilter}
                   key={crypto.randomUUID()}
+                  singleSelect
                 />
               ))}
             </div>
