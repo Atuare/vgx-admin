@@ -15,3 +15,18 @@ export enum AdmissionContractStatusEnum {
   ASSINADO = "ASSINADO",
   NAOASSINADO = "NÃO ASSINADO",
 }
+
+export enum DocumentStatusEnum {
+  PENDENTE = "PENDENTE",
+  APROVADO = "APROVADO",
+  REPROVADO = "REPROVADO",
+  EMANALISE = "EM ANÁLISE",
+  DESISTENTE = "DESISTENTE",
+  NAOENVIADO = "NÃO ENVIADO",
+}
+
+export enum DocumentCandidateStatusEnum {
+  PENDENTE = "PENDENTE",
+  APROVADO = "APROVADO",
+  REPROVADO = "REPROVADO",
+}

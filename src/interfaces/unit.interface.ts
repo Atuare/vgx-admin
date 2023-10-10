@@ -6,8 +6,8 @@ export interface IUnit {
   unitName: string;
   unitAcronym: string;
   unitAddress: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IUnits {

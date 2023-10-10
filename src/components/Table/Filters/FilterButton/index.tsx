@@ -3,7 +3,7 @@ import { useTableParams } from "@/hooks/useTableParams";
 import * as Popover from "@radix-ui/react-popover";
 import { Table } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "../../../Button";
 import { Checkbox } from "../../../Checkbox";
 import { SearchInput } from "../../../SearchInput";
@@ -26,11 +26,22 @@ export function FilterButton({
 
   const handleOpenFilter = (value: boolean) => setOpenFilter(value);
 
+  const { get } = useSearchParams();
+
+  const getFilterValues = () => {
+    const paramsValue = get(column);
+    paramsValue &&
+      table?.getColumn(column)?.setFilterValue(paramsValue.split(","));
+  };
+
+  useEffect(() => {
+    getFilterValues();
+  }, []);
+
   return (
     <div
       className={styles.container}
       data-state={openFilter ? "active" : "inactive"}
-      style={{ width: 152 }}
     >
       <PopoverFilter
         handleOpenFilter={handleOpenFilter}

@@ -17,6 +17,13 @@ export default function FlatText({ text, type }: FlatTextProps) {
     "NÃO ASSINADO": "var(--error)",
     NÃOASSINADO: "var(--error)",
     SUSPENSO: "var(--secondary-7)",
+    APROVADO: "var(--sucess)",
+    REPROVADO: "var(--error)",
+    EMANALISE: "var(--secondary-7)",
+    "EM ANÁLISE": "var(--secondary-7)",
+    NAOENVIADO: "var(--error)",
+    "NÃO ENVIADO": "var(--error)",
+    DESISTENTE: "var(--error)",
   };
 
   return (
