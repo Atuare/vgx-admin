@@ -2,13 +2,29 @@
 import { FileInput } from "@/components/FileInput";
 import { Select } from "@/components/Select";
 import { configSelectOptions } from "@/utils/configUpdate";
+import { useState } from "react";
 import styles from "./UpdateConfig.module.scss";
 
 export default function ConfigUpdate() {
+  const [option, setOption] = useState("MIS");
+
+  const getSpreadsheet = () => {
+    switch (option) {
+      case "MIS":
+        return "/spreadsheets/excel-mis.xlsx";
+      case "Jurídico":
+        return "/spreadsheets/excel-juridico.xlsx";
+      case "Funcionários":
+        return "/spreadsheets/excel-funcionarios.xlsx";
+      case "Desligamentos":
+        return "/spreadsheets/excel-desligamento.xlsx";
+    }
+  };
+
   return (
     <main className={styles.config}>
       <Select
-        onChange={() => {}}
+        onChange={({ id }) => setOption(id)}
         placeholder="Selecione"
         options={configSelectOptions}
         defaultValue="MIS"
@@ -20,7 +36,9 @@ export default function ConfigUpdate() {
         Baixe a planilha modelo, preencha e selecione o arquivo com os dados
         para importação.
       </p>
-      <a href="#">Download planilha modelo</a>
+      <a href={getSpreadsheet()} download>
+        Download planilha modelo
+      </a>
       <div className={styles.config__message}>
         <strong>ATENÇÃO!</strong>
         <p>
