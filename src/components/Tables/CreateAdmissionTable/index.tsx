@@ -28,6 +28,7 @@ interface CreateAdmissionTableProps {
   setTable: (table: Table<any>) => void;
   globalFilter?: string;
   defaultTableSize: number;
+  handleOnChangeRowSelection?: (row: any) => void;
 }
 
 export function CreateAdmissionTable({
@@ -35,6 +36,7 @@ export function CreateAdmissionTable({
   table,
   globalFilter,
   defaultTableSize,
+  handleOnChangeRowSelection,
 }: CreateAdmissionTableProps) {
   const [candidates, setCandidates] = useState<CandidacysType>();
   const [tableColumns, setTableColumns] = useState<any[]>([]);
@@ -252,17 +254,20 @@ export function CreateAdmissionTable({
   if (!candidates) return <p>Não foi possível encontrar os candidatos</p>;
 
   return (
-    <DataTable
-      columns={tableColumns}
-      currentPage={currentPage}
-      data={candidates.candidacys}
-      defaultTableSize={defaultTableSize}
-      handleTogglePage={handleTogglePage}
-      setTable={setTable}
-      size={candidates.totalCount}
-      globalFilterValue={globalFilter ?? ""}
-      loading={isFetching}
-      scroll
-    />
+    <section style={{ width: "100%" }}>
+      <DataTable
+        columns={tableColumns}
+        currentPage={currentPage}
+        data={candidates.candidacys}
+        defaultTableSize={defaultTableSize}
+        handleTogglePage={handleTogglePage}
+        setTable={setTable}
+        size={candidates.totalCount}
+        globalFilterValue={globalFilter ?? ""}
+        loading={isFetching}
+        handleOnChangeRowSelection={handleOnChangeRowSelection}
+        scroll
+      />
+    </section>
   );
 }

@@ -121,8 +121,6 @@ export function PopoverFilter({
 }) {
   const [selected, setSelected] = useState<string[]>([]);
 
-  console.log("sel", selected);
-
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
 
@@ -143,7 +141,6 @@ export function PopoverFilter({
     const paramsValue = get(column);
     if (paramsValue) {
       const paramsArray = paramsValue.split(",");
-      console.log(paramsArray);
       setSelected(paramsArray);
     }
   };

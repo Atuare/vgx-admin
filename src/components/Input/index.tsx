@@ -1,7 +1,7 @@
-import { HTMLAttributes } from "react";
+import { InputHTMLAttributes } from "react";
 import styles from "./Input.module.scss";
 
-interface InputProps extends HTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   width?: number;
   height?: number;
   disabled?: boolean;

@@ -33,6 +33,7 @@ interface DataTableProps {
   loading?: boolean;
   tableName?: string;
   scroll?: boolean;
+  handleOnChangeRowSelection?: (row: any) => void;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -43,16 +44,28 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
     const [rowSelection, setRowSelection] = useState<any>({});
     const tableRef = useRef<HTMLTableElement>(null);
 
-    const data = props.data;
-    const columns = props.columns;
+    const {
+      data,
+      columns,
+      setTable,
+      defaultTableSize,
+      size,
+      globalFilterValue,
+      currentPage,
+      handleTogglePage,
+      loading,
+      scroll,
+      tableName,
+      handleOnChangeRowSelection,
+    } = props;
 
     const table = useReactTable({
       data,
       columns,
-      pageCount: Math.ceil(props.size / props.defaultTableSize),
+      pageCount: Math.ceil(size / defaultTableSize),
       initialState: {
         pagination: {
-          pageSize: props.defaultTableSize,
+          pageSize: defaultTableSize,
         },
       },
       state: {
@@ -77,14 +90,18 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
     });
 
     useEffect(() => {
-      props.setTable(table);
+      handleOnChangeRowSelection?.(rowSelection);
+    }, [rowSelection]);
+
+    useEffect(() => {
+      setTable(table);
     }, [table]);
 
     useEffect(() => {
-      setGlobalFilter(props.globalFilterValue ?? globalFilter);
-    }, [props.globalFilterValue]);
+      setGlobalFilter(globalFilterValue ?? globalFilter);
+    }, [globalFilterValue]);
 
-    if (props.loading)
+    if (loading)
       return (
         <div
           style={{
@@ -107,11 +124,11 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       <>
         <div
           style={{
-            width: props.scroll ? "83.2vw" : "100%",
-            overflowX: props.scroll ? "scroll" : "hidden",
+            width: scroll ? "82.8vw" : "100%",
+            overflowX: scroll ? "scroll" : "hidden",
           }}
         >
-          <Table ref={tableRef} id={props.tableName}>
+          <Table ref={tableRef} id={tableName}>
             <TableHeader>
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
@@ -155,10 +172,10 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
           </Table>
         </div>
         <DataTablePagination
-          size={props.size}
-          handleTogglePage={props.handleTogglePage}
-          currentPage={props.currentPage}
-          totalPages={Math.ceil(props.size / props.defaultTableSize)}
+          size={size}
+          handleTogglePage={handleTogglePage}
+          currentPage={currentPage}
+          totalPages={Math.ceil(size / defaultTableSize)}
           table={table}
         />
       </>
