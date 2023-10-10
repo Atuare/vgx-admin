@@ -38,7 +38,7 @@ export default function AdmissionCreate() {
     console.log(data);
   };
 
-  const handleOnChangeRowSelection = () => {
+  const handleGetSelectedRowsId = () => {
     const selectedRows = table
       ?.getSelectedRowModel()
       .flatRows.map(row => row.original);
@@ -135,7 +135,7 @@ export default function AdmissionCreate() {
                 table={table}
                 globalFilter={globalFilter}
                 handleOnChangeRowSelection={() => {
-                  const ids = handleOnChangeRowSelection();
+                  const ids = handleGetSelectedRowsId();
                   onChange(ids);
                 }}
               />
