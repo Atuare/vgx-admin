@@ -196,3 +196,58 @@ export const documentsStatus = [
 ];
 
 export const documentCandidateStatus = ["PENDENTE", "APROVADO", "REPROVADO"];
+
+export const candidateStatusModalOptions = [
+  {
+    name: "Pendente",
+    id: "PENDENTE",
+  },
+  {
+    name: "Em análise",
+    id: "EMANALISE",
+  },
+  {
+    name: "Aprovado",
+    id: "APROVADO",
+  },
+  {
+    name: "Reprovado",
+    id: "REPROVADO",
+  },
+  {
+    name: "Desistente",
+    id: "DESISTENTE",
+  },
+  {
+    name: "Não enviado",
+    id: "NAOENVIADO",
+  },
+];
+
+export const candidateStatusModalReasons = [
+  {
+    name: "Documentos em processo de análise",
+    id: "Documentos em processo de análise",
+  },
+  {
+    name: "Documentos ilegíveis",
+    id: "Documentos ilegíveis",
+  },
+  {
+    name: "Não enviou todos os documentos",
+    id: "Não enviou todos os documentos",
+  },
+  {
+    name: "Desistiu do processo seletivo",
+    id: "Desistiu do processo seletivo",
+  },
+];
+
+export const convertDocumentStatus = {
+  PENDENTE: "Pendente",
+  APROVADO: "Aprovado",
+  REPROVADO: "Reprovado",
+  EMANALISE: "Em análise",
+  DESISTENTE: "Desistente",
+  NAOENVIADO: "Não enviado",
+};

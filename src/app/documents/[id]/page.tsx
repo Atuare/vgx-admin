@@ -3,6 +3,7 @@ import { Helper, SystemUpdate, UserCheck } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import FlatText from "@/components/FlatText";
+import { CandidateStatusModal } from "@/components/Modals/Documents/CandidateStatusModal";
 import { DataTable } from "@/components/Table";
 import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { ICandidateDocument, IDocument } from "@/interfaces/document.interface";
@@ -125,12 +126,14 @@ export default function DocumentsCandidate() {
 
         <div className={styles.container__header_right}>
           <Helper />
-          <Button
-            buttonType="default"
-            text="Alterar status"
-            icon={<UserCheck />}
-            iconLeft
-          />
+          <CandidateStatusModal candidate={candidate}>
+            <Button
+              buttonType="default"
+              text="Alterar status"
+              icon={<UserCheck />}
+              iconLeft
+            />
+          </CandidateStatusModal>
         </div>
       </section>
 
