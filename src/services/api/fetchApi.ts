@@ -646,6 +646,24 @@ export const fetchApi = createApi({
         };
       },
     }),
+    updateTest: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/test",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    deleteTest: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/test/${id}`,
+        method: "DELETE",
+        params: {
+          id,
+        },
+      }),
+    }),
     getAvailabilityById: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/availability/${id}`,
@@ -735,6 +753,8 @@ export const {
   useUpdateCandidateMutation,
   useGetAllTestsQuery,
   useCreateTestMutation,
+  useUpdateTestMutation,
+  useDeleteTestMutation,
   useGetAvailabilityByIdQuery,
   useGetAllCandidacysQuery,
   useReleaseAdmissionContractMutation,
