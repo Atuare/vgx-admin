@@ -88,6 +88,20 @@
   }
 }
 
+.trigger {
+  cursor: pointer;
+}
+
+.form__file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  a {
+    align-self: flex-end;
+  }
+}
+
 @keyframes overlayShow {
   from {
     opacity: 0;

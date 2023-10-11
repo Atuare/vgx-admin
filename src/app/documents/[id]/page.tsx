@@ -4,6 +4,7 @@ import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import FlatText from "@/components/FlatText";
 import { CandidateStatusModal } from "@/components/Modals/Documents/CandidateStatusModal";
+import { DocumentStatusModal } from "@/components/Modals/Documents/DocumentStatusModal";
 import { DataTable } from "@/components/Table";
 import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { ICandidateDocument, IDocument } from "@/interfaces/document.interface";
@@ -56,7 +57,11 @@ export default function DocumentsCandidate() {
         />
       ),
       cell: row => {
-        return <FlatText text={row.getValue()} type={row.getValue()} />;
+        return (
+          <DocumentStatusModal document={row.row.original}>
+            <FlatText text={row.getValue()} type={row.getValue()} />
+          </DocumentStatusModal>
+        );
       },
       filterFn: (row, id, value) => {
         const newValues = value.map((item: string) =>

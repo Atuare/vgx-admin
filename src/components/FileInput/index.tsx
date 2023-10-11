@@ -77,7 +77,7 @@ export function FileInput({
         <label
           htmlFor="file"
           className={styles.inputContainer__left__label}
-          style={disabled ? { cursor: "default" } : {}}
+          style={disabled ? { cursor: "default", display: "none" } : {}}
         >
           <p>Escolher arquivo...</p>
         </label>

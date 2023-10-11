@@ -251,3 +251,18 @@ export const convertDocumentStatus = {
   DESISTENTE: "Desistente",
   NAOENVIADO: "Não enviado",
 };
+
+export const documentStatusModalOptions = [
+  {
+    name: "Pendente",
+    id: "PENDENTE",
+  },
+  {
+    name: "Aprovado",
+    id: "APROVADO",
+  },
+  {
+    name: "Reprovado",
+    id: "REPROVADO",
+  },
+];
