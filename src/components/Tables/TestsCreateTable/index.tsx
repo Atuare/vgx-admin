@@ -55,15 +55,14 @@ export function TestsCreateTable({
 
   const columnHelper = createColumnHelper<IQuestion>();
   const columns = [
-    {
-      header: "Número",
-      id: "number",
-      cell: ({ row }: { row: any }) => (
+    columnHelper.accessor("index", {
+      header: "Questão",
+      cell: row => (
         <div style={{ fontSize: 14, fontWeight: 700 }}>
-          Questão {row.index + 1}:
+          Questão {row.getValue()}
         </div>
       ),
-    },
+    }),
     columnHelper.accessor("text", {
       header: "Texto",
       cell: row => <div>{row.getValue()}</div>,

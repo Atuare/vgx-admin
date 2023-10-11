@@ -82,6 +82,13 @@ export function TestCreateModal({
   }
 
   useEffect(() => {
+    if (!open) {
+      reset();
+      setCorrect(undefined);
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (typeof correct !== "undefined") {
       setValue("correctOption", correct);
     }

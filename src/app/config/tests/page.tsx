@@ -5,7 +5,11 @@ import { DataTable } from "@/components/Table";
 import { Actions } from "@/components/Tables/components/Actions";
 import { useTableParams } from "@/hooks/useTableParams";
 import { ITest, ITests } from "@/interfaces/tests.interface";
-import { useGetAllTestsQuery } from "@/services/api/fetchApi";
+import {
+  useDeleteTestMutation,
+  useGetAllTestsQuery,
+} from "@/services/api/fetchApi";
+import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -33,6 +37,8 @@ export default function TestsConfigPage() {
     orderBy: "createdAt",
     direction: "DESC",
   });
+
+  const [deleteTest] = useDeleteTestMutation();
 
   const handleTogglePage = (page: number) => {
     setCurrentPage(page);
@@ -140,13 +146,22 @@ export default function TestsConfigPage() {
       header: "Ações",
       cell: (row: any) => {
         const id = String(row.row.original.id);
-        const handleDeleteRow = () => {};
+        const handleDeleteRow = () => {
+          deleteTest({ id })
+            .then(() => {
+              refetch();
+              Toast("success", "Prova deletada com sucesso");
+            })
+            .catch(() => {
+              Toast("error", "Erro ao deletar a prova");
+            });
+        };
 
         return (
           <Actions
             handleDelete={handleDeleteRow}
             href={`/config/tests/${id}`}
-            value={"Prova"}
+            value={"essa prova"}
           />
         );
       },

@@ -3,30 +3,37 @@ import * as yup from "yup";
 export const testsCreateConfigSchema = yup.object({
   maxTime: yup
     .number()
-    .typeError("Número inválid")
+    .typeError("Número inválido")
+    .min(1, "O tempo máximo deve ser maior que 0")
     .required("Campo obrigatório"),
   portTotal: yup
     .number()
+    .integer("O valor deve ser inteiro")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   portMinScore: yup
     .number()
+    .min(1, "A pontuação mínima deve ser maior que 0")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   matTotal: yup
     .number()
+    .integer("O valor deve ser inteiro")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   matMinScore: yup
     .number()
+    .min(1, "A pontuação mínima deve ser maior que 0")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   compTotal: yup
     .number()
+    .integer("O valor deve ser inteiro")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   compMinScore: yup
     .number()
+    .min(1, "A pontuação mínima deve ser maior que 0")
     .typeError("Número inválido")
     .required("Campo obrigatório"),
   orientationMessage: yup.string().required("Campo obrigatório"),

@@ -22,6 +22,7 @@ export interface IQuestion {
   id?: string;
   text: string;
   type: string;
+  index?: number;
   createdAt?: string;
   updatedAt?: string;
   alternatives: Alternative[];
