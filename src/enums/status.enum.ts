@@ -30,3 +30,10 @@ export enum DocumentCandidateStatusEnum {
   APROVADO = "APROVADO",
   REPROVADO = "REPROVADO",
 }
+
+export enum ExamsStatusEnum {
+  EMANDAMENTO = "EM ANDAMENTO",
+  SUSPENSO = "SUSPENSO",
+  CONCLUIDO = "CONCLUÍDO",
+  CANCELADO = "CANCELADO",
+}

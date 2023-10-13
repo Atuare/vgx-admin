@@ -8,6 +8,7 @@ interface FlatTextProps {
 export default function FlatText({ text, type }: FlatTextProps) {
   const bgColor = {
     CONCLUIDO: "var(--sucess)",
+    CONCLUÍDO: "var(--sucess)",
     ASSINADO: "var(--sucess)",
     EM_ANDAMENTO: "var(--attention)",
     EMANDAMENTO: "var(--attention)",

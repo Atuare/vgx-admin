@@ -4,9 +4,14 @@ import styles from "./SearchInput.module.scss";
 interface SearchInputProps {
   icon?: ReactNode;
   handleChangeValue: (value: string) => void;
+  defaultValue?: string;
 }
 
-export function SearchInput({ handleChangeValue, icon }: SearchInputProps) {
+export function SearchInput({
+  handleChangeValue,
+  icon,
+  defaultValue,
+}: SearchInputProps) {
   return (
     <div className={styles.inputContainer}>
       {icon && icon}
@@ -15,6 +20,7 @@ export function SearchInput({ handleChangeValue, icon }: SearchInputProps) {
         type="search"
         placeholder="Pesquisar..."
         onChange={e => handleChangeValue(e.target.value)}
+        defaultValue={defaultValue}
       />
     </div>
   );

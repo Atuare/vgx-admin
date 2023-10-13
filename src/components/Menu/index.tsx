@@ -1,9 +1,9 @@
 "use client";
 
+import Logo from "@/assets/logo.svg";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Menu.module.scss";
-import Image from "next/image";
-import Logo from "@/assets/logo.svg";
 
 import {
   Badge,
@@ -18,7 +18,6 @@ import {
 } from "@/assets/Icons";
 import { MenuItem } from "../MenuItem";
 import { SettingsMenu } from "../SettingsMenu";
-import { configItems } from "@/utils/sidebar";
 
 const menuItems = [
   {
@@ -53,7 +52,7 @@ const menuItems = [
   },
   {
     name: "Exames Admissionais",
-    value: "/admission-exams",
+    value: "/exams",
     icon: <Hospital />,
   },
   {
