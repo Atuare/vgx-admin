@@ -17,9 +17,11 @@ import { TipTapMenu } from "./TipTapMenu";
 export function TipTap({
   content,
   getContentFromEditor,
+  grayBorder = false,
 }: {
   content?: any;
-  getContentFromEditor: (content: any) => void;
+  getContentFromEditor?: (content: any) => void;
+  grayBorder?: boolean;
 }) {
   const editor = useEditor({
     extensions: [
@@ -38,12 +40,14 @@ export function TipTap({
   });
 
   useEffect(() => {
-    if (editor?.getJSON()) getContentFromEditor(editor?.getJSON());
+    if (editor?.getJSON()) getContentFromEditor?.(editor?.getJSON());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor?.getJSON()]);
 
   return (
-    <div className={styles.textEditor}>
+    <div
+      className={`${styles.textEditor} ${grayBorder ? styles.grayBorder : ""}`}
+    >
       <TipTapMenu editor={editor} />
       <div
         onClick={() => editor?.chain().focus()}

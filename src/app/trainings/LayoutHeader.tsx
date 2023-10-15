@@ -23,6 +23,7 @@ export function LayoutHeader() {
         )}
         <h1>
           {(pathname.endsWith("/edit") && "Editar treinamento") ||
+            (pathname === "/trainings/create" && "Novo treinamento") ||
             (data && `${data.data.trainingName} - ${data.data.productName}`) ||
             "Treinamentos"}
         </h1>

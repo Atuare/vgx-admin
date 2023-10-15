@@ -34,6 +34,7 @@ interface DataTableProps {
   tableName?: string;
   scroll?: boolean;
   handleOnChangeRowSelection?: (row: any) => void;
+  primary2Color?: boolean;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -57,6 +58,7 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       scroll,
       tableName,
       handleOnChangeRowSelection,
+      primary2Color,
     } = props;
 
     const table = useReactTable({
@@ -129,12 +131,23 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
           }}
         >
           <Table ref={tableRef} id={tableName}>
-            <TableHeader>
+            <TableHeader
+              style={{
+                background: primary2Color
+                  ? "var(--primary-2)"
+                  : "var(--primary-1)",
+              }}
+            >
               {table.getHeaderGroups().map(headerGroup => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map(header => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead
+                        key={header.id}
+                        style={{
+                          borderRadius: primary2Color ? "0px" : undefined,
+                        }}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(

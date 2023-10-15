@@ -11,3 +11,25 @@ export async function getAllTrainings(page: number, defaultTableSize: number) {
 
   return trainingsData;
 }
+
+export const trainingStatus = [
+  "CONCLUÍDO",
+  "EM ANDAMENTO",
+  "CANCELADO",
+  "SUSPENSO",
+];
+
+export const trainingTypesOptions = [
+  {
+    name: "Pré contratação parcial",
+    id: "Pré contratação parcial",
+  },
+  {
+    name: "Pré contratação integral",
+    id: "Pré contratação integral",
+  },
+  {
+    name: " Pós contratação",
+    id: " Pós contratação",
+  },
+];

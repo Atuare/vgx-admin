@@ -36,3 +36,16 @@ export enum TrainingStatusEnum {
   CANCELADO = "CANCELADO",
   SUSPENSO = "SUSPENSO",
 }
+
+export interface ITrainingCreateForm {
+  trainingName: string;
+  productName?: string;
+  trainer: string;
+  trainingDays: number;
+  participantLimit: number;
+  minimumFrequency: number;
+  trainingLocation: string;
+  startDate: string;
+  endDate: string;
+  trainingType: string;
+}
