@@ -202,6 +202,12 @@
   }
 }
 
+.error {
+  font-weight: 700;
+  color: var(--error);
+  padding: 16px;
+}
+
 @keyframes slideDown {
   from {
     height: 0;

@@ -5,18 +5,23 @@ import { Select } from "@/components/Select";
 import useUser from "@/hooks/useUser";
 import { ITrainingCreateForm } from "@/interfaces/training.interface";
 import { trainingTypesOptions } from "@/utils/training";
-import { Control, Controller, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormRegister,
+} from "react-hook-form";
 import styles from "./TrainingCreate.module.scss";
 
 interface TrainingFormInputsProps {
-  handleOnChangeTrainingDays: (days: number) => void;
+  handleChangeAssessmentsFields: (type: "APPEND" | "REMOVE") => void;
   register: UseFormRegister<ITrainingCreateForm>;
   control: Control<ITrainingCreateForm>;
-  errors: any;
+  errors: FieldErrors<ITrainingCreateForm>;
 }
 
 export function TrainingFormInputs({
-  handleOnChangeTrainingDays,
+  handleChangeAssessmentsFields,
   control,
   errors,
   register,
@@ -56,7 +61,7 @@ export function TrainingFormInputs({
         <Controller
           name="trainingDays"
           control={control}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <DataInput
               name="Dias de treinamento"
               required
@@ -65,11 +70,13 @@ export function TrainingFormInputs({
             >
               <NumberInput
                 width={120}
-                onChange={value => {
-                  handleOnChangeTrainingDays(value);
-                  onChange(value);
+                onChange={val => {
+                  if (!val && typeof value === "undefined") return;
+                  handleChangeAssessmentsFields(
+                    value > val ? "REMOVE" : "APPEND",
+                  );
+                  onChange(val);
                 }}
-                defaultValue={1}
               />
             </DataInput>
           )}

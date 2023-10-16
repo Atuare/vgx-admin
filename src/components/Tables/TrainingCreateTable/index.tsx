@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import { Actions } from "../components/Actions";
 
 interface TrainingCreateTableProps {
-  questions: IQuestion[];
+  questions: Partial<IQuestion>[];
   setTable: (table: Table<any>) => void;
-  handleSetQuestions: (questions: IQuestion[]) => void;
+  handleSetQuestions: (questions: Partial<IQuestion>[]) => void;
   defaultTableSize: number;
 }
 export function TrainingCreateTable({

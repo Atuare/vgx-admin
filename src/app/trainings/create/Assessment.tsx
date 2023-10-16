@@ -6,22 +6,44 @@ import { TrainingCreateModal } from "@/components/Modals/TrainingCreateModal";
 import { TrainingCreateTable } from "@/components/Tables/TrainingCreateTable";
 import { TipTap } from "@/components/TipTap";
 import { IQuestion } from "@/interfaces/tests.interface";
+import { ITrainingCreateForm } from "@/interfaces/training.interface";
 import { Toast } from "@/utils/toast";
 import * as Accordion from "@radix-ui/react-accordion";
 import { Table } from "@tanstack/react-table";
 import { ChangeEvent, useState } from "react";
 import { downloadExcel } from "react-export-table-to-excel";
+import {
+  Control,
+  Controller,
+  FieldArrayWithId,
+  FieldErrors,
+  UseFormRegister,
+} from "react-hook-form";
 import * as XLSX from "xlsx";
 import styles from "./TrainingCreate.module.scss";
 
 interface AssessmentProps {
   questionNumber: number;
+  register: UseFormRegister<ITrainingCreateForm>;
+  control: Control<ITrainingCreateForm>;
+  errors: FieldErrors<ITrainingCreateForm>;
+  index: number;
+  field: FieldArrayWithId<ITrainingCreateForm, "trainingAssessments", "id">;
 }
 
 const defaultTableSize = 5;
 
-export function Assessment({ questionNumber }: AssessmentProps) {
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
+export function Assessment({
+  questionNumber,
+  field,
+  control,
+  errors,
+  register,
+  index,
+}: AssessmentProps) {
+  const [questions, setQuestions] = useState<Partial<IQuestion>[]>(
+    field.trainingAssessmentQuestions,
+  );
   const [table, setTable] = useState<Table<any>>();
 
   const handleCreateQuestion = (data: any) => {
@@ -32,8 +54,8 @@ export function Assessment({ questionNumber }: AssessmentProps) {
         index: questions.length + 1,
       },
     ];
-    setQuestions(newQuestions);
-    Toast("success", "Questão criada com sucesso!");
+
+    return newQuestions;
   };
 
   const downloadTableExcelHandler = () => {
@@ -121,7 +143,7 @@ export function Assessment({ questionNumber }: AssessmentProps) {
                 icon={<SystemUpdate />}
                 type="button"
                 onClick={downloadTableExcelHandler}
-                disabled={questions.length === 0}
+                disabled={questions?.length === 0}
               />
               <div>
                 <label htmlFor="uploadExcelFile" style={{ cursor: "pointer" }}>
@@ -142,46 +164,160 @@ export function Assessment({ questionNumber }: AssessmentProps) {
                   accept=".xls, .xlsx"
                 />
 
-                <TrainingCreateModal
-                  handleOnSubmit={handleCreateQuestion}
-                  create
+                <Controller
+                  control={control}
+                  name={`trainingAssessments.${index}.trainingAssessmentQuestions`}
+                  render={({ field: { onChange } }) => (
+                    <TrainingCreateModal
+                      handleOnSubmit={data => {
+                        const newQuestions = handleCreateQuestion(data);
+                        setQuestions(newQuestions);
+                        Toast("success", "Questão criada com sucesso!");
+                        onChange(newQuestions);
+                      }}
+                      create
+                    />
+                  )}
                 />
               </div>
             </div>
             <div className={styles.accordion__content__inputs}>
-              <DataInput name="Total de questões" required>
-                <input type="number" />
+              <DataInput
+                name="Total de questões"
+                required
+                error={
+                  errors.trainingAssessments?.[index]?.questionsAmount?.message
+                }
+              >
+                <input
+                  type="number"
+                  defaultValue={field.questionsAmount}
+                  {...register(`trainingAssessments.${index}.questionsAmount`)}
+                />
               </DataInput>
 
-              <DataInput name="Nota mín. aprovação" required>
-                <input type="number" />
+              <DataInput
+                name="Nota mín. aprovação"
+                required
+                error={
+                  errors.trainingAssessments?.[index]?.minimumPassingGrade
+                    ?.message
+                }
+              >
+                <input
+                  type="number"
+                  defaultValue={field.minimumPassingGrade}
+                  {...register(
+                    `trainingAssessments.${index}.minimumPassingGrade`,
+                  )}
+                />
               </DataInput>
 
-              <DataInput name="Tempo máx. prova" required lightName="(minutos)">
-                <input type="number" />
+              <DataInput
+                name="Tempo máx. prova"
+                required
+                lightName="(minutos)"
+                error={
+                  errors.trainingAssessments?.[index]?.maxTimeToFinish?.message
+                }
+              >
+                <input
+                  type="number"
+                  defaultValue={field.maxTimeToFinish}
+                  {...register(`trainingAssessments.${index}.maxTimeToFinish`)}
+                />
               </DataInput>
             </div>
 
-            <TrainingCreateTable
-              handleSetQuestions={setQuestions}
-              questions={questions}
-              setTable={setTable}
-              defaultTableSize={defaultTableSize}
+            <Controller
+              control={control}
+              name={`trainingAssessments.${index}.trainingAssessmentQuestions`}
+              render={({ field: { onChange }, fieldState: { error } }) => (
+                <div>
+                  <TrainingCreateTable
+                    handleSetQuestions={questions => {
+                      setQuestions(questions);
+                      onChange(questions);
+                    }}
+                    questions={questions}
+                    setTable={setTable}
+                    defaultTableSize={defaultTableSize}
+                  />
+                  <p className={styles.error}>{error?.message}</p>
+                </div>
+              )}
             />
 
             <section className={styles.accordion__content__orientation}>
               <h2>Orientação para a prova</h2>
-              <TipTap grayBorder />
+              <Controller
+                control={control}
+                name={`trainingAssessments.${index}.orientationMessage`}
+                render={({ field: { onChange }, fieldState: { error } }) => (
+                  <div>
+                    <TipTap
+                      grayBorder
+                      content={field.orientationMessage}
+                      getContentFromEditor={content => {
+                        if (content.content[0].content) {
+                          onChange(JSON.stringify(content));
+                        } else {
+                          onChange("");
+                        }
+                      }}
+                    />
+                    <p className={styles.error}>{error?.message}</p>
+                  </div>
+                )}
+              />
             </section>
             <section className={styles.accordion__content__messages}>
               <h2>Mensagem final</h2>
               <div className={styles.accordion__content__messages_container}>
                 <h3>Aprovação*</h3>
-                <TipTap grayBorder />
+                <Controller
+                  control={control}
+                  name={`trainingAssessments.${index}.aproveMessage`}
+                  render={({ field: { onChange }, fieldState: { error } }) => (
+                    <div>
+                      <TipTap
+                        grayBorder
+                        content={field.aproveMessage}
+                        getContentFromEditor={content => {
+                          if (content.content[0].content) {
+                            onChange(JSON.stringify(content));
+                          } else {
+                            onChange("");
+                          }
+                        }}
+                      />
+                      <p className={styles.error}>{error?.message}</p>
+                    </div>
+                  )}
+                />
               </div>
               <div className={styles.accordion__content__messages_container}>
                 <h3>Reprovação*</h3>
-                <TipTap grayBorder />
+                <Controller
+                  control={control}
+                  name={`trainingAssessments.${index}.disapprovedMessage`}
+                  render={({ field: { onChange }, fieldState: { error } }) => (
+                    <div>
+                      <TipTap
+                        grayBorder
+                        content={field.disapprovedMessage}
+                        getContentFromEditor={content => {
+                          if (content.content[0].content) {
+                            onChange(JSON.stringify(content));
+                          } else {
+                            onChange("");
+                          }
+                        }}
+                      />
+                      <p className={styles.error}>{error?.message}</p>
+                    </div>
+                  )}
+                />
               </div>
             </section>
           </div>

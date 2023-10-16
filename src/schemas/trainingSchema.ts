@@ -23,7 +23,7 @@ export const trainingCreateModalConfigSchema = yup.object().shape({
     .required("Selecione uma alternativa correta"),
 });
 
-export const trainingCreateSchema = yup.object().shape({
+export const trainingCreateSchema = yup.object({
   trainingName: yup.string().required("Campo obrigatório"),
   productName: yup.string().optional(),
   trainer: yup.string().required("Campo obrigatório"),
@@ -43,9 +43,58 @@ export const trainingCreateSchema = yup.object().shape({
     .number()
     .typeError("Número inválido")
     .min(0, "Digite um número maior ou igual a 0")
+    .max(100, "Digite um número menor ou igual a 100")
     .required("Campo obrigatório"),
-  startDate: yup.string().required("Campo obrigatório"),
-  endDate: yup.string().required("Campo obrigatório"),
+  startDate: yup
+    .date()
+    .typeError("Data inválida")
+    .required("Campo obrigatório")
+    .max(yup.ref("endDate"), "Data inicial deve ser menor que a data final"),
+  endDate: yup
+    .date()
+    .typeError("Data inválida")
+    .required("Campo obrigatório")
+    .min(yup.ref("startDate"), "Data final deve ser maior que a data inicial"),
   trainingLocation: yup.string().required("Campo obrigatório"),
   trainingType: yup.string().required("Campo obrigatório"),
+  trainingAssessments: yup
+    .array()
+    .of(
+      yup
+        .object()
+        .shape({
+          minimumPassingGrade: yup
+            .number()
+            .typeError("Número inválido")
+            .min(1, "Digite um número maior ou igual a 1")
+            .required("Campo obrigatório"),
+          maxTimeToFinish: yup
+            .number()
+            .typeError("Número inválido")
+            .min(1, "Digite um número maior ou igual a 1")
+            .required("Campo obrigatório"),
+          questionsAmount: yup
+            .number()
+            .integer("Digite um número inteiro")
+            .typeError("Número inválido")
+            .min(1, "Digite um número maior ou igual a 1")
+            .required("Campo obrigatório"),
+          orientationMessage: yup.string().required("Campo obrigatório"),
+          aproveMessage: yup.string().required("Campo obrigatório"),
+          disapprovedMessage: yup.string().required("Campo obrigatório"),
+          trainingAssessmentQuestions: yup
+            .array()
+            .test({
+              message: "É necessário no mínimo criar uma questão",
+              test: arr => arr && arr.length > 0,
+            })
+            .required("Campo obrigatório"),
+        })
+        .required("Campo obrigatório"),
+    )
+    .test({
+      message: "É necessário no mínimo criar uma avaliação",
+      test: arr => arr && arr.length > 0,
+    })
+    .required("Campo obrigatório"),
 });

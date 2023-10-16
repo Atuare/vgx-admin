@@ -1,5 +1,4 @@
 import { CandidacyType } from "./candidacy.interface";
-import { TrainingAssessmentType } from "./trainingAssessment.interface";
 import { TrainingDayType } from "./trainingDay.interface";
 import { TrainingGradeType } from "./trainingGrade.interface";
 import { TrainingTypeType } from "./trainingType.interface";
@@ -44,8 +43,29 @@ export interface ITrainingCreateForm {
   trainingDays: number;
   participantLimit: number;
   minimumFrequency: number;
+  startDate: Date;
+  endDate: Date;
   trainingLocation: string;
-  startDate: string;
-  endDate: string;
   trainingType: string;
+  trainingAssessments: TrainingAssessmentType[];
+}
+
+interface TrainingAssessmentType {
+  minimumPassingGrade: number;
+  maxTimeToFinish: number;
+  questionsAmount: number;
+  orientationMessage: string;
+  aproveMessage: string;
+  disapprovedMessage: string;
+  trainingAssessmentQuestions: IQuestion[];
+}
+
+export interface IQuestion {
+  text: string;
+  alternatives: Alternative[];
+}
+
+interface Alternative {
+  alternative: string;
+  isCorrect: boolean;
 }
