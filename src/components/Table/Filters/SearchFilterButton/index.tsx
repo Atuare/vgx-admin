@@ -79,6 +79,7 @@ export function PopoverFilter({
 
   const handleToggleFilter = () => {
     table?.getColumn(column)?.setFilterValue(inputValue);
+    table?.toggleAllRowsSelected(false);
     setParams(column, inputValue);
   };
 

@@ -92,6 +92,7 @@ export function PopoverFilter({
     }
 
     table?.getColumn(column)?.setFilterValue([firstDate, secondDate]);
+    table?.toggleAllRowsSelected(false);
     setParams(column, [firstDate, secondDate].join(","));
   };
 

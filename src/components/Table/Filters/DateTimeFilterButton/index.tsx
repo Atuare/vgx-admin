@@ -81,10 +81,12 @@ export function PopoverFilter({
   const handleToggleFilter = () => {
     if (!date && !hour) {
       table?.getColumn(column)?.setFilterValue([]);
+      table?.toggleAllRowsSelected(false);
       setParams(column, "");
       handleOpenFilter(false);
     } else {
       table?.getColumn(column)?.setFilterValue([date, hour]);
+      table?.toggleAllRowsSelected(false);
       setParams(column, [date, hour].join(","));
       handleOpenFilter(false);
     }
