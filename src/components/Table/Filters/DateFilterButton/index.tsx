@@ -73,7 +73,6 @@ export function PopoverFilter({
 }) {
   const [firstDate, setFirstDate] = useState<string>("");
   const [secondDate, setSecondDate] = useState<string>("");
-  const [selected, setSelected] = useState<string[]>([]);
 
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
@@ -92,7 +91,6 @@ export function PopoverFilter({
       return;
     }
 
-    setSelected([firstDate, secondDate]);
     table?.getColumn(column)?.setFilterValue([firstDate, secondDate]);
     setParams(column, [firstDate, secondDate].join(","));
   };
@@ -103,7 +101,6 @@ export function PopoverFilter({
       const paramsArray = paramsValue.split(",");
       setFirstDate(paramsArray[0]);
       setSecondDate(paramsArray[1]);
-      setSelected(paramsArray);
     }
   };
 
@@ -113,6 +110,9 @@ export function PopoverFilter({
         handleOpenFilter(open);
         if (open) {
           getFilterValues();
+        } else {
+          setFirstDate("");
+          setSecondDate("");
         }
       }}
     >

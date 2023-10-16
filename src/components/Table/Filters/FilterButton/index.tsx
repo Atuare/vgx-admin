@@ -48,6 +48,7 @@ export function FilterButton({
         options={options}
         table={table}
         column={column}
+        openFilter={openFilter}
       >
         <button
           className={styles.button}
@@ -69,12 +70,14 @@ export function PopoverFilter({
   options,
   table,
   column,
+  openFilter,
 }: {
   children: ReactNode;
   handleOpenFilter: (value: boolean) => void;
   options: string[];
   table: Table<any> | undefined;
   column: string;
+  openFilter: boolean;
 }) {
   const [inputValue, setInputValue] = useState<string>("");
   const [selected, setSelected] = useState<string[]>([]);
@@ -97,6 +100,7 @@ export function PopoverFilter({
   const handleToggleFilter = () => {
     table?.getColumn(column)?.setFilterValue(selected);
     setParams(column, selected.join(","));
+    handleOpenFilter(false);
   };
 
   const getFilterValues = () => {
@@ -109,10 +113,14 @@ export function PopoverFilter({
 
   return (
     <Popover.Root
+      open={openFilter}
       onOpenChange={open => {
         handleOpenFilter(open);
         if (open) {
           getFilterValues();
+        } else {
+          setInputValue("");
+          setSelected([]);
         }
       }}
     >

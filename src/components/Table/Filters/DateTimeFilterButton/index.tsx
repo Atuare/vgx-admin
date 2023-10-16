@@ -106,6 +106,9 @@ export function PopoverFilter({
         handleOpenFilter(open);
         if (open) {
           getFilterValues();
+        } else {
+          setDate("");
+          setHour("");
         }
       }}
     >
