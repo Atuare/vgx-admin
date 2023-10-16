@@ -7,16 +7,32 @@ interface ModalStatusProps {
 }
 
 export function ModalStatus({ data }: ModalStatusProps) {
-  return (
-    <section className={styles.container}>
-      <StatusItem title="Prova" type={data.testResult} />
-      <StatusItem title="Entrevista" type={data.interview?.status} />
-      <StatusItem title="Documentos" type="AREALIZAR" />
-      <StatusItem title="Treinamento" type={data.training?.status} />
-      <StatusItem title="Exame adm." type="AREALIZAR" />
-      <StatusItem title="Ass. Contrato" type="AREALIZAR" />
-    </section>
-  );
+  const getStatus = () => {
+    switch (data.process.requestCv) {
+      case true:
+        return (
+          <>
+            <StatusItem title="Entrevista" type={data.interview?.status} />
+            <StatusItem title="Documentos" type="AREALIZAR" />
+            <StatusItem title="Exame adm." type="AREALIZAR" />
+            <StatusItem title="Ass. Contrato" type="AREALIZAR" />
+          </>
+        );
+      default:
+        return (
+          <>
+            <StatusItem title="Prova" type={data.testResult} />
+            <StatusItem title="Entrevista" type={data.interview?.status} />
+            <StatusItem title="Documentos" type="AREALIZAR" />
+            <StatusItem title="Treinamento" type={data.training?.status} />
+            <StatusItem title="Exame adm." type="AREALIZAR" />
+            <StatusItem title="Ass. Contrato" type="AREALIZAR" />
+          </>
+        );
+    }
+  };
+
+  return <section className={styles.container}>{getStatus()}</section>;
 }
 
 function StatusItem({
