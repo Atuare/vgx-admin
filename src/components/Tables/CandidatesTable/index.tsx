@@ -183,11 +183,7 @@ export function CandidatesTable({
       {
         id: "status",
         header: () => <CandidateStatusFilterButton column="status" />,
-        cell: (row: any) => (
-          <div>
-            <CandidateStatus data={row.row.original} />
-          </div>
-        ),
+        cell: (row: any) => <CandidateStatus data={row.row.original} />,
       },
     ];
 
