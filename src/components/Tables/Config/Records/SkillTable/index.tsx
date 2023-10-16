@@ -189,10 +189,6 @@ export function SkillTable({ defaultTableSize, type }: TableProps) {
     setParams("page", String(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
-
   if (!skills) return;
 
   return (

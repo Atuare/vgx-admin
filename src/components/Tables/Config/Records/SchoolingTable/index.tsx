@@ -199,10 +199,6 @@ export function SchoolingTable({ defaultTableSize, type }: TableProps) {
     setParams("page", String(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
-
   if (!schoolings) return;
 
   return (

@@ -52,30 +52,8 @@ export const availabilityModalConfigSchema = yup
   .object({
     startDay: yup.string().required("Campo obrigatório"),
     endDay: yup.string().required("Campo obrigatório"),
-    startHour: yup
-      .string()
-      .test(
-        "startHour",
-        "A hora inicial não pode ser maior que a final",
-        function (value) {
-          const startHour = Number(value);
-          const endHour = Number(this.parent.endHour);
-          return startHour <= endHour;
-        },
-      )
-      .required("Campo obrigatório"),
-    endHour: yup
-      .string()
-      .test(
-        "endHour",
-        "A hora final não pode ser menor que a inicial",
-        function (value) {
-          const endHour = Number(value);
-          const startHour = Number(this.parent.startHour);
-          return endHour >= startHour;
-        },
-      )
-      .required("Campo obrigatório"),
+    startHour: yup.string().required("Campo obrigatório"),
+    endHour: yup.string().required("Campo obrigatório"),
   })
   .required();
 

@@ -194,10 +194,6 @@ export function RoleTable({ defaultTableSize, type }: TableProps) {
     setParams("page", String(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
-
   if (!roles) return;
 
   return (

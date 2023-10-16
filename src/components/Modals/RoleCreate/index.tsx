@@ -5,7 +5,7 @@ import { roleModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import styles from "./RoleCreate.module.scss";
 
 interface IRole {
@@ -24,24 +24,35 @@ export function RoleModal({
   handleOnSubmit,
   create,
 }: RoleModalProps) {
-  const [data, setData] = useState<IRole | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
 
-  const { control, handleSubmit } = useForm({
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(roleModalConfigSchema),
     defaultValues: {
-      roleText: data?.roleText ?? "",
-      roleDescription: data?.roleDescription ?? "",
+      roleText: defaultValue?.roleText ?? "",
+      roleDescription: defaultValue?.roleDescription ?? "",
     },
   });
 
   function handleOnSave(data: any) {
     setOpen(false);
+    reset();
     handleOnSubmit(data);
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={val => {
+        setOpen(val);
+        if (!val) reset();
+      }}
+    >
       <Dialog.Trigger asChild>
         <span>
           {create ? (
@@ -55,75 +66,67 @@ export function RoleModal({
           )}
         </span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
-        <Dialog.Overlay className={styles.modal__overlay} />
-        <Dialog.Content className={styles.modal__content}>
-          <form onSubmit={handleSubmit(handleOnSave)}>
-            <Dialog.Title className={styles.modal__title}>
-              {data?.roleText ? `${data?.roleText} - Cargo` : "Novo Cargo"}
-              <Dialog.Close asChild>
-                <span>
-                  <Close />
-                </span>
-              </Dialog.Close>
-            </Dialog.Title>
+      <Dialog.Portal>
+        <div className={styles.modal}>
+          <Dialog.Overlay className={styles.modal__overlay} />
+          <Dialog.Content className={styles.modal__content}>
+            <form onSubmit={handleSubmit(handleOnSave)}>
+              <Dialog.Title className={styles.modal__title}>
+                {defaultValue?.roleText
+                  ? `${defaultValue?.roleText} - Cargo`
+                  : "Novo Cargo"}
+                <Dialog.Close asChild>
+                  <span>
+                    <Close />
+                  </span>
+                </Dialog.Close>
+              </Dialog.Title>
 
-            <div className={styles.modal__content__form}>
-              <Controller
-                name="roleText"
-                control={control}
-                render={({ field: { onChange }, fieldState: { error } }) => (
-                  <div className={styles.modal__content__form__item}>
-                    <label htmlFor="role">Cargo</label>
-                    <input
-                      id="role"
-                      type="text"
-                      defaultValue={data?.roleText}
-                      onChange={onChange}
-                    />
-                    <span className={styles.error}>
-                      {error?.message && error.message}
-                    </span>
-                  </div>
-                )}
-              />
+              <div className={styles.modal__content__form}>
+                <div className={styles.modal__content__form__item}>
+                  <label htmlFor="role">Cargo</label>
+                  <input
+                    id="role"
+                    type="text"
+                    defaultValue={defaultValue?.roleText}
+                    {...register("roleText")}
+                  />
+                  <span className={styles.error}>
+                    {errors.roleText && errors.roleText.message}
+                  </span>
+                </div>
 
-              <Controller
-                name="roleDescription"
-                control={control}
-                render={({ field: { onChange }, fieldState: { error } }) => (
-                  <div className={styles.modal__content__form__item}>
-                    <label htmlFor="description">Descrição</label>
-                    <input
-                      id="description"
-                      type="text"
-                      defaultValue={data?.roleDescription}
-                      onChange={onChange}
-                    />
-                    <span className={styles.error}>
-                      {error?.message && error.message}
-                    </span>
-                  </div>
-                )}
-              />
-            </div>
+                <div className={styles.modal__content__form__item}>
+                  <label htmlFor="description">Descrição</label>
+                  <input
+                    id="description"
+                    type="text"
+                    defaultValue={defaultValue?.roleDescription}
+                    {...register("roleDescription")}
+                  />
+                  <span className={styles.error}>
+                    {errors.roleDescription && errors.roleDescription.message}
+                  </span>
+                </div>
+              </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "flex-end",
-                padding: 10,
-              }}
-            >
-              <Dialog.Close asChild>
-                <Button text="Cancelar" buttonType="default" type="button" />
-              </Dialog.Close>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                  padding: 10,
+                }}
+              >
+                <Dialog.Close asChild>
+                  <Button text="Cancelar" buttonType="default" type="button" />
+                </Dialog.Close>
 
-              <Button text="Salvar" buttonType="primary" type="submit" />
-            </div>
-          </form>
-        </Dialog.Content>
+                <Button text="Salvar" buttonType="primary" type="submit" />
+              </div>
+            </form>
+          </Dialog.Content>
+        </div>
       </Dialog.Portal>
     </Dialog.Root>
   );

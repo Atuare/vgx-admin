@@ -5,7 +5,7 @@ import { skillModalConfigSchema } from "@/schemas/configRecordsSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import styles from "./SkillCreate.module.scss";
 
 interface ISkill {
@@ -23,22 +23,33 @@ export function SkillModal({
   handleOnSubmit,
   create,
 }: SkillModalProps) {
-  const [skillData, setSkillData] = useState<ISkill | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const {
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(skillModalConfigSchema),
     defaultValues: {
-      skillText: skillData?.skillText ?? "",
+      skillText: defaultValue?.skillText ?? "",
     },
   });
 
   function handleOnSave(data: any) {
     setOpen(false);
+    reset();
     handleOnSubmit(data);
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={val => {
+        setOpen(val);
+        if (!val) reset();
+      }}
+    >
       <Dialog.Trigger asChild>
         <span>
           {create ? (
@@ -52,58 +63,54 @@ export function SkillModal({
           )}
         </span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
-        <Dialog.Overlay className={styles.modal__overlay} />
-        <Dialog.Content className={styles.modal__content}>
-          <form onSubmit={handleSubmit(handleOnSave)}>
-            <Dialog.Title className={styles.modal__title}>
-              {skillData?.skillText
-                ? `${skillData?.skillText} - Habilidade`
-                : "Nova Habilidade"}
-              <Dialog.Close asChild>
-                <span>
-                  <Close />
-                </span>
-              </Dialog.Close>
-            </Dialog.Title>
+      <Dialog.Portal>
+        <div className={styles.modal}>
+          <Dialog.Overlay className={styles.modal__overlay} />
+          <Dialog.Content className={styles.modal__content}>
+            <form onSubmit={handleSubmit(handleOnSave)}>
+              <Dialog.Title className={styles.modal__title}>
+                {defaultValue?.skillText
+                  ? `${defaultValue?.skillText} - Habilidade`
+                  : "Nova Habilidade"}
+                <Dialog.Close asChild>
+                  <span>
+                    <Close />
+                  </span>
+                </Dialog.Close>
+              </Dialog.Title>
 
-            <div className={styles.modal__content__form}>
-              <Controller
-                name="skillText"
-                control={control}
-                render={({ field: { onChange }, fieldState: { error } }) => (
-                  <div className={styles.modal__content__form__item}>
-                    <label htmlFor="acronym">Habilidade</label>
-                    <input
-                      id="acronym"
-                      type="text"
-                      defaultValue={skillData?.skillText}
-                      onChange={onChange}
-                    />
-                    <span className={styles.error}>
-                      {error?.message && error.message}
-                    </span>
-                  </div>
-                )}
-              />
-            </div>
+              <div className={styles.modal__content__form}>
+                <div className={styles.modal__content__form__item}>
+                  <label htmlFor="acronym">Habilidade</label>
+                  <input
+                    id="acronym"
+                    type="text"
+                    defaultValue={defaultValue?.skillText}
+                    {...register("skillText")}
+                  />
+                  <span className={styles.error}>
+                    {errors.skillText && errors.skillText.message}
+                  </span>
+                </div>
+              </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "flex-end",
-                padding: 10,
-              }}
-            >
-              <Dialog.Close asChild>
-                <Button text="Cancelar" buttonType="default" type="button" />
-              </Dialog.Close>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                  padding: 10,
+                }}
+              >
+                <Dialog.Close asChild>
+                  <Button text="Cancelar" buttonType="default" type="button" />
+                </Dialog.Close>
 
-              <Button text="Salvar" buttonType="primary" type="submit" />
-            </div>
-          </form>
-        </Dialog.Content>
+                <Button text="Salvar" buttonType="primary" type="submit" />
+              </div>
+            </form>
+          </Dialog.Content>
+        </div>
       </Dialog.Portal>
     </Dialog.Root>
   );

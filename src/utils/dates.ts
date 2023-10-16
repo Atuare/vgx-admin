@@ -27,6 +27,47 @@ export const daysOfWeek = [
   "Sábado",
 ];
 
+export const daysOfWeekSelect = [
+  {
+    name: "Domingo",
+    id: "Dom",
+  },
+  {
+    name: "Segunda",
+    id: "Seg",
+  },
+  {
+    name: "Terça",
+    id: "Ter",
+  },
+  {
+    name: "Quarta",
+    id: "Qua",
+  },
+  {
+    name: "Quinta",
+    id: "Qui",
+  },
+  {
+    name: "Sexta",
+    id: "Sex",
+  },
+  {
+    name: "Sábado",
+    id: "Sáb",
+  },
+];
+
+export const dayOfWeek: Record<string, number> = {
+  Dom: 0,
+  Seg: 1,
+  Ter: 2,
+  Qua: 3,
+  Qui: 4,
+  Sex: 5,
+  Sáb: 6,
+};
+
 export function generateYears() {
   const years = [];
   for (let i = new Date().getFullYear(); i >= 1970; i--) {

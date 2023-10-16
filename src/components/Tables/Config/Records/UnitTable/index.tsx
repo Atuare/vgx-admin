@@ -205,10 +205,6 @@ export function UnitTable({ defaultTableSize, type }: UnitTableProps) {
     setParams("page", String(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
-
   if (!units) return;
 
   return (

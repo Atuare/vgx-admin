@@ -214,10 +214,6 @@ export function AvailabilityTable({ defaultTableSize, type }: TableProps) {
     setParams("page", String(currentPage));
   }, [currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
-
   if (!availabilities) return;
 
   return (

@@ -25,24 +25,36 @@ export function SchoolingModal({
   handleOnSubmit,
   create,
 }: SchoolingModalProps) {
-  const [data, setData] = useState<ISchooling | undefined>(defaultValue);
   const [open, setOpen] = useState(false);
 
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schoolingModalConfigSchema),
     defaultValues: {
-      schoolingName: data?.schoolingName ?? "",
-      informCourse: data?.informCourse ?? false,
+      schoolingName: defaultValue?.schoolingName ?? "",
+      informCourse: defaultValue?.informCourse ?? false,
     },
   });
 
   function handleOnSave(data: any) {
     setOpen(false);
     handleOnSubmit(data);
+    reset();
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={val => {
+        setOpen(val);
+        if (!val) reset();
+      }}
+    >
       <Dialog.Trigger asChild>
         <span>
           {create ? (
@@ -56,72 +68,68 @@ export function SchoolingModal({
           )}
         </span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
-        <Dialog.Overlay className={styles.modal__overlay} />
-        <Dialog.Content className={styles.modal__content}>
-          <form onSubmit={handleSubmit(handleOnSave)}>
-            <Dialog.Title className={styles.modal__title}>
-              {data
-                ? `${data?.schoolingName} - Escolaridade`
-                : "Nova Escolaridade"}
-              <Dialog.Close asChild>
-                <span>
-                  <Close />
-                </span>
-              </Dialog.Close>
-            </Dialog.Title>
+      <Dialog.Portal>
+        <div className={styles.modal}>
+          <Dialog.Overlay className={styles.modal__overlay} />
+          <Dialog.Content className={styles.modal__content}>
+            <form onSubmit={handleSubmit(handleOnSave)}>
+              <Dialog.Title className={styles.modal__title}>
+                {defaultValue
+                  ? `${defaultValue?.schoolingName} - Escolaridade`
+                  : "Nova Escolaridade"}
+                <Dialog.Close asChild>
+                  <span>
+                    <Close />
+                  </span>
+                </Dialog.Close>
+              </Dialog.Title>
 
-            <div className={styles.modal__content__form}>
-              <Controller
-                name="schoolingName"
-                control={control}
-                render={({ field: { onChange }, fieldState: { error } }) => (
-                  <div className={styles.modal__content__form__item}>
-                    <label htmlFor="schooling">Escolaridade</label>
-                    <input
-                      id="schooling"
-                      type="text"
-                      defaultValue={data?.schoolingName}
-                      onChange={onChange}
-                    />
-                    <span className={styles.error}>
-                      {error?.message && error.message}
-                    </span>
-                  </div>
-                )}
-              />
-
-              <Controller
-                name="informCourse"
-                control={control}
-                render={({ field: { onChange } }) => (
-                  <Checkbox
-                    iconType="solid"
-                    value="Informar curso"
-                    isActive={data?.informCourse}
-                    onChangeCheckbox={onChange}
-                    type="button"
+              <div className={styles.modal__content__form}>
+                <div className={styles.modal__content__form__item}>
+                  <label htmlFor="schooling">Escolaridade</label>
+                  <input
+                    id="schooling"
+                    type="text"
+                    defaultValue={defaultValue?.schoolingName}
+                    {...register("schoolingName")}
                   />
-                )}
-              />
-            </div>
+                  <span className={styles.error}>
+                    {errors.schoolingName && errors.schoolingName.message}
+                  </span>
+                </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "flex-end",
-                padding: 10,
-              }}
-            >
-              <Dialog.Close asChild>
-                <Button text="Cancelar" buttonType="default" type="button" />
-              </Dialog.Close>
+                <Controller
+                  name="informCourse"
+                  control={control}
+                  render={({ field: { onChange } }) => (
+                    <Checkbox
+                      iconType="solid"
+                      value="Informar curso"
+                      isActive={defaultValue?.informCourse}
+                      onChangeCheckbox={onChange}
+                      type="button"
+                    />
+                  )}
+                />
+              </div>
 
-              <Button text="Salvar" buttonType="primary" type="submit" />
-            </div>
-          </form>
-        </Dialog.Content>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  justifyContent: "flex-end",
+                  padding: 10,
+                }}
+              >
+                <Dialog.Close asChild>
+                  <Button text="Cancelar" buttonType="default" type="button" />
+                </Dialog.Close>
+
+                <Button text="Salvar" buttonType="primary" type="submit" />
+              </div>
+            </form>
+          </Dialog.Content>
+        </div>
       </Dialog.Portal>
     </Dialog.Root>
   );

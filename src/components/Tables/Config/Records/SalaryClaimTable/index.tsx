@@ -147,8 +147,8 @@ export function SalaryClaimTable({ defaultTableSize, type }: TableProps) {
       cell: row => {
         const values = String(row.getValue()).split(" ");
 
-        const firstValue = formatCurrency(Number(values[0]));
-        const secondValue = formatCurrency(Number(values[1]));
+        const firstValue = formatCurrency(values[0]);
+        const secondValue = formatCurrency(values[1]);
 
         return (
           <div>
@@ -206,10 +206,6 @@ export function SalaryClaimTable({ defaultTableSize, type }: TableProps) {
     refetch();
     setParams("page", String(currentPage));
   }, [currentPage]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [type]);
 
   if (!salaryClaims) return;
 
