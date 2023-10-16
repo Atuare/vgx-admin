@@ -66,20 +66,17 @@ export default function ContractsConfigPage() {
 
   const handleDeleteContract = async (id: string) => {
     await deleteContract({ id });
-    refetch();
-    Toast("success", "Contrato deletado com sucesso!");
+    refetch().then(() => Toast("success", "Contrato deletado com sucesso!"));
   };
 
   const handleCreateContract = async (data: any) => {
     await createContract(data);
-    refetch();
-    Toast("success", "Contrato criado com sucesso!");
+    refetch().then(() => Toast("success", "Contrato criado com sucesso!"));
   };
 
   const handleUpdateContract = async (data: any) => {
     await updateContract(data);
-    refetch();
-    Toast("success", "Contrato atualizado com sucesso!");
+    refetch().then(() => Toast("success", "Contrato atualizado com sucesso!"));
   };
 
   const handleSwitchChange = (checked: boolean, rowIndex: number) => {

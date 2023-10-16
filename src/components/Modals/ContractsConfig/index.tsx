@@ -55,7 +55,13 @@ export function ContractConfigModal({
   }, [defaultValue]);
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={val => {
+        setOpen(val);
+        if (!val) reset();
+      }}
+    >
       <Dialog.Trigger asChild>
         <span>
           {create ? (
