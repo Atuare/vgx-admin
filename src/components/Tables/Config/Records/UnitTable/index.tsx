@@ -39,7 +39,7 @@ export function UnitTable({ defaultTableSize, type }: UnitTableProps) {
   const { data, isSuccess, isFetching, refetch } = useGetAllUnitsQuery({
     page: currentPage,
     size: defaultTableSize,
-    orderBy: "createdAt",
+    orderBy: "updatedAt",
     direction: "DESC",
   });
 

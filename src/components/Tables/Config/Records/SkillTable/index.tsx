@@ -39,7 +39,7 @@ export function SkillTable({ defaultTableSize, type }: TableProps) {
   const { data, isSuccess, isFetching, refetch } = useGetAllSkillsQuery({
     page: currentPage,
     size: defaultTableSize,
-    orderBy: "createdAt",
+    orderBy: "updatedAt",
     direction: "DESC",
   });
 

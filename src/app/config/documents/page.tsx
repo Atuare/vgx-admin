@@ -55,6 +55,8 @@ export default function DocumentsConfigPage() {
   } = useGetAllDocumentsQuery({
     page: currentPage,
     size: defaultTableSize,
+    direction: "DESC",
+    orderBy: "updatedAt",
   });
 
   const [deleteDocument] = useDeleteDocumentMutation();
@@ -200,9 +202,7 @@ export default function DocumentsConfigPage() {
       value => dayjs(value.updatedAt).format("DD/MM/YYYY HH:mm"),
       {
         header: "Atualizado em",
-        cell: row => (
-          <div>{dayjs(row.getValue()).format("DD/MM/YYYY HH:mm")}</div>
-        ),
+        cell: row => <div>{row.getValue()}</div>,
       },
     ),
   ];

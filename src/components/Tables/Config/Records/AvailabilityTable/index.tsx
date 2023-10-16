@@ -44,7 +44,7 @@ export function AvailabilityTable({ defaultTableSize, type }: TableProps) {
     {
       page: currentPage,
       size: defaultTableSize,
-      orderBy: "createdAt",
+      orderBy: "updatedAt",
       direction: "DESC",
     },
   );

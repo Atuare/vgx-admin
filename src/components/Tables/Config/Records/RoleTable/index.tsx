@@ -39,7 +39,7 @@ export function RoleTable({ defaultTableSize, type }: TableProps) {
   const { data, isSuccess, isFetching, refetch } = useGetAllRolesQuery({
     page: currentPage,
     size: defaultTableSize,
-    orderBy: "createdAt",
+    orderBy: "updatedAt",
     direction: "DESC",
   });
 

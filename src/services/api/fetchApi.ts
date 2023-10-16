@@ -460,12 +460,22 @@ export const fetchApi = createApi({
         };
       },
     }),
-    getAllDocuments: builder.query<any, { page: number; size: number }>({
-      query: ({ page, size }) => ({
+    getAllDocuments: builder.query<
+      any,
+      {
+        page: number;
+        size: number;
+        orderBy?: string;
+        direction?: "ASC" | "DESC";
+      }
+    >({
+      query: ({ page, size, direction, orderBy }) => ({
         url: "/document/findAll",
         params: {
           page,
           size,
+          direction,
+          orderBy,
         },
       }),
     }),

@@ -43,7 +43,7 @@ export function SalaryClaimTable({ defaultTableSize, type }: TableProps) {
   const { data, isSuccess, isFetching, refetch } = useGetAllSalaryClaimQuery({
     page: currentPage,
     size: defaultTableSize,
-    orderBy: "createdAt",
+    orderBy: "updatedAt",
     direction: "DESC",
   });
 

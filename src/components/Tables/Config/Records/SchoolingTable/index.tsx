@@ -39,7 +39,7 @@ export function SchoolingTable({ defaultTableSize, type }: TableProps) {
   const { data, isSuccess, isFetching, refetch } = useGetAllSchoolingsQuery({
     page: currentPage,
     size: defaultTableSize,
-    orderBy: "createdAt",
+    orderBy: "updatedAt",
     direction: "DESC",
   });
 
