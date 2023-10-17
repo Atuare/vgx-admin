@@ -3,17 +3,21 @@ import { StepOneProcessEdit } from "@/components/ProcessEdit/StepOneProcessEdit"
 import { StepThreeProcessEdit } from "@/components/ProcessEdit/StepThreeProcessEdit";
 import { StepTwoProcessEdit } from "@/components/ProcessEdit/StepTwoProcessEdit";
 import { Stepper } from "@/components/Stepper";
-import { useProcessEdit } from "@/hooks/useProcess";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useGetProcessCandidatesQuery } from "@/services/api/fetchApi";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import styles from "./ProcessEdit.module.scss";
 
 export default function ProcessEdit() {
   const [step, setStep] = useState(1);
+  const [processData, setProcessData] = useState<any>();
+
   const pathname = usePathname();
-  const { push } = useRouter();
-  const { processEdit } = useProcessEdit();
-  const [processData, setProcessData] = useState<any>(processEdit);
+  const processID = pathname.split("/")[2];
+
+  const { data, isSuccess } = useGetProcessCandidatesQuery({
+    id: processID,
+  });
 
   const handleSetProcessData = (data: any) => {
     setProcessData(data);
@@ -23,7 +27,11 @@ export default function ProcessEdit() {
     setStep(page);
   };
 
-  if (!processData) return;
+  useEffect(() => {
+    isSuccess && setProcessData(data.data);
+  }, [isSuccess]);
+
+  if (!processData) return <div>Processo não encontrado.</div>;
 
   return (
     <div className={styles.process}>

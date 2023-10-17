@@ -53,7 +53,7 @@ export const fetchApi = createApi({
       query: (data: Record<string, string>) => {
         const formData = new FormData();
         formData.append("body", JSON.stringify(data));
-        formData.append("banner", data.file);
+        formData.append("banner", data.banner);
 
         return {
           url: "/process",

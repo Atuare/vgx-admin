@@ -32,9 +32,7 @@ export const processEditStepOneSchema = yup.object({
     .optional(),
   endDate: yup.date().optional(),
   limitCandidates: yup.number().optional(),
-  banner: yup
-    .mixed()
-    .test("required", "O banner é obrigatório", (file: File | any) => file),
+  banner: yup.mixed().required("Campo obrigatório"),
   observations: yup.string().optional(),
   registrationCompletionMessage: yup.string().optional(),
 });

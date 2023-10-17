@@ -71,18 +71,19 @@ export function StepOneProcessEdit({
       ...currentProcessData,
       ...(data?.unit && { unit: data.unit }),
       ...(data?.role && { role: data.role }),
-      ...(data?.requestCv && { curriculum: data.requestCv }),
+      ...(data?.requestCv && { requestCv: data.requestCv }),
       ...(data?.startDate && {
         startDate: new Date(data.startDate).toISOString(),
       }),
       ...(data?.endDate && { endDate: new Date(data.endDate).toISOString() }),
       ...(data?.limitCandidates && { limitCandidates: data.limitCandidates }),
-      ...(data?.banner && { file: data.banner }),
+      ...(data?.banner && { banner: data.banner }),
       ...(data?.observations && { observations: data.observations }),
       ...(data?.registrationCompletionMessage && {
         registrationCompletionMessage: data.registrationCompletionMessage,
       }),
     });
+
     handleTogglePage(2);
   }
 
@@ -236,7 +237,7 @@ export function StepOneProcessEdit({
                   onChange={file => onChange(file)}
                   allowedTypes={["png", "jpeg", "jpg"]}
                   maxSize={5}
-                  defaultFile={currentProcessData?.file}
+                  defaultFile={currentProcessData?.banner}
                   fileName={
                     typeof currentProcessData?.banner === "string"
                       ? currentProcessData?.banner
