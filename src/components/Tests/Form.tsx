@@ -36,12 +36,24 @@ export default function TestForm({
   handleOnSubmit,
   defaultValue,
 }: TestCreateProps) {
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
+  const [questions, setQuestions] = useState<IQuestion[]>(
+    defaultValue?.questions ?? [],
+  );
   const [table, setTable] = useState<Table<any>>();
   const [units, setUnits] = useState<any>();
 
-  const { control, handleSubmit, setValue } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    register,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(testsCreateConfigSchema),
+    defaultValues: {
+      ...defaultValue,
+      unitId: defaultValue?.unit?.id,
+    },
   });
 
   const { back } = useRouter();
@@ -167,140 +179,99 @@ export default function TestForm({
                 onChange={({ id }) => onChange(id)}
                 options={units ?? []}
                 placeholder="Selecione"
+                defaultValue={defaultValue?.unit?.unitName}
               />
             </DataInput>
           )}
         />
-        <Controller
-          control={control}
-          name="maxTime"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Tempo máx. prova"
-              lightName="(minutos)"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Tempo máx. prova"
+          lightName="(minutos)"
+          required
+          error={errors.maxTime?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("maxTime")}
+          />
+        </DataInput>
       </Container>
 
       <Container>
-        <Controller
-          control={control}
-          name="portTotal"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Total de questões português"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Total de questões português"
+          required
+          error={errors.portTotal?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("portTotal")}
+          />
+        </DataInput>
 
-        <Controller
-          control={control}
-          name="portMinScore"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Nota mín. aprovação"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Nota mín. aprovação"
+          required
+          error={errors.portMinScore?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("portMinScore")}
+          />
+        </DataInput>
 
-        <Controller
-          control={control}
-          name="matTotal"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Total de questões matemática"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Total de questões matemática"
+          required
+          error={errors.matTotal?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("matTotal")}
+          />
+        </DataInput>
 
-        <Controller
-          control={control}
-          name="matMinScore"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Nota mín. aprovação"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Nota mín. aprovação"
+          required
+          error={errors.matMinScore?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("matMinScore")}
+          />
+        </DataInput>
       </Container>
 
       <Container>
-        <Controller
-          control={control}
-          name="compTotal"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Total de questões noções informática"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Total de questões noções informática"
+          required
+          error={errors.compTotal?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("compTotal")}
+          />
+        </DataInput>
 
-        <Controller
-          control={control}
-          name="compMinScore"
-          render={({ field: { onChange }, fieldState: { error } }) => (
-            <DataInput
-              name="Nota mín. aprovação"
-              required
-              error={error?.message}
-            >
-              <input
-                type="number"
-                onChange={e => onChange(e.target.value)}
-                style={{ width: 128 }}
-              />
-            </DataInput>
-          )}
-        />
+        <DataInput
+          name="Nota mín. aprovação"
+          required
+          error={errors.compMinScore?.message}
+        >
+          <input
+            type="number"
+            style={{ width: 128 }}
+            {...register("compMinScore")}
+          />
+        </DataInput>
       </Container>
 
       <h3 className={styles.form__title}>Questões prova</h3>
@@ -365,8 +336,14 @@ export default function TestForm({
               getContentFromEditor={content => {
                 if (content.content[0].content) {
                   onChange(JSON.stringify(content));
+                } else {
+                  onChange("");
                 }
               }}
+              content={
+                defaultValue && JSON.parse(defaultValue?.orientationMessage)
+              }
+              grayBorder
             />
             <p className={styles.error}>{error?.message}</p>
           </div>
@@ -384,8 +361,12 @@ export default function TestForm({
               getContentFromEditor={content => {
                 if (content.content[0].content) {
                   onChange(JSON.stringify(content));
+                } else {
+                  onChange("");
                 }
               }}
+              content={defaultValue && JSON.parse(defaultValue?.aproveMessage)}
+              grayBorder
             />
             <p className={styles.error}>{error?.message}</p>
           </div>
@@ -402,8 +383,14 @@ export default function TestForm({
               getContentFromEditor={content => {
                 if (content.content[0].content) {
                   onChange(JSON.stringify(content));
+                } else {
+                  onChange("");
                 }
               }}
+              content={
+                defaultValue && JSON.parse(defaultValue?.disapprovedMessage)
+              }
+              grayBorder
             />
             <p className={styles.error}>{error?.message}</p>
           </div>

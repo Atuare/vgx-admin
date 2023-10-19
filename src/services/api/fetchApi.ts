@@ -448,6 +448,15 @@ export const fetchApi = createApi({
         };
       },
     }),
+    createAdmission: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/admission",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
     changeEmployeePassword: builder.mutation<
       any,
       { password: string; newPassword: string }
@@ -674,6 +683,14 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getTestById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/test/id/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
     getAvailabilityById: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/availability/${id}`,
@@ -700,6 +717,42 @@ export const fetchApi = createApi({
           direction,
         },
       }),
+    }),
+    sendShutdownSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/shutdown",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendEmployeeSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/employee",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendJuridicalSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/juridical",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendMisSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/mis",
+          method: "POST",
+          body: data,
+        };
+      },
     }),
   }),
 });
@@ -745,6 +798,7 @@ export const {
   useUpdateTrainingMutation,
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
+  useCreateAdmissionMutation,
   useChangeEmployeePasswordMutation,
   useGetAllDocumentsQuery,
   useDeleteDocumentMutation,
@@ -765,7 +819,12 @@ export const {
   useCreateTestMutation,
   useUpdateTestMutation,
   useDeleteTestMutation,
+  useGetTestByIdQuery,
   useGetAvailabilityByIdQuery,
   useGetAllCandidacysQuery,
   useReleaseAdmissionContractMutation,
+  useSendEmployeeSpreadsheetMutation,
+  useSendJuridicalSpreadsheetMutation,
+  useSendMisSpreadsheetMutation,
+  useSendShutdownSpreadsheetMutation,
 } = fetchApi;
