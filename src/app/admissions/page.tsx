@@ -13,7 +13,6 @@ import {
   useGetAllAdmissionsQuery,
   useGetAllUnitsQuery,
 } from "@/services/api/fetchApi";
-import { getAllAdmissions } from "@/utils/admissions";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -54,22 +53,8 @@ export default function Admmissions() {
     setGlobalFilter(value);
   };
 
-  const getAdmissions = async (page: number) => {
-    const data = await getAllAdmissions(page, 2);
-
-    setAdmissions(data);
-  };
-
   const handleTogglePage = (page: number) => {
     setCurrentPage(page + 1);
-  };
-
-  const getFilterValues = (column: string) => {
-    const paramsValue = get(column);
-    if (paramsValue) {
-      const paramsArray = paramsValue.split(",");
-      table?.getColumn(column)?.setFilterValue(paramsArray);
-    }
   };
 
   const handleGoClassPage = (rowIndex: number) => {
@@ -83,12 +68,8 @@ export default function Admmissions() {
   const getAllExaminers = () => {
     const examiners: string[] = [];
     admissions?.admissions.map(admission => {
-      if (examiners.length === 0) {
+      if (!examiners.includes(admission.examiner)) {
         examiners.push(admission.examiner);
-      } else {
-        if (examiners.find(examiner => examiner !== admission.examiner)) {
-          examiners.push(admission.examiner);
-        }
       }
     });
 
@@ -147,18 +128,9 @@ export default function Admmissions() {
       },
     }),
     columnHelper.accessor(
-      value => dayjs(value.startDate).utc().format("DD/MM/YYYY"),
+      value => dayjs(value.date).utc().format("DD/MM/YYYY"),
       {
         header: "Data admissão",
-        cell: row => {
-          return <div>{row.getValue()}</div>;
-        },
-      },
-    ),
-    columnHelper.accessor(
-      value => dayjs(value.endDate).utc().format("DD/MM/YYYY"),
-      {
-        header: "Data Limite",
         cell: row => {
           return <div>{row.getValue()}</div>;
         },
@@ -258,10 +230,6 @@ export default function Admmissions() {
       }
     }
   }
-
-  useEffect(() => {
-    getFilterValues("unit_unitName");
-  }, [table]);
 
   useEffect(() => {
     setParams("page", String(currentPage));

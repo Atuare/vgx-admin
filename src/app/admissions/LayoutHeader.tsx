@@ -43,8 +43,8 @@ export function Header() {
         <h1>
           {titles[pathname as keyof typeof titles]
             ? titles[pathname as keyof typeof titles]
-            : admission?.startDate &&
-              `Turma admissão - ${dayjs(admission.startDate)
+            : admission?.date &&
+              `Turma admissão - ${dayjs(admission.date)
                 .utc()
                 .format("DD/MM/YYYY")}`}
         </h1>

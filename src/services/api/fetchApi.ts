@@ -457,6 +457,18 @@ export const fetchApi = createApi({
         };
       },
     }),
+    updateAdmission: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/admission/${data.id}`,
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
     changeEmployeePassword: builder.mutation<
       any,
       { password: string; newPassword: string }
@@ -799,6 +811,7 @@ export const {
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
   useCreateAdmissionMutation,
+  useUpdateAdmissionMutation,
   useChangeEmployeePasswordMutation,
   useGetAllDocumentsQuery,
   useDeleteDocumentMutation,

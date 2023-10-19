@@ -152,7 +152,7 @@ export function CreateAdmissionTable({
             column="role"
           />
         ),
-        cell: row => <div>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 152 }}>{row.getValue()}</div>,
         filterFn: (row, id, value) => {
           return value.length !== 0 ? value.includes(row.getValue(id)) : true;
         },
@@ -167,7 +167,7 @@ export function CreateAdmissionTable({
             column="unit"
           />
         ),
-        cell: row => <div>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 152 }}>{row.getValue()}</div>,
         filterFn: (row, id, value) => {
           return value.length !== 0 ? value.includes(row.getValue(id)) : true;
         },

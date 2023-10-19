@@ -13,7 +13,7 @@ export function NumberInput({
   onChange,
   width,
 }: NumberInputProps) {
-  const [value, setValue] = useState<number>(defaultValue ?? 0);
+  const [value, setValue] = useState<number>(0);
 
   function handleChangeValue(event: React.ChangeEvent<HTMLInputElement>) {
     const newValue = event.target.valueAsNumber;
@@ -23,6 +23,10 @@ export function NumberInput({
   useEffect(() => {
     onChange?.(value);
   }, [value]);
+
+  useEffect(() => {
+    if (defaultValue) setValue(defaultValue);
+  }, [defaultValue]);
 
   return (
     <div className={styles.inputContainer} style={{ width }}>
