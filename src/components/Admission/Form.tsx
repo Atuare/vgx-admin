@@ -175,9 +175,10 @@ export default function AdmissionForm({
                 setTable={setTable}
                 table={table}
                 globalFilter={globalFilter}
+                defaultCandidacysIds={defaultCandidacysIds}
                 handleOnChangeRowSelection={() => {
                   const ids = handleGetSelectedRowsId();
-                  !defaultValue && onChange(ids);
+                  onChange(ids);
                 }}
               />
               <p className={styles.error}>{error?.message}</p>

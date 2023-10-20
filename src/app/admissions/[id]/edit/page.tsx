@@ -30,9 +30,13 @@ export default function AdmissionEdit() {
       examiner: admission?.admission.examiner,
       date: dayjs(data.date).toISOString(),
       ...data,
-    }).then(() => {
-      Toast("success", "Admissão atualizada com sucesso!");
-      location.replace("/admissions");
+    }).then(data => {
+      if ("error" in data) {
+        Toast("error", "Erro ao atualizar admissão!");
+      } else {
+        Toast("success", "Admissão atualizada com sucesso!");
+        location.replace("/admissions");
+      }
     });
   };
 
