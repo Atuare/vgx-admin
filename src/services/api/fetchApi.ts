@@ -766,6 +766,20 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getSubscriptionSettings: builder.query({
+      query: () => ({
+        url: `/subscription-settings`,
+      }),
+    }),
+    updateSubscriptionSettings: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription-settings",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -840,4 +854,6 @@ export const {
   useSendJuridicalSpreadsheetMutation,
   useSendMisSpreadsheetMutation,
   useSendShutdownSpreadsheetMutation,
+  useGetSubscriptionSettingsQuery,
+  useUpdateSubscriptionSettingsMutation,
 } = fetchApi;
