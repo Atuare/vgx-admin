@@ -126,14 +126,16 @@ export default function AdmissionClass() {
     }),
     columnHelper.accessor(value => formatCpf(value.candidacy?.candidate?.cpf), {
       header: "CPF",
-      cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+      cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
     }),
     columnHelper.accessor(
       value => formatRG(value.candidacy?.candidate?.documents?.identity?.rg),
       {
         header: "RG",
         cell: row => (
-          <div style={{ width: 128 }}>{formatRG(row.getValue())}</div>
+          <div style={{ width: 128 }}>
+            {formatRG(row.getValue() ?? "-") ?? "-"}
+          </div>
         ),
       },
     ),
@@ -144,7 +146,7 @@ export default function AdmissionClass() {
           .format("DD/MM/YYYY"),
       {
         header: "Data de nascimento",
-        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
       },
     ),
     columnHelper.accessor(
@@ -153,7 +155,7 @@ export default function AdmissionClass() {
         header: "Telefone",
         cell: row => (
           <div style={{ width: 144 }}>
-            {formatWhatsappNumber(row.getValue() ?? "")}
+            {formatWhatsappNumber(row.getValue() ?? "") ?? "-"}
           </div>
         ),
       },
@@ -196,7 +198,9 @@ export default function AdmissionClass() {
       {
         header: "Disponibilidade",
         cell: row => (
-          <div style={{ width: 180, margin: "0 auto" }}>{row.getValue()}</div>
+          <div style={{ width: 180, margin: "0 auto" }}>
+            {row.getValue() ?? "-"}
+          </div>
         ),
       },
     ),
@@ -204,19 +208,21 @@ export default function AdmissionClass() {
       value =>
         formatCurrency(
           Number(
-            value.candidacy?.candidate?.complementaryInfo?.transportTaxGoing,
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxGoing ??
+              0,
           ),
         ),
       {
         header: "Tarifa trecho",
-        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
       },
     ),
     columnHelper.accessor(
       value =>
         formatCurrency(
           Number(
-            value.candidacy?.candidate?.complementaryInfo?.transportTaxReturn,
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxReturn ??
+              0,
           ),
         ),
       {
@@ -228,7 +234,8 @@ export default function AdmissionClass() {
       value =>
         formatCurrency(
           Number(
-            value.candidacy?.candidate?.complementaryInfo?.transportTaxDaily,
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxDaily ??
+              0,
           ),
         ),
       {
