@@ -780,6 +780,48 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getInterviewSettings: builder.query<any, { skip?: number; take?: number }>({
+      query: ({ skip, take }) => ({
+        url: `/interview-settings`,
+        params: {
+          skip,
+          take,
+        },
+      }),
+    }),
+    getInterviewSettingsById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/interview-settings/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
+    updateInterviewSetting: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/interview-settings/${data.id}`,
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    createInterviewSetting: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/interview-settings",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    deleteInterviewSetting: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/interview-settings/${id}`,
+        method: "DELETE",
+        params: { id },
+      }),
+    }),
   }),
 });
 
@@ -856,4 +898,9 @@ export const {
   useSendShutdownSpreadsheetMutation,
   useGetSubscriptionSettingsQuery,
   useUpdateSubscriptionSettingsMutation,
+  useGetInterviewSettingsQuery,
+  useUpdateInterviewSettingMutation,
+  useCreateInterviewSettingMutation,
+  useGetInterviewSettingsByIdQuery,
+  useDeleteInterviewSettingMutation,
 } = fetchApi;
