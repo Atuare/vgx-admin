@@ -20,6 +20,7 @@ export default function InterviewsConfigPage() {
       "Hora limite",
       "Data inicial",
       "Dias disponíveis",
+      "Atualizado em",
     ];
 
     const rows = table?.getRowModel().flatRows.map(row => row.original);
@@ -30,7 +31,8 @@ export default function InterviewsConfigPage() {
         unitOrSite: row.unitOrSite,
         type: row.type === "REMOTE" ? "Remoto" : "Presencial",
         limit: dayjs(row.limitTime).format("HH:mm:ss"),
-        initialDate: "D+1",
+        initialDate: `D+${row.availableDays}`,
+        availableDays: `${row.availableDays}`,
         updatedAt: dayjs(row.updatedAt).format("DD/MM/YYYY HH:mm:ss"),
       }));
 

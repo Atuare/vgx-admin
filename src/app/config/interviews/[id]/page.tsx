@@ -18,20 +18,23 @@ export default function InterviewsEditPage() {
   const [defaultInterview, setDefaultInterview] = useState<ICreateInterview>();
   const [updateInterview] = useUpdateInterviewSettingMutation();
 
-  const { push } = useRouter();
   const params = useParams();
+  const { push } = useRouter();
 
-  const { data, isSuccess, refetch } = useGetInterviewSettingsByIdQuery({
-    id: Array.from(params.id).join(""),
-  });
+  const { data, isSuccess, isFetching, refetch } =
+    useGetInterviewSettingsByIdQuery({
+      id: Array.from(params.id).join(""),
+    });
 
   const handleCreateInterview = (data: any) => {
     updateInterview(data).then(data => {
       if ("error" in data) {
         Toast("error", "Erro ao editar o agendamento.");
       } else {
-        Toast("success", "Agendamento atualizado com sucesso.");
-        push("/config/interviews");
+        refetch().then(() => {
+          push("/config/interviews");
+          Toast("success", "Agendamento atualizado com sucesso.");
+        });
       }
     });
   };
@@ -48,11 +51,7 @@ export default function InterviewsEditPage() {
         },
       });
     }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    refetch();
-  }, []);
+  }, [isSuccess, isFetching]);
 
   if (!defaultInterview) return <div>Agendamento não encontrado</div>;
 

@@ -18,15 +18,17 @@ import styles from "./ConfigInterview.module.scss";
 const defaultTableSize = 15;
 
 interface IDatesProps {
-  handleOnSubmit: (data: { dates: IDate[] | any }) => void;
+  handleOnSubmit: () => void;
   defaultDates?: IDate[];
   handleBackStep: () => void;
+  handleSetInterview: (data: { dates: IDate[] | any }) => void;
 }
 
 export function Dates({
   handleOnSubmit,
   defaultDates,
   handleBackStep,
+  handleSetInterview,
 }: IDatesProps) {
   const [dates, setDates] = useState<IDate[]>(defaultDates ?? []);
   const [table, setTable] = useState<Table<any>>();
@@ -41,7 +43,7 @@ export function Dates({
   });
 
   const handleSubmitDate = (data: IDate[] | any) => {
-    handleOnSubmit(data);
+    handleOnSubmit();
   };
 
   const handleOnCreateDate = (data: IDateModal) => {
@@ -104,6 +106,7 @@ export function Dates({
   useEffect(() => {
     setValue("dates", dates);
     trigger("dates");
+    handleSetInterview({ dates });
   }, [dates]);
 
   return (
@@ -130,8 +133,6 @@ export function Dates({
           setTable={setTable}
           handleChangeDates={setDates}
         />
-
-        <span className="error-message">{errors.dates?.message}</span>
 
         <footer className={styles.footer}>
           <Button

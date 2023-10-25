@@ -21,12 +21,14 @@ export function ConfigInterviewForm({
   );
   const [step, setStep] = useState<number>(1);
 
-  const handleChangeStep = (data: any) => {
+  const handleSetInterview = (data: any) => {
     setInterview({
       ...interview,
       ...data,
     });
+  };
 
+  const handleChangeStep = () => {
     step < 3 && setStep(prev => prev + 1);
   };
 
@@ -34,17 +36,11 @@ export function ConfigInterviewForm({
     step > 1 && setStep(prev => prev - 1);
   };
 
-  const handleCreateInterview = (data: any) => {
-    setInterview({
-      ...interview,
-      ...data,
-    });
-
+  const handleCreateInterview = () => {
     handleOnSubmit({
       status: true,
       ...interview,
-      ...data,
-      unitOrSite: interview?.unitOrSite.id,
+      unitOrSite: interview?.unitOrSite.name,
       type: interview?.type.id,
     });
   };
@@ -53,17 +49,25 @@ export function ConfigInterviewForm({
     <main className={styles.container}>
       <InterviewHeader step={step} />
       {step === 1 ? (
-        <General handleOnSubmit={handleChangeStep} interview={interview} />
+        <General
+          handleOnSubmit={data => {
+            handleChangeStep();
+            handleSetInterview(data);
+          }}
+          interview={interview}
+        />
       ) : step === 2 ? (
         <Schedulings
           defaultSchedulings={interview?.schedulings}
           handleOnSubmit={handleChangeStep}
+          handleSetInterview={handleSetInterview}
           handleBackStep={handleBackStep}
         />
       ) : step === 3 ? (
         <Dates
           defaultDates={interview?.dates}
           handleOnSubmit={handleCreateInterview}
+          handleSetInterview={handleSetInterview}
           handleBackStep={handleBackStep}
         />
       ) : (

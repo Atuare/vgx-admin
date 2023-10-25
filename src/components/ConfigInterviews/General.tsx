@@ -86,7 +86,13 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
         limitTime: dayjs(interview.limitTime).format("HH:mm"),
         startDate: dayjs(interview.startDate).format("YYYY-MM-DD"),
         type: interview.type,
-        unitOrSite: interview.unitOrSite,
+        unitOrSite:
+          typeof interview.unitOrSite === "string"
+            ? {
+                name: interview.unitOrSite,
+                id: interview.unitOrSite,
+              }
+            : interview.unitOrSite,
       });
   }, [interview]);
 

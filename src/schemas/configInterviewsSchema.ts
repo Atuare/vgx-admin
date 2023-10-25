@@ -50,8 +50,5 @@ export const DatesModalSchema = yup.object({
 });
 
 export const DatesSchema = yup.object({
-  dates: yup.array().test({
-    message: "É necessário criar pelo menos uma data indisponível",
-    test: arr => arr && arr.length > 0,
-  }),
+  dates: yup.array(),
 });

@@ -55,6 +55,8 @@ export function InterviewHomeTable({ setTable, table }: IHomeTableProps) {
   };
 
   const handleChangeStatus = (data: IInterview, status: boolean) => {
+    const oldInterviews = interviews;
+
     const newItems = interviews!.data.map(item => {
       if (item.id === data.id) {
         return {
@@ -66,13 +68,19 @@ export function InterviewHomeTable({ setTable, table }: IHomeTableProps) {
     });
 
     setTimeout(() => {
+      setInterviews({
+        data: newItems,
+        total: interviews!.total,
+      });
+
       updateInterview({ ...data, status }).then(res => {
         if ("error" in res) {
+          Toast("error", "Erro ao atualizar o status do agendamento.");
+          setInterviews(oldInterviews);
         } else {
-          setInterviews({
-            data: newItems,
-            total: interviews!.total,
-          });
+          refetch().then(() =>
+            Toast("success", "Status do agendamento atualizado com sucesso."),
+          );
         }
       });
     }, 100);
@@ -105,9 +113,10 @@ export function InterviewHomeTable({ setTable, table }: IHomeTableProps) {
       header: "Hora limite",
       cell: row => <div>{dayjs(row.getValue()).format("HH:mm:ss")}</div>,
     }),
-    columnHelper.accessor("startDate", {
+    columnHelper.accessor("availableDays", {
+      id: "startDate",
       header: "Data Inicial",
-      cell: row => <div>D+1</div>,
+      cell: row => <div>D+{row.getValue()}</div>,
     }),
     columnHelper.accessor("availableDays", {
       header: "Dias disponíveis",

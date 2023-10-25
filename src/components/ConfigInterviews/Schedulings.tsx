@@ -22,15 +22,17 @@ import styles from "./ConfigInterview.module.scss";
 const defaultTableSize = 15;
 
 interface ISchedulings {
-  handleOnSubmit: (data: { schedulings: IScheduling[] | any }) => void;
+  handleOnSubmit: () => void;
   defaultSchedulings?: IScheduling[];
   handleBackStep: () => void;
+  handleSetInterview: (data: { schedulings: IScheduling[] | any }) => void;
 }
 
 export function Schedulings({
   handleOnSubmit,
   defaultSchedulings,
   handleBackStep,
+  handleSetInterview,
 }: ISchedulings) {
   const [schedulings, setSchedulings] = useState<IScheduling[]>(
     defaultSchedulings ?? [],
@@ -47,9 +49,7 @@ export function Schedulings({
   });
 
   const handleSubmitScheduling = (data: IScheduling[] | any) => {
-    handleOnSubmit({
-      schedulings: data.schedulings,
-    });
+    handleOnSubmit();
   };
 
   const handleOnCreateHour = (data: ISchedulingModal) => {
@@ -119,6 +119,10 @@ export function Schedulings({
   useEffect(() => {
     setValue("schedulings", schedulings);
     trigger("schedulings");
+
+    handleSetInterview({
+      schedulings,
+    });
   }, [schedulings]);
 
   return (
