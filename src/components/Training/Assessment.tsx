@@ -18,6 +18,7 @@ import {
   FieldArrayWithId,
   FieldErrors,
   UseFormRegister,
+  UseFormTrigger,
 } from "react-hook-form";
 import * as XLSX from "xlsx";
 import styles from "./TrainingCreate.module.scss";
@@ -29,6 +30,7 @@ interface AssessmentProps {
   errors: FieldErrors<ITrainingCreateForm>;
   index: number;
   field: FieldArrayWithId<ITrainingCreateForm, "trainingAssessments", "id">;
+  trigger: UseFormTrigger<ITrainingCreateForm>;
 }
 
 const defaultTableSize = 5;
@@ -39,6 +41,7 @@ export function Assessment({
   control,
   errors,
   register,
+  trigger,
   index,
 }: AssessmentProps) {
   const [questions, setQuestions] = useState<Partial<IQuestion>[]>(
@@ -98,7 +101,7 @@ export function Assessment({
 
           data.map((row: any) => {
             const newQuestion: Partial<IQuestion> = {
-              text: row.QUESTION,
+              question: row.QUESTION,
               alternatives: [
                 {
                   alternative: row.FIRST_OPTION,
@@ -118,7 +121,9 @@ export function Assessment({
                 },
               ],
             };
-            handleCreateQuestion(newQuestion);
+            const newQuestions = handleCreateQuestion(newQuestion);
+            setQuestions(newQuestions);
+            trigger(`trainingAssessments.${index}.trainingAssessmentQuestions`);
           });
         };
       } else {
@@ -160,8 +165,9 @@ export function Assessment({
                   type="file"
                   id="uploadExcelFile"
                   style={{ display: "none" }}
-                  onChange={handleImportExcel}
-                  accept=".xls, .xlsx"
+                  onChange={event => {
+                    handleImportExcel(event);
+                  }}
                 />
 
                 <Controller

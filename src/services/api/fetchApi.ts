@@ -408,6 +408,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    createTraining: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/training",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
     updateTraining: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         return {
@@ -416,6 +425,15 @@ export const fetchApi = createApi({
           body: data,
         };
       },
+    }),
+    getAllTrainingTypes: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/training-type/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
     }),
     getAllAdmissions: builder.query<any, { page: number; size: number }>({
       query: ({ page, size }) => ({
@@ -863,6 +881,8 @@ export const {
   useCreateSchoolingMutation,
   useGetAllTrainingsQuery,
   useGetTrainingByIdQuery,
+  useCreateTrainingMutation,
+  useGetAllTrainingTypesQuery,
   useUpdateTrainingMutation,
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,

@@ -49,6 +49,7 @@ export const trainingCreateSchema = yup.object({
     .date()
     .typeError("Data inválida")
     .required("Campo obrigatório")
+    .min(new Date(), "Data inicial deve ser maior que a data atual")
     .max(yup.ref("endDate"), "Data inicial deve ser menor que a data final"),
   endDate: yup
     .date()
@@ -56,7 +57,7 @@ export const trainingCreateSchema = yup.object({
     .required("Campo obrigatório")
     .min(yup.ref("startDate"), "Data final deve ser maior que a data inicial"),
   trainingLocation: yup.string().required("Campo obrigatório"),
-  trainingType: yup.string().required("Campo obrigatório"),
+  trainingTypeId: yup.string().required("Campo obrigatório"),
   trainingAssessments: yup
     .array()
     .of(

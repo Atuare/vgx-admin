@@ -46,7 +46,7 @@ export interface ITrainingCreateForm {
   startDate: Date;
   endDate: Date;
   trainingLocation: string;
-  trainingType: string;
+  trainingTypeId: string;
   trainingAssessments: TrainingAssessmentType[];
 }
 
@@ -61,7 +61,7 @@ interface TrainingAssessmentType {
 }
 
 export interface IQuestion {
-  text: string;
+  question: string;
   alternatives: Alternative[];
 }
 
