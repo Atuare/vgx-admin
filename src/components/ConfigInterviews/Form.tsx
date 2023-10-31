@@ -28,7 +28,7 @@ export function ConfigInterviewForm({
     });
   };
 
-  const handleChangeStep = () => {
+  const handleNextStep = () => {
     step < 3 && setStep(prev => prev + 1);
   };
 
@@ -51,7 +51,7 @@ export function ConfigInterviewForm({
       {step === 1 ? (
         <General
           handleOnSubmit={data => {
-            handleChangeStep();
+            handleNextStep();
             handleSetInterview(data);
           }}
           interview={interview}
@@ -59,7 +59,7 @@ export function ConfigInterviewForm({
       ) : step === 2 ? (
         <Schedulings
           defaultSchedulings={interview?.schedulings}
-          handleOnSubmit={handleChangeStep}
+          handleOnSubmit={handleNextStep}
           handleSetInterview={handleSetInterview}
           handleBackStep={handleBackStep}
         />

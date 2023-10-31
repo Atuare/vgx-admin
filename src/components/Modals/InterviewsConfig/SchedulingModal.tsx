@@ -79,7 +79,7 @@ export function SchedulingModal({
         <div className={styles.modal}>
           <Dialog.Overlay className={styles.modal__overlay} />
           <Dialog.Content className={styles.modal__content}>
-            <form onSubmit={handleSubmit(handleOnSave)}>
+            <form>
               <Dialog.Title className={styles.modal__title}>
                 {defaultValue?.date
                   ? `${dayjs(defaultValue?.date).format(
@@ -136,7 +136,12 @@ export function SchedulingModal({
                   <Button text="Cancelar" buttonType="default" type="button" />
                 </Dialog.Close>
 
-                <Button text="Salvar" buttonType="primary" type="submit" />
+                <Button
+                  text="Salvar"
+                  buttonType="primary"
+                  type="button"
+                  onClick={handleSubmit(handleOnSave)}
+                />
               </div>
             </form>
           </Dialog.Content>

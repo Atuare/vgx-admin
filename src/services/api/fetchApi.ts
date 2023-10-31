@@ -840,6 +840,34 @@ export const fetchApi = createApi({
         params: { id },
       }),
     }),
+    updateInterviewSchedulings: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/interview-settings/${data.id}/schedulings`,
+          method: "PUT",
+          body: {
+            data: data.schedulings,
+          },
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
+    updateInterviewDates: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/interview-settings/${data.id}/dates`,
+          method: "PUT",
+          body: {
+            data: data.dates,
+          },
+          params: {
+            id: data.id,
+          },
+        };
+      },
+    }),
   }),
 });
 
@@ -923,4 +951,6 @@ export const {
   useCreateInterviewSettingMutation,
   useGetInterviewSettingsByIdQuery,
   useDeleteInterviewSettingMutation,
+  useUpdateInterviewDatesMutation,
+  useUpdateInterviewSchedulingsMutation,
 } = fetchApi;
