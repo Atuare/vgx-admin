@@ -66,3 +66,17 @@ export function decimalToTime(decimalTime: number): string {
   const timeString = `${hoursStr}:${minutesStr}`;
   return timeString;
 }
+
+export function formattedTimeToISOString(time: string) {
+  const [hours, minutes] = time.split(":");
+
+  const isoDate = dayjs()
+    .utc()
+    .hour(parseInt(hours))
+    .minute(parseInt(minutes))
+    .second(0)
+    .millisecond(0)
+    .toISOString();
+
+  return isoDate;
+}
