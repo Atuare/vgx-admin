@@ -1,27 +1,30 @@
 "use client";
 
 import TestForm from "@/components/Tests/Form";
-import { useUpdateTestMutation } from "@/services/api/fetchApi";
+import {
+  useGetTestByIdQuery,
+  useUpdateTestMutation,
+} from "@/services/api/fetchApi";
 import { Toast } from "@/utils/toast";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function TestEdit() {
   const [test, setTest] = useState();
-  const pathname = usePathname();
-  const { push } = useRouter();
+  const params = useParams();
+  const { replace } = useRouter();
 
   const [updateTest] = useUpdateTestMutation();
-
-  const getTestData = () => {
-    const testId = pathname.split("/")[3];
-  };
+  const { data, isSuccess, isFetching } = useGetTestByIdQuery({
+    id: Array.from(params.id).join(""),
+  });
 
   const handleEditTest = (data: any) => {
-    updateTest(data)
+    const { unit, ...rest } = data;
+    updateTest(rest)
       .then(() => {
         Toast("success", "Prova editada com sucesso!");
-        push("/config/tests");
+        location.replace("/config/tests");
       })
       .catch(() => {
         Toast("error", "Não foi possível editar a prova.");
@@ -29,8 +32,10 @@ export default function TestEdit() {
   };
 
   useEffect(() => {
-    getTestData();
-  }, []);
+    isSuccess && setTest(data.data);
+  }, [isSuccess, isFetching]);
 
-  return <TestForm handleOnSubmit={handleEditTest} />;
+  if (!test) return;
+
+  return <TestForm handleOnSubmit={handleEditTest} defaultValue={test} />;
 }

@@ -1,7 +1,7 @@
 import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { IconButton } from "@/components/IconButton";
-import { IQuestion } from "@/interfaces/tests.interface";
+import { IQuestion } from "@/interfaces/training.interface";
 import { trainingCreateModalConfigSchema } from "@/schemas/trainingSchema";
 import { Toast } from "@/utils/toast";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,11 +34,11 @@ export function TrainingCreateModal({
   } = useForm({
     resolver: yupResolver(trainingCreateModalConfigSchema),
     defaultValues: {
-      firstOption: data?.alternatives[0].alternative,
-      secondOption: data?.alternatives[1].alternative,
-      thirdOption: data?.alternatives[2].alternative,
-      fourthOption: data?.alternatives[3].alternative,
-      text: data?.text,
+      firstOption: data?.alternatives?.[0]?.alternative,
+      secondOption: data?.alternatives?.[1]?.alternative,
+      thirdOption: data?.alternatives?.[2]?.alternative,
+      fourthOption: data?.alternatives?.[3]?.alternative,
+      text: data?.question,
     },
   });
 
@@ -48,7 +48,7 @@ export function TrainingCreateModal({
     reset();
     const question = {
       id: crypto.randomUUID(),
-      text: data.text,
+      question: data.text,
       alternatives: [
         {
           alternative: data.firstOption,
@@ -140,7 +140,7 @@ export function TrainingCreateModal({
                       <input
                         id="text"
                         type="text"
-                        defaultValue={data?.text}
+                        defaultValue={data?.question}
                         onChange={onChange}
                       />
                       <span className={styles.error}>

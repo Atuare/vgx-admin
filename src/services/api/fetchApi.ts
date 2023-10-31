@@ -53,7 +53,7 @@ export const fetchApi = createApi({
       query: (data: Record<string, string>) => {
         const formData = new FormData();
         formData.append("body", JSON.stringify(data));
-        formData.append("banner", data.file);
+        formData.append("banner", data.banner);
 
         return {
           url: "/process",
@@ -408,6 +408,15 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    createTraining: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/training",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
     updateTraining: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         return {
@@ -416,6 +425,15 @@ export const fetchApi = createApi({
           body: data,
         };
       },
+    }),
+    getAllTrainingTypes: builder.query<any, { page: number; size: number }>({
+      query: ({ page, size }) => ({
+        url: "/training-type/findAll",
+        params: {
+          page,
+          size,
+        },
+      }),
     }),
     getAllAdmissions: builder.query<any, { page: number; size: number }>({
       query: ({ page, size }) => ({
@@ -445,6 +463,27 @@ export const fetchApi = createApi({
           url: "/admission/releaseContract",
           method: "POST",
           body: data,
+        };
+      },
+    }),
+    createAdmission: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/admission",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    updateAdmission: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/admission/${data.id}`,
+          method: "PUT",
+          body: data,
+          params: {
+            id: data.id,
+          },
         };
       },
     }),
@@ -674,6 +713,14 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    getTestById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/test/id/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
     getAvailabilityById: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/availability/${id}`,
@@ -779,6 +826,98 @@ export const fetchApi = createApi({
         body: data,
       }),
     }),
+    sendShutdownSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/shutdown",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendEmployeeSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/employee",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendJuridicalSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/juridical",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    sendMisSpreadsheet: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription/mis",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    getSubscriptionSettings: builder.query({
+      query: () => ({
+        url: `/subscription-settings`,
+      }),
+    }),
+    updateSubscriptionSettings: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/subscription-settings",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    getInterviewSettings: builder.query<any, { skip?: number; take?: number }>({
+      query: ({ skip, take }) => ({
+        url: `/interview-settings`,
+        params: {
+          skip,
+          take,
+        },
+      }),
+    }),
+    getInterviewSettingsById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/interview-settings/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
+    updateInterviewSetting: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: `/interview-settings/${data.id}`,
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
+    createInterviewSetting: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/interview-settings",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    deleteInterviewSetting: builder.mutation<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/interview-settings/${id}`,
+        method: "DELETE",
+        params: { id },
+      }),
+    }),
   }),
 });
 
@@ -820,9 +959,13 @@ export const {
   useCreateSchoolingMutation,
   useGetAllTrainingsQuery,
   useGetTrainingByIdQuery,
+  useCreateTrainingMutation,
+  useGetAllTrainingTypesQuery,
   useUpdateTrainingMutation,
   useGetAllAdmissionsQuery,
   useGetAdmissionQuery,
+  useCreateAdmissionMutation,
+  useUpdateAdmissionMutation,
   useChangeEmployeePasswordMutation,
   useGetAllDocumentsQuery,
   useDeleteDocumentMutation,
@@ -843,6 +986,7 @@ export const {
   useCreateTestMutation,
   useUpdateTestMutation,
   useDeleteTestMutation,
+  useGetTestByIdQuery,
   useGetAvailabilityByIdQuery,
   useGetAllCandidacysQuery,
   useReleaseAdmissionContractMutation,
@@ -855,4 +999,15 @@ export const {
   useUpdateExamMutation,
   useUpdateExamStatusMutation,
   useUpdateExamClassesCandidacyStatusMutation,
+  useSendEmployeeSpreadsheetMutation,
+  useSendJuridicalSpreadsheetMutation,
+  useSendMisSpreadsheetMutation,
+  useSendShutdownSpreadsheetMutation,
+  useGetSubscriptionSettingsQuery,
+  useUpdateSubscriptionSettingsMutation,
+  useGetInterviewSettingsQuery,
+  useUpdateInterviewSettingMutation,
+  useCreateInterviewSettingMutation,
+  useGetInterviewSettingsByIdQuery,
+  useDeleteInterviewSettingMutation,
 } = fetchApi;

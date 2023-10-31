@@ -145,10 +145,10 @@ export default function DocumentsConfigPage() {
         id: "availability",
         cell: row => {
           const values = String(row.getValue()).split(" ");
-          const man = Number(values[0]);
-          const eighteenYears = Number(values[1]);
-          const married = Number(values[2]);
-          const childrens = Number(values[3]);
+          const man = Boolean(values[0]);
+          const eighteenYears = Boolean(values[1]);
+          const married = Boolean(values[2]);
+          const childrens = Boolean(values[3]);
 
           return (
             <div

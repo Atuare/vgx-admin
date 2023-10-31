@@ -94,7 +94,9 @@ export function StepThreeProcessEdit({
         registrationCompletionMessage:
           processData?.registrationCompletionMessage,
       }),
-      ...(typeof processData?.file === "object" && { file: processData?.file }),
+      ...(typeof processData?.banner === "object" && {
+        banner: processData?.banner,
+      }),
     });
 
     updateProcess(updateProcessData).then(() => {
@@ -124,7 +126,7 @@ export function StepThreeProcessEdit({
             </DataInput>
             <DataInput name="Solicitar currículo" width="264px">
               <Radio
-                defaultValue={processData?.curriculum}
+                defaultValue={processData?.requestCv}
                 onChange={() => {}}
                 disabled
               />
@@ -159,13 +161,13 @@ export function StepThreeProcessEdit({
               <FileInput
                 onChange={() => {}}
                 defaultFile={
-                  typeof processData?.file === "string"
+                  typeof processData?.banner === "string"
                     ? null
-                    : processData?.file
+                    : processData?.banner
                 }
                 fileName={
-                  typeof processData?.file === "string"
-                    ? processData?.file
+                  typeof processData?.banner === "string"
+                    ? processData?.banner
                     : undefined
                 }
                 disabled

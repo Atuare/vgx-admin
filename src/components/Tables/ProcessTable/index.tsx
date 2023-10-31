@@ -94,14 +94,6 @@ export function ProcessTable({
     });
   };
 
-  const getFilterValues = (column: string) => {
-    const paramsValue = get(column);
-    if (paramsValue) {
-      const paramsArray = paramsValue.split(",");
-      table?.getColumn(column)?.setFilterValue(paramsArray);
-    }
-  };
-
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
   };
@@ -196,11 +188,6 @@ export function ProcessTable({
       setUnitsOptions(units.units.map(unit => unit.unitName));
     }
   }, [unitsSuccess, rolesSuccess]);
-
-  useEffect(() => {
-    getFilterValues("role_roleText");
-    getFilterValues("unit_unitName");
-  }, [table]);
 
   useEffect(() => {
     setParams("page", String(currentPage));

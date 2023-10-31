@@ -9,6 +9,7 @@ interface ActionsProps {
   value: string;
   EditModal?: ReactNode;
   href?: string;
+  handleEdit?: () => void;
 }
 
 export function Actions({
@@ -16,6 +17,7 @@ export function Actions({
   value,
   EditModal,
   href,
+  handleEdit,
 }: ActionsProps) {
   const { push } = useRouter();
 
@@ -38,7 +40,10 @@ export function Actions({
         <IconButton
           buttonType="edit"
           icon={<EditSquare />}
-          onClick={() => href && push(href)}
+          onClick={() => {
+            href && push(href);
+            handleEdit?.();
+          }}
         />
       )}
     </div>

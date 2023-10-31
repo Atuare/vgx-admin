@@ -31,6 +31,12 @@ export function Select({
     setOpenSelect(false);
   }, [options]);
 
+  useEffect(() => {
+    if (defaultValue && !value) {
+      setSelect(defaultValue);
+    }
+  }, [defaultValue]);
+
   return (
     <div className={styles.select} style={{ width }}>
       <button

@@ -82,7 +82,7 @@ export function StepThreeProcessCreate({
         (schooling: any) => schooling.id,
       ),
       benefitsId: processData?.benefits?.map((benefit: any) => benefit.id),
-      requestCv: processData?.curriculum,
+      requestCv: processData?.requestCv,
       availableForMinors: processData?.availableForMinors,
       startDate: processData?.startDate,
       endDate: processData?.endDate,
@@ -94,7 +94,7 @@ export function StepThreeProcessCreate({
         registrationCompletionMessage:
           processData?.registrationCompletionMessage,
       }),
-      file: processData?.file,
+      banner: processData?.file,
     };
 
     createProcess(createProcessData).then(() => {

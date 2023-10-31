@@ -28,6 +28,7 @@ interface CreateAdmissionTableProps {
   setTable: (table: Table<any>) => void;
   globalFilter?: string;
   defaultTableSize: number;
+  defaultCandidacysIds?: string[];
   handleOnChangeRowSelection?: (row: any) => void;
 }
 
@@ -37,6 +38,7 @@ export function CreateAdmissionTable({
   globalFilter,
   defaultTableSize,
   handleOnChangeRowSelection,
+  defaultCandidacysIds,
 }: CreateAdmissionTableProps) {
   const [candidates, setCandidates] = useState<CandidacysType>();
   const [tableColumns, setTableColumns] = useState<any[]>([]);
@@ -66,14 +68,6 @@ export function CreateAdmissionTable({
   });
 
   const handleTogglePage = (page: number) => setCurrentPage(page + 1);
-
-  const getFilterValues = (column: string) => {
-    const paramsValue = get(column);
-    if (paramsValue) {
-      const paramsArray = paramsValue.split(",");
-      table?.getColumn(column)?.setFilterValue(paramsArray);
-    }
-  };
 
   const columnHelper = createColumnHelper<CandidacyType>();
 
@@ -152,7 +146,7 @@ export function CreateAdmissionTable({
             column="role"
           />
         ),
-        cell: row => <div>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 152 }}>{row.getValue()}</div>,
         filterFn: (row, id, value) => {
           return value.length !== 0 ? value.includes(row.getValue(id)) : true;
         },
@@ -167,7 +161,7 @@ export function CreateAdmissionTable({
             column="unit"
           />
         ),
-        cell: row => <div>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 152 }}>{row.getValue()}</div>,
         filterFn: (row, id, value) => {
           return value.length !== 0 ? value.includes(row.getValue(id)) : true;
         },
@@ -241,8 +235,6 @@ export function CreateAdmissionTable({
   }, [unitsIsSuccess, rolesIsSuccess]);
 
   useEffect(() => {
-    getFilterValues("unit");
-    getFilterValues("role");
     getColumns();
   }, [table]);
 
@@ -250,6 +242,23 @@ export function CreateAdmissionTable({
     refetch();
     getColumns();
   }, [dateFilter]);
+
+  useEffect(() => {
+    if (defaultCandidacysIds && defaultCandidacysIds.length > 0) {
+      table?.getRowModel().flatRows.map(row => {
+        defaultCandidacysIds?.map(candidacyId => {
+          if (row.original.id === candidacyId) {
+            table.getRow(row.id).toggleSelected(true);
+          }
+        });
+      });
+    }
+  }, [defaultCandidacysIds]);
+
+  const handleOnChangeRowSelectionGetColumns = (row: any) => {
+    getColumns();
+    handleOnChangeRowSelection?.(row);
+  };
 
   if (!candidates) return <p>Não foi possível encontrar os candidatos</p>;
 
@@ -265,7 +274,7 @@ export function CreateAdmissionTable({
         size={candidates.totalCount}
         globalFilterValue={globalFilter ?? ""}
         loading={isFetching}
-        handleOnChangeRowSelection={handleOnChangeRowSelection}
+        handleOnChangeRowSelection={handleOnChangeRowSelectionGetColumns}
         scroll
       />
     </section>

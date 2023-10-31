@@ -35,6 +35,7 @@ interface DataTableProps {
   scroll?: boolean;
   handleOnChangeRowSelection?: (row: any) => void;
   primary2Color?: boolean;
+  disablePagination?: boolean;
 }
 
 export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
@@ -59,6 +60,7 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
       tableName,
       handleOnChangeRowSelection,
       primary2Color,
+      disablePagination = false,
     } = props;
 
     const table = useReactTable({
@@ -184,13 +186,15 @@ export const DataTable = forwardRef<HTMLButtonElement, DataTableProps>(
             </TableBody>
           </Table>
         </div>
-        <DataTablePagination
-          size={size}
-          handleTogglePage={handleTogglePage}
-          currentPage={currentPage}
-          totalPages={Math.ceil(size / defaultTableSize)}
-          table={table}
-        />
+        {!disablePagination ? (
+          <DataTablePagination
+            size={size}
+            handleTogglePage={handleTogglePage}
+            currentPage={currentPage}
+            totalPages={Math.ceil(size / defaultTableSize)}
+            table={table}
+          />
+        ) : null}
       </>
     );
   },

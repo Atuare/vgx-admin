@@ -4,7 +4,8 @@ import { NumberInput } from "@/components/NumberInput";
 import { Select } from "@/components/Select";
 import useUser from "@/hooks/useUser";
 import { ITrainingCreateForm } from "@/interfaces/training.interface";
-import { trainingTypesOptions } from "@/utils/training";
+import { useGetAllTrainingTypesQuery } from "@/services/api/fetchApi";
+import { useEffect, useState } from "react";
 import {
   Control,
   Controller,
@@ -27,6 +28,23 @@ export function TrainingFormInputs({
   register,
 }: TrainingFormInputsProps) {
   const { user } = useUser();
+  const [trainingTypesOptions, setTrainingTypesOptions] = useState([]);
+
+  const { data, isSuccess } = useGetAllTrainingTypesQuery({
+    page: 1,
+    size: 9999,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setTrainingTypesOptions(
+        data.trainingTypes.map((item: any) => ({
+          id: item.id,
+          name: item.trainingTypeName,
+        })),
+      );
+    }
+  }, [isSuccess]);
 
   return (
     <section className={styles.form__data}>
@@ -54,6 +72,7 @@ export function TrainingFormInputs({
           <input
             type="text"
             defaultValue={user?.employee?.name}
+            disabled
             {...register("trainer")}
           />
         </DataInput>
@@ -77,6 +96,7 @@ export function TrainingFormInputs({
                   );
                   onChange(val);
                 }}
+                defaultValue={value}
               />
             </DataInput>
           )}
@@ -85,14 +105,18 @@ export function TrainingFormInputs({
         <Controller
           name="participantLimit"
           control={control}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <DataInput
               name="Lim. participantes"
               required
               width="173px"
               error={errors?.participantLimit?.message}
             >
-              <NumberInput width={120} onChange={onChange} />
+              <NumberInput
+                width={120}
+                onChange={onChange}
+                defaultValue={value}
+              />
             </DataInput>
           )}
         />
@@ -142,19 +166,20 @@ export function TrainingFormInputs({
         </DataInput>
 
         <Controller
-          name="trainingType"
+          name="trainingTypeId"
           control={control}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <DataInput
               name="Tipo treinamento"
               required
               width="336px"
-              error={errors?.trainingType?.message}
+              error={errors?.trainingTypeId?.message}
             >
               <Select
                 options={trainingTypesOptions}
                 placeholder="Selecione"
                 onChange={({ id }) => onChange(id)}
+                defaultValue={value}
               />
             </DataInput>
           )}

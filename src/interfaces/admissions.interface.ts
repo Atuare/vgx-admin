@@ -11,12 +11,11 @@ export interface IAdmission {
   id: string;
   examiner: string;
   limitCandidates: number;
-  startDate: string;
-  endDate: string;
-  time: string;
+  date: Date;
   status: AdmissionsStatusEnum;
   createdAt: string;
   updatedAt: string;
+  product: string;
   unit: {
     id: string;
     unitName: string;
@@ -50,5 +49,11 @@ export interface IAdmissionCandidate {
 
 export interface IAdmissions {
   admissions: IAdmission[];
+  totalCount: number;
+}
+
+export interface IAdmissionResult {
+  admission: IAdmission;
+  admissionResult: IAdmissionCandidate[];
   totalCount: number;
 }

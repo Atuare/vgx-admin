@@ -6,6 +6,7 @@ import {
   FieldArrayWithId,
   FieldErrors,
   UseFormRegister,
+  UseFormTrigger,
 } from "react-hook-form";
 import { Assessment } from "./Assessment";
 import styles from "./TrainingCreate.module.scss";
@@ -15,6 +16,7 @@ interface TrainingCreateAssessmentsProps {
   control: Control<ITrainingCreateForm>;
   errors: FieldErrors<ITrainingCreateForm>;
   fields: FieldArrayWithId<ITrainingCreateForm, "trainingAssessments", "id">[];
+  trigger: UseFormTrigger<ITrainingCreateForm>;
 }
 
 export function TrainingCreateAssessments({
@@ -22,6 +24,7 @@ export function TrainingCreateAssessments({
   control,
   errors,
   register,
+  trigger,
 }: TrainingCreateAssessmentsProps) {
   return (
     <section className={styles.assessments}>
@@ -37,6 +40,7 @@ export function TrainingCreateAssessments({
                   control={control}
                   errors={errors}
                   register={register}
+                  trigger={trigger}
                   index={index}
                 />
                 {errors.trainingAssessments?.[index] && (

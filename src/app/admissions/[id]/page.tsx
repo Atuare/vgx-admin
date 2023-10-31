@@ -37,7 +37,7 @@ import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Admission.module.scss";
@@ -56,6 +56,7 @@ export default function AdmissionClass() {
   const pathname = usePathname();
   const { get } = useSearchParams();
   const { setParams } = useTableParams();
+  const { push } = useRouter();
 
   const [currentPage, setCurrentPage] = useState<number>(
     get("page") ? Number(get("page")) : 1,
@@ -76,14 +77,6 @@ export default function AdmissionClass() {
 
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
-  };
-
-  const getFilterValues = (column: string) => {
-    const paramsValue = get(column);
-    if (paramsValue) {
-      const paramsArray = paramsValue.split(",");
-      table?.getColumn(column)?.setFilterValue(paramsArray);
-    }
   };
 
   const handleInputValue = (value: string) => {
@@ -131,36 +124,38 @@ export default function AdmissionClass() {
       header: "Nome",
       cell: row => <div style={{ width: 256 }}>{row.getValue()}</div>,
     }),
-    columnHelper.accessor(value => formatCpf(value.candidacy.candidate.cpf), {
+    columnHelper.accessor(value => formatCpf(value.candidacy?.candidate?.cpf), {
       header: "CPF",
-      cell: row => (
-        <div style={{ width: 144 }}>{formatCpf(row.getValue())}</div>
-      ),
+      cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
     }),
     columnHelper.accessor(
-      value => formatRG(value.candidacy.candidate.documents.identity.rg),
+      value => formatRG(value.candidacy?.candidate?.documents?.identity?.rg),
       {
         header: "RG",
         cell: row => (
-          <div style={{ width: 128 }}>{formatRG(row.getValue())}</div>
+          <div style={{ width: 128 }}>
+            {formatRG(row.getValue() ?? "-") ?? "-"}
+          </div>
         ),
       },
     ),
     columnHelper.accessor(
       value =>
-        dayjs(value.candidacy.candidate.birthdate).utc().format("DD/MM/YYYY"),
+        dayjs(value.candidacy?.candidate?.birthdate)
+          .utc()
+          .format("DD/MM/YYYY"),
       {
         header: "Data de nascimento",
-        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
+        cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
       },
     ),
     columnHelper.accessor(
-      value => formatWhatsappNumber(value.candidacy.candidate.phone),
+      value => formatWhatsappNumber(value.candidacy?.candidate?.phone),
       {
         header: "Telefone",
         cell: row => (
           <div style={{ width: 144 }}>
-            {formatWhatsappNumber(row.getValue())}
+            {formatWhatsappNumber(row.getValue() ?? "") ?? "-"}
           </div>
         ),
       },
@@ -188,7 +183,7 @@ export default function AdmissionClass() {
     }),
     columnHelper.accessor(
       value =>
-        value.candidacy.candidate.complementaryInfo.transportVoucher
+        value.candidacy?.candidate?.complementaryInfo?.transportVoucher
           ? "SIM"
           : "NÃO",
       {
@@ -199,29 +194,35 @@ export default function AdmissionClass() {
       },
     ),
     columnHelper.accessor(
-      value => `${formatTimeRange(value.candidacy.availability)}`,
+      value => `${formatTimeRange(value.candidacy?.availability)}`,
       {
         header: "Disponibilidade",
         cell: row => (
-          <div style={{ width: 180, margin: "0 auto" }}>{row.getValue()}</div>
+          <div style={{ width: 180, margin: "0 auto" }}>
+            {row.getValue() ?? "-"}
+          </div>
         ),
-      },
-    ),
-    columnHelper.accessor(
-      value =>
-        formatCurrency(
-          Number(value.candidacy.candidate.complementaryInfo.transportTaxGoing),
-        ),
-      {
-        header: "Tarifa trecho",
-        cell: row => <div style={{ width: 144 }}>{row.getValue()}</div>,
       },
     ),
     columnHelper.accessor(
       value =>
         formatCurrency(
           Number(
-            value.candidacy.candidate.complementaryInfo.transportTaxReturn,
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxGoing ??
+              0,
+          ),
+        ),
+      {
+        header: "Tarifa trecho",
+        cell: row => <div style={{ width: 144 }}>{row.getValue() ?? "-"}</div>,
+      },
+    ),
+    columnHelper.accessor(
+      value =>
+        formatCurrency(
+          Number(
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxReturn ??
+              0,
           ),
         ),
       {
@@ -232,7 +233,10 @@ export default function AdmissionClass() {
     columnHelper.accessor(
       value =>
         formatCurrency(
-          Number(value.candidacy.candidate.complementaryInfo.transportTaxDaily),
+          Number(
+            value.candidacy?.candidate?.complementaryInfo?.transportTaxDaily ??
+              0,
+          ),
         ),
       {
         header: "Tarifa dia",
@@ -323,32 +327,36 @@ export default function AdmissionClass() {
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        name: row.candidacy.candidate.name,
-        cpf: formatCpf(row.candidacy.candidate.cpf),
-        rg: formatRG(row.candidacy.candidate.documents.identity.rg),
-        dateofbirth: dayjs(row.candidacy.candidate.birthdate)
-          .utc()
-          .format("DD/MM/YYYY"),
-        phone: formatWhatsappNumber(row.candidacy.candidate.phone),
-        role: row.candidacy.process.role.roleText,
-        unit: row.candidacy.process.unit.unitName,
+        name: row.candidacy.candidate.name ?? "",
+        cpf: formatCpf(row.candidacy.candidate.cpf) ?? "",
+        rg: formatRG(row.candidacy.candidate.documents.identity.rg) ?? "",
+        dateofbirth:
+          dayjs(row.candidacy.candidate.birthdate).utc().format("DD/MM/YYYY") ??
+          "",
+        phone: formatWhatsappNumber(row.candidacy.candidate.phone) ?? "",
+        role: row.candidacy.process.role.roleText ?? "",
+        unit: row.candidacy.process.unit.unitName ?? "",
         optedforvt: row.candidacy.candidate.complementaryInfo.transportVoucher
           ? "SIM"
-          : "NÃO",
-        availability: formatTimeRange(row.candidacy.availability),
+          : "NÃO" ?? "",
+        availability: formatTimeRange(row.candidacy.availability) ?? "",
         transportTaxGoing: formatCurrency(
-          Number(row.candidacy.candidate.complementaryInfo.transportTaxGoing),
+          Number(row.candidacy.candidate.complementaryInfo.transportTaxGoing) ??
+            "",
         ),
         transportTaxReturn: formatCurrency(
-          Number(row.candidacy.candidate.complementaryInfo.transportTaxReturn),
+          Number(
+            row.candidacy.candidate.complementaryInfo.transportTaxReturn,
+          ) ?? "",
         ),
         transportTaxDaily: formatCurrency(
-          Number(row.candidacy.candidate.complementaryInfo.transportTaxDaily),
+          Number(row.candidacy.candidate.complementaryInfo.transportTaxDaily) ??
+            "",
         ),
         status:
           AdmissionContractStatusEnum[
             row.contractStatus as keyof typeof AdmissionContractStatusEnum
-          ],
+          ] ?? "",
       }));
 
       downloadExcel({
@@ -364,34 +372,39 @@ export default function AdmissionClass() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          name: row.candidacy.candidate.name,
-          cpf: formatCpf(row.candidacy.candidate.cpf),
-          rg: formatRG(row.candidacy.candidate.documents.identity.rg),
-          dateofbirth: dayjs(row.candidacy.candidate.birthdate)
-            .utc()
-            .format("DD/MM/YYYY"),
-          phone: formatWhatsappNumber(row.candidacy.candidate.phone),
-          role: row.candidacy.process.role.roleText,
-          unit: row.candidacy.process.unit.unitName,
+          name: row.candidacy.candidate.name ?? "",
+          cpf: formatCpf(row.candidacy.candidate.cpf) ?? "",
+          rg: formatRG(row.candidacy.candidate.documents.identity.rg) ?? "",
+          dateofbirth:
+            dayjs(row.candidacy.candidate.birthdate)
+              .utc()
+              .format("DD/MM/YYYY") ?? "",
+          phone: formatWhatsappNumber(row.candidacy.candidate.phone) ?? "",
+          role: row.candidacy.process.role.roleText ?? "",
+          unit: row.candidacy.process.unit.unitName ?? "",
           optedforvt: row.candidacy.candidate.complementaryInfo.transportVoucher
             ? "SIM"
-            : "NÃO",
-          availability: formatTimeRange(row.candidacy.availability),
+            : "NÃO" ?? "",
+          availability: formatTimeRange(row.candidacy.availability) ?? "",
           transportTaxGoing: formatCurrency(
-            Number(row.candidacy.candidate.complementaryInfo.transportTaxGoing),
+            Number(
+              row.candidacy.candidate.complementaryInfo.transportTaxGoing,
+            ) ?? "",
           ),
           transportTaxReturn: formatCurrency(
             Number(
               row.candidacy.candidate.complementaryInfo.transportTaxReturn,
-            ),
+            ) ?? "",
           ),
           transportTaxDaily: formatCurrency(
-            Number(row.candidacy.candidate.complementaryInfo.transportTaxDaily),
+            Number(
+              row.candidacy.candidate.complementaryInfo.transportTaxDaily,
+            ) ?? "",
           ),
           status:
             AdmissionContractStatusEnum[
               row.contractStatus as keyof typeof AdmissionContractStatusEnum
-            ],
+            ] ?? "",
         }));
 
         downloadExcel({
@@ -405,11 +418,6 @@ export default function AdmissionClass() {
       }
     }
   };
-
-  useEffect(() => {
-    getFilterValues("unit_unitName");
-    getFilterValues("contractStatus");
-  }, [table]);
 
   useEffect(() => {
     setParams("page", String(currentPage));
@@ -433,7 +441,10 @@ export default function AdmissionClass() {
   return (
     <div className={styles.admission}>
       <section className={styles.admission__info}>
-        <p>Criado em {dayjs(admission.createdAt).format("DD/MM/YYYY HH:mm")}</p>
+        <p>
+          Criado em{" "}
+          {dayjs(admission.createdAt).utc().format("DD/MM/YYYY HH:mm")}
+        </p>
         <p>Por: {admission.examiner}</p>
       </section>
       <section className={styles.admission__actions}>
@@ -453,6 +464,7 @@ export default function AdmissionClass() {
               buttonType="secondary"
               text="Editar"
               icon={<EditSquare />}
+              onClick={() => push(`/admissions/${admission.id}/edit`)}
             />
           </div>
         </div>

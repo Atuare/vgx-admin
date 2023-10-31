@@ -27,6 +27,79 @@ export const daysOfWeek = [
   "Sábado",
 ];
 
+export const daysOfWeekInEnglish = [
+  {
+    name: "Domingo",
+    id: "SUNDAY",
+  },
+  {
+    name: "Segunda-Feira",
+    id: "MONDAY",
+  },
+  {
+    name: "Terça-Feira",
+    id: "TUESDAY",
+  },
+  {
+    name: "Quarta-Feira",
+    id: "WEDNESDAY",
+  },
+  {
+    name: "Quinta-Feira",
+    id: "THURSDAY",
+  },
+  {
+    name: "Sexta-Feira",
+    id: "FRIDAY",
+  },
+  {
+    name: "Sábado",
+    id: "SATURDAY",
+  },
+];
+
+export const convertDayOfWeek = (day?: string) => {
+  switch (day) {
+    case "SUNDAY":
+      return "Domingo";
+    case "MONDAY":
+      return "Segunda-Feira";
+    case "TUESDAY":
+      return "Terça-Feira";
+    case "WEDNESDAY":
+      return "Quarta-Feira";
+    case "THURSDAY":
+      return "Quinta-Feira";
+    case "FRIDAY":
+      return "Sexta-Feira";
+    case "SATURDAY":
+      return "Sábado";
+    default:
+      return "";
+  }
+};
+
+export const convertDayOfWeekToEnglish = (day?: string) => {
+  switch (day) {
+    case "Domingo":
+      return "SUNDAY";
+    case "Segunda-Feira":
+      return "MONDAY";
+    case "Terça-Feira":
+      return "TUESDAY";
+    case "Quarta-Feira":
+      return "WEDNESDAY";
+    case "Quinta-Feira":
+      return "THURSDAY";
+    case "Sexta-Feira":
+      return "FRIDAY";
+    case "Sábado":
+      return "SATURDAY";
+    default:
+      return "";
+  }
+};
+
 export const daysOfWeekSelect = [
   {
     name: "Domingo",
@@ -177,4 +250,15 @@ export const getDayOfWeekName = (day: number | undefined) => {
     default:
       return "";
   }
+};
+
+export const convertStringDateToDate = (date: string) => {
+  return dayjs(date).toISOString();
+};
+
+export const convertStringTimeToDate = (time: string) => {
+  return dayjs()
+    .set("hour", Number(time.split(":")[0]))
+    .set("minute", Number(time.split(":")[1]))
+    .toISOString();
 };

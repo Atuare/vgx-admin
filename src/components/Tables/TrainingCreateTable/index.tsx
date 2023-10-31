@@ -61,7 +61,7 @@ export function TrainingCreateTable({
         </div>
       ),
     }),
-    columnHelper.accessor("text", {
+    columnHelper.accessor("question", {
       header: "Texto",
       cell: row => <div>{row.getValue()}</div>,
     }),
