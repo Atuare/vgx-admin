@@ -3,49 +3,92 @@
 import { Button } from "@/components/Button";
 import { DataInput } from "@/components/DataInput";
 import { NumberInput } from "@/components/NumberInput";
-import { examsCreateSchema } from "@/schemas/examsShema";
-import { useCreateExamMutation } from "@/services/api/fetchApi";
+import { IExam } from "@/interfaces/exams.interface";
+import { examsEditSchema } from "@/schemas/examsShema";
+import {
+  useGetExamByIdQuery,
+  useUpdateExamMutation,
+} from "@/services/api/fetchApi";
 import { formattedTimeToISOString } from "@/utils/formatTimeRange";
 import { Toast } from "@/utils/toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs from "dayjs";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ToastContainer } from "react-toastify";
-import styles from "./ExamsCreate.module.scss";
+import styles from "./ExamsEdit.module.scss";
 
-export default function ExamsCreate() {
+export default function ExamsEdit() {
+  const pathname = usePathname();
+  const { push } = useRouter();
+
+  const examId = pathname.split("/")[2];
+
+  const [examData, setExamData] = useState<any>();
+  const { data, isFetching, isSuccess } = useGetExamByIdQuery({
+    id: examId,
+  });
+
   const {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(examsCreateSchema),
+    resolver: yupResolver(examsEditSchema),
+    defaultValues: { ...examData },
   });
 
-  const [createExam] = useCreateExamMutation();
+  const [updateExam] = useUpdateExamMutation();
 
-  const handleCreateExam = (data: any) => {
-    createExam({
+  const handleEditExam = (data: IExam) => {
+    const examTime = dayjs(data?.time).isValid()
+      ? data?.time
+      : formattedTimeToISOString(data?.time);
+
+    updateExam({
+      examId: data.id,
       data: {
-        status: "INCOMING",
+        status: examData?.status,
         examiner: data?.examiner,
         startDate: dayjs(data.startDate).toISOString(),
         endDate: dayjs(data.endDate).toISOString(),
         candidateLimit: data?.candidateLimit,
         location: data?.location,
-        time: formattedTimeToISOString(data?.time),
+        time: examTime,
       },
     });
-    Toast("success", "Exame criado com sucesso!");
-    location.replace("/exams");
+    Toast("success", "Exame atualizado com sucesso!");
+    location.replace(`/exams/${examId}`);
   };
+
+  useEffect(() => {
+    isSuccess && setExamData(data?.data);
+  }, [isSuccess, isFetching]);
+
+  useEffect(() => {
+    if (examData) {
+      reset({
+        id: examData?.id,
+        examiner: examData?.examiner,
+        startDate: examData?.startDate,
+        endDate: examData?.endDate,
+        candidateLimit: examData?.candidateLimit,
+        location: examData?.location,
+        time: dayjs(examData?.time).format("HH:mm"),
+      });
+    }
+  }, [examData]);
+
+  if (!examData) return;
 
   return (
     <main className={styles.exams}>
       <h1 className={styles.exams__title}>Dados Exame</h1>
 
-      <form onSubmit={handleSubmit(handleCreateExam)}>
+      <form onSubmit={handleSubmit(handleEditExam)}>
         <section className={styles.exams__inputs}>
           <DataInput
             name="Examinador"
@@ -104,7 +147,10 @@ export default function ExamsCreate() {
                 width="173px"
                 error={error?.message}
               >
-                <NumberInput onChange={onChange} />
+                <NumberInput
+                  defaultValue={examData.candidateLimit}
+                  onChange={onChange}
+                />
               </DataInput>
             )}
           />

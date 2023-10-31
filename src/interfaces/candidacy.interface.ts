@@ -23,7 +23,7 @@ export interface CandidacyType {
   testResult: any;
 }
 
-enum CandidacyStatusEnum {
+export enum CandidacyStatusEnum {
   APROVADO = "APROVADO",
   REPROVADO = "REPROVADO",
   DESISTENTE = "DESISTENTE",

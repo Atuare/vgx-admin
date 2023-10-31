@@ -9,6 +9,7 @@ export default function FlatText({ text, type }: FlatTextProps) {
   const bgColor = {
     CONCLUIDO: "var(--sucess)",
     CONCLUÍDO: "var(--sucess)",
+    APTO: "var(--sucess)",
     ASSINADO: "var(--sucess)",
     EM_ANDAMENTO: "var(--attention)",
     EMANDAMENTO: "var(--attention)",
@@ -22,9 +23,11 @@ export default function FlatText({ text, type }: FlatTextProps) {
     REPROVADO: "var(--error)",
     EMANALISE: "var(--secondary-7)",
     "EM ANÁLISE": "var(--secondary-7)",
+    AUSENTE: "var(--secondary-7)",
     NAOENVIADO: "var(--error)",
     "NÃO ENVIADO": "var(--error)",
     DESISTENTE: "var(--error)",
+    INAPTO: "var(--error)",
   };
 
   return (

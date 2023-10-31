@@ -701,6 +701,84 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    updateCandidacyCandidate: builder.mutation<
+      any,
+      { id: string; data: Record<string, string> }
+    >({
+      query: ({ id, data }) => ({
+        url: `/candidacy/${id}/updateCandidate`,
+        method: "PATCH",
+        body: data,
+        params: {
+          id,
+        },
+      }),
+    }),
+    getAllExams: builder.query<any, any>({
+      query: () => ({
+        url: `exams/`,
+      }),
+    }),
+    getAllExaminers: builder.query<any, any>({
+      query: () => ({
+        url: `exams/examiners`,
+      }),
+    }),
+    getAllExamClass: builder.query<
+      any,
+      {
+        id: string;
+      }
+    >({
+      query: ({ id }) => ({
+        url: `exams/${id}/class`,
+      }),
+    }),
+    getExamById: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/exams/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
+    createExam: builder.mutation<any, { data: Record<any, any> }>({
+      query: ({ data }) => ({
+        url: `/exams/`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateExam: builder.mutation<
+      any,
+      { examId: string; data: Record<any, any> }
+    >({
+      query: ({ examId, data }) => ({
+        url: `/exams/${examId}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+    updateExamStatus: builder.mutation<
+      any,
+      { examId: string; data: Record<any, any> }
+    >({
+      query: ({ examId, data }) => ({
+        url: `/exams/${examId}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+    updateExamClassesCandidacyStatus: builder.mutation<
+      any,
+      { examId: string; data: Record<any, any> }
+    >({
+      query: ({ examId, data }) => ({
+        url: `/exams/${examId}/classes`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -768,4 +846,13 @@ export const {
   useGetAvailabilityByIdQuery,
   useGetAllCandidacysQuery,
   useReleaseAdmissionContractMutation,
+  useUpdateCandidacyCandidateMutation,
+  useGetAllExamsQuery,
+  useGetAllExaminersQuery,
+  useGetAllExamClassQuery,
+  useGetExamByIdQuery,
+  useCreateExamMutation,
+  useUpdateExamMutation,
+  useUpdateExamStatusMutation,
+  useUpdateExamClassesCandidacyStatusMutation,
 } = fetchApi;

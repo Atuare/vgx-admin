@@ -1,3 +1,4 @@
+import examReducer from "@/features/exam/examSlice";
 import processEditReducer from "@/features/process/processEditSlice";
 import userReducer from "@/features/user/userSlice";
 import { authApi } from "@/services/api/authApi";
@@ -12,6 +13,7 @@ export const store = configureStore({
     [fetchApi.reducerPath]: fetchApi.reducer,
     userState: userReducer,
     processEditState: processEditReducer,
+    examState: examReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(

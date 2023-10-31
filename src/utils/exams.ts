@@ -52,3 +52,10 @@ export const examsStatus = [
   "SUSPENSO",
   "CONCLUÍDO",
 ];
+
+export const examClassCandidateStatus = [
+  "APTO",
+  "INAPTO",
+  "PENDENTE",
+  "AUSENTE",
+];

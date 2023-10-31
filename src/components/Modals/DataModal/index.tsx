@@ -9,6 +9,7 @@ import { InterviewType } from "@/interfaces/interviews.interface";
 import { dataModalSchema } from "@/schemas/dataModalSchema";
 import {
   useGetAllTrainingsQuery,
+  useUpdateCandidacyCandidateMutation,
   useUpdateCandidateAddressMutation,
   useUpdateCandidateComplementaryInfoMutation,
   useUpdateCandidateDocumentsMutation,
@@ -101,37 +102,46 @@ export function DataModal({ children, data }: DataModalProps) {
     useUpdateCandidateComplementaryInfoMutation();
   const [updateAddress] = useUpdateCandidateAddressMutation();
   const [updateDocuments] = useUpdateCandidateDocumentsMutation();
+  const [updateCandidacyData] = useUpdateCandidacyCandidateMutation();
 
-  function handleOnSave(data: ICandidate) {
+  function handleOnSave(candidateData: any) {
     updateCandidate({
-      id: data.id,
-      name: data.name,
-      cpf: data.cpf,
-      birthdate: data.birthdate,
-      gender: data.gender,
-      civilStatus: data.civilStatus,
-      state: data.state,
-      county: data.county,
-      phone: data.phone,
-      whatsapp: data.whatsapp,
-      email: data.email,
-      fatherName: data.fatherName,
-      motherName: data.motherName,
-      childUnderfourteen: data.childUnderfourteen,
-      childCount: data.childCount,
+      id: candidateData.id,
+      name: candidateData.name,
+      cpf: candidateData.cpf,
+      birthdate: candidateData.birthdate,
+      gender: candidateData.gender,
+      civilStatus: candidateData.civilStatus,
+      state: candidateData.state,
+      county: candidateData.county,
+      phone: candidateData.phone,
+      whatsapp: candidateData.whatsapp,
+      email: candidateData.email,
+      fatherName: candidateData.fatherName,
+      motherName: candidateData.motherName,
+      childUnderfourteen: candidateData.childUnderfourteen,
+      childCount: candidateData.childCount,
     });
 
     updateAddress({
-      ...data.address,
+      ...candidateData.address,
     });
 
     updateComplementaryInfo({
-      ...data.complementaryInfo,
+      ...candidateData.complementaryInfo,
     });
 
     updateDocuments({
-      ...data.documents,
+      ...candidateData.documents,
     });
+
+    updateCandidacyData({
+      id: data!.candidacy.id,
+      data: {
+        availabilityId: candidateData.availability,
+      },
+    });
+
     setOpen(false);
   }
 

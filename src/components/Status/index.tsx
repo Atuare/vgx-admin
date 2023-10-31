@@ -1,4 +1,5 @@
 import { DonutLarge } from "@/assets/Icons";
+import { ExamsStatusEnum } from "@/enums/status.enum";
 import styles from "./Status.module.scss";
 
 enum StatusEnum {
@@ -16,15 +17,13 @@ export function Status({
   pointer?: boolean;
 }) {
   const bgColor = {
-    CONCLUIDO: "var(--sucess)",
-    EM_ANDAMENTO: "var(--attention)",
-    EMANDAMENTO: "var(--attention)",
-    "EM ANDAMENTO": "var(--attention)",
-    CANCELADO: "var(--error)",
-    SUSPENSO: "var(--secondary-7)",
+    DONE: "var(--sucess)",
+    INCOMING: "var(--attention)",
+    CANCELLED: "var(--error)",
+    SUSPENDED: "var(--secondary-7)",
   };
 
-  const status = StatusEnum[type as keyof typeof StatusEnum];
+  const status = ExamsStatusEnum[type as keyof typeof ExamsStatusEnum];
 
   return (
     <div
@@ -34,7 +33,7 @@ export function Status({
         cursor: pointer ? "pointer" : "default",
       }}
     >
-      {status}
+      {status?.replace("_", " ")}
       <DonutLarge />
     </div>
   );

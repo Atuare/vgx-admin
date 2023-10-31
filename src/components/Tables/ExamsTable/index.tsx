@@ -4,12 +4,16 @@ import { DataTable } from "@/components/Table";
 import { DateTimeFilterButton } from "@/components/Table/Filters/DateTimeFilterButton";
 import { FilterButton } from "@/components/Table/Filters/FilterButton";
 import { SearchFilterButton } from "@/components/Table/Filters/SearchFilterButton";
-import { IExam } from "@/interfaces/exams.interface";
-import { fakeExamsData } from "@/utils/exams";
+import { ExamsStatusEnum } from "@/enums/status.enum";
+import { IExam, IExams } from "@/interfaces/exams.interface";
+import {
+  useGetAllExaminersQuery,
+  useGetAllExamsQuery,
+} from "@/services/api/fetchApi";
 import { createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 dayjs.extend(utc);
 
@@ -26,25 +30,25 @@ export function ExamsTable({
   globalFilter,
   defaultTableSize,
 }: ExamsTableProps) {
+  const [exams, setExams] = useState<IExams>();
   const [examiners, setExaminers] = useState<string[]>([]);
+
+  const { push } = useRouter();
 
   const { get } = useSearchParams();
   const [currentPage, setCurrentPage] = useState(
     get("page") ? Number(get("page")) : 1,
   );
 
+  const { data, isFetching, isSuccess, refetch } = useGetAllExamsQuery({}); // ! FIX: This hook should not require any property but is requiring, so a temporary object is being passed.
+
+  const {
+    data: examinersData,
+    isFetching: examinersIsFetching,
+    isSuccess: examinersIsSuccess,
+  } = useGetAllExaminersQuery({});
+
   const handleTogglePage = (page: number) => setCurrentPage(page + 1);
-
-  const getAllExaminers = () => {
-    const newExaminers: string[] = [];
-    fakeExamsData.exams.map(exam => {
-      if (newExaminers.includes(exam.examiner)) return;
-
-      newExaminers.push(exam.examiner);
-    });
-
-    setExaminers(newExaminers);
-  };
 
   const columnHelper = createColumnHelper<IExam>();
   const columns = [
@@ -66,16 +70,39 @@ export function ExamsTable({
     columnHelper.accessor("status", {
       header: "Status",
       cell: row => {
-        return <FlatText text={row.getValue()} type={row.getValue()} />;
+        const value = row.getValue();
+        const status = ExamsStatusEnum[
+          String(value) as keyof typeof ExamsStatusEnum
+        ].replace("_", " ");
+
+        return (
+          <div
+            style={{ cursor: "pointer" }}
+            //   onClick={() => handleGoClassPage(row.row.index)}
+          >
+            <FlatText text={status} type={status} />
+          </div>
+        );
       },
     }),
-    columnHelper.accessor("limit", {
+    columnHelper.accessor("candidateLimit", {
       header: "Quantidade",
-      cell: row => <div>{row.getValue()}</div>,
+      cell: ({ row }) => {
+        return (
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => push(`/exams/${row.original.id}`)}
+          >
+            {row.getValue("candidateLimit")}
+          </div>
+        );
+      },
     }),
     columnHelper.accessor(
       value =>
-        `${dayjs(value.startDate).utc().format("DD/MM/YYYY")}-${value.hour}`,
+        `${dayjs(value.startDate).utc().format("DD/MM/YYYY")}-${dayjs(
+          value.time,
+        ).format("HH:MM")}`,
       {
         id: "dateandtime",
         header: () => (
@@ -127,7 +154,7 @@ export function ExamsTable({
         return value.length !== 0 ? value.includes(row.getValue(id)) : true;
       },
     }),
-    columnHelper.accessor("local", {
+    columnHelper.accessor("location", {
       header: () => (
         <SearchFilterButton column="local" table={table} title="Local" />
       ),
@@ -141,15 +168,30 @@ export function ExamsTable({
   ];
 
   useEffect(() => {
-    getAllExaminers();
-  }, []);
+    isSuccess && setExams(data);
+  }, [isSuccess, isFetching]);
+
+  useEffect(() => {
+    if (examinersIsSuccess) {
+      const newExaminers: string[] = [];
+      examinersData.data.map((exam: any) => {
+        if (newExaminers.includes(exam.examiner)) return;
+
+        newExaminers.push(exam.examiner);
+      });
+
+      setExaminers(newExaminers);
+    }
+  }, [examinersIsSuccess, examinersIsFetching]);
+
+  if (!exams || !examiners) return <p>Exames admissionais indisponíveis</p>;
 
   return (
     <section>
       <DataTable
         columns={columns}
-        data={fakeExamsData.exams}
-        size={fakeExamsData.totalCount}
+        data={exams.data}
+        size={exams.data.length}
         currentPage={currentPage}
         defaultTableSize={defaultTableSize}
         handleTogglePage={handleTogglePage}

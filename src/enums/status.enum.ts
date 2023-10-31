@@ -32,8 +32,15 @@ export enum DocumentCandidateStatusEnum {
 }
 
 export enum ExamsStatusEnum {
-  EMANDAMENTO = "EM ANDAMENTO",
-  SUSPENSO = "SUSPENSO",
-  CONCLUIDO = "CONCLUÍDO",
-  CANCELADO = "CANCELADO",
+  INCOMING = "EM_ANDAMENTO",
+  SUSPENDED = "SUSPENSO",
+  DONE = "CONCLUÍDO",
+  CANCELLED = "CANCELADO",
+}
+
+export enum ExamClassCandidateStatusEnum {
+  "ABLE" = "APTO",
+  "UNABLE" = "INAPTO",
+  "PENDING" = "PENDENTE",
+  "ABSENT" = "AUSENTE",
 }

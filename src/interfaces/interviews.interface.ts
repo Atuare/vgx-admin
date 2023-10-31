@@ -7,6 +7,7 @@ export interface InterviewType {
   date: Date;
   status: "AREALIZAR" | "NAOREALIZADO" | "APROVADO";
   candidacy: {
+    id: string;
     candidate: ICandidate;
     process: ProcessType;
   };

@@ -1,0 +1,36 @@
+.exams {
+  width: 100%;
+  padding: 24px 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-2);
+  }
+
+  &__inputs {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+
+    position: fixed;
+    bottom: 24px;
+    left: 0px;
+    right: 16px;
+
+    button {
+      padding: 16px;
+    }
+  }
+}

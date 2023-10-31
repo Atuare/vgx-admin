@@ -4,6 +4,7 @@ import { AddCircle, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { SearchInput } from "@/components/SearchInput";
 import { ExamsTable } from "@/components/Tables/ExamsTable";
+import { ExamsStatusEnum } from "@/enums/status.enum";
 import { Table } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -36,13 +37,15 @@ export default function Exams() {
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        status: row.status,
-        limit: row.limit,
+        status: ExamsStatusEnum[
+          row.status as keyof typeof ExamsStatusEnum
+        ].replace("_", " "),
+        limit: row.candidateLimit,
         dateandtime: `${dayjs(row.startDate).utc().format("DD/MM/YYYY")} ${
           row.hour
         }`,
         examiner: row.examiner,
-        local: row.local,
+        local: row.location,
       }));
 
       downloadExcel({
@@ -58,13 +61,15 @@ export default function Exams() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          status: row.status,
-          limit: row.limit,
-          dateandtime: `${dayjs(row.startDate).utc().format("DD/MM/YYYY")} ${
-            row.hour
-          }`,
+          status: ExamsStatusEnum[
+            row.status as keyof typeof ExamsStatusEnum
+          ].replace("_", " "),
+          limit: row.candidateLimit,
+          dateandtime: `${dayjs(row.startDate)
+            .utc()
+            .format("DD/MM/YYYY")}${" "}${dayjs(row.time).format("HH:mm")}`,
           examiner: row.examiner,
-          local: row.local,
+          local: row.location,
         }));
 
         downloadExcel({
