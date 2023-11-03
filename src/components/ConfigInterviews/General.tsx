@@ -10,6 +10,7 @@ import {
 } from "@/utils/dates";
 import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../Button";
@@ -30,6 +31,8 @@ interface IGeneralProps {
 
 export function General({ handleOnSubmit, interview }: IGeneralProps) {
   const [units, setUnits] = useState<SelectOptions>([]);
+
+  const { push } = useRouter();
 
   const InterviewType = [
     {
@@ -167,7 +170,7 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
       <Controller
         control={control}
         name="endMessage"
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange } }) => (
           <DataInput
             name="Mensagem final"
             required
@@ -191,7 +194,12 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
       />
 
       <footer className={styles.form__footer}>
-        <Button buttonType="default" text="Cancelar" type="button" />
+        <Button
+          buttonType="default"
+          text="Cancelar"
+          type="button"
+          onClick={() => push("/config/interviews")}
+        />
         <Button buttonType="primary" text="Próximo" type="submit" />
       </footer>
     </form>

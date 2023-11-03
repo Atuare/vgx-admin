@@ -3,6 +3,8 @@ import { ConfigInterviewForm } from "@/components/ConfigInterviews/Form";
 import { ICreateInterview } from "@/interfaces/configInterviews.interface";
 import {
   useGetInterviewSettingsByIdQuery,
+  useUpdateInterviewDatesMutation,
+  useUpdateInterviewSchedulingsMutation,
   useUpdateInterviewSettingMutation,
 } from "@/services/api/fetchApi";
 import { Toast } from "@/utils/toast";
@@ -17,25 +19,57 @@ const convertInterviewType = {
 export default function InterviewsEditPage() {
   const [defaultInterview, setDefaultInterview] = useState<ICreateInterview>();
   const [updateInterview] = useUpdateInterviewSettingMutation();
+  const [updateInterviewSchedulings] = useUpdateInterviewSchedulingsMutation();
+  const [updateInterviewDates] = useUpdateInterviewDatesMutation();
 
   const params = useParams();
   const { push } = useRouter();
 
+  const interviewId = Array.from(params.id).join("");
+
   const { data, isSuccess, isFetching, refetch } =
     useGetInterviewSettingsByIdQuery({
-      id: Array.from(params.id).join(""),
+      id: interviewId,
     });
 
-  const handleCreateInterview = (data: any) => {
-    updateInterview(data).then(data => {
-      if ("error" in data) {
-        Toast("error", "Erro ao editar o agendamento.");
+  const handleUpdateInterview = (data: any) => {
+    updateInterview(data).then(interviewData => {
+      if ("error" in interviewData) {
+        Toast("error", "Erro ao atualizar a seção geral.");
       } else {
-        refetch().then(() => {
-          push("/config/interviews");
-          Toast("success", "Agendamento atualizado com sucesso.");
-        });
+        Toast("success", "Seção geral atualizada com sucesso.");
       }
+
+      updateInterviewSchedulings({
+        id: interviewId,
+        schedulings: data.schedulings,
+      }).then(schedulings => {
+        if ("error" in schedulings) {
+          Toast(
+            "error",
+            "Erro ao atualizar os horários e limites de agendamento.",
+          );
+        } else {
+          Toast(
+            "success",
+            "Horários e limites de agendamento atualizado com sucesso.",
+          );
+        }
+
+        updateInterviewDates({
+          id: interviewId,
+          dates: data.dates,
+        }).then(dates => {
+          if ("error" in dates) {
+            Toast("error", "Erro ao atualizar as datas indisponíveis.");
+          } else {
+            Toast("success", "Datas indisponíveis atualizadas com sucesso.");
+          }
+          refetch().then(() => {
+            push("/config/interviews");
+          });
+        });
+      });
     });
   };
 
@@ -57,7 +91,7 @@ export default function InterviewsEditPage() {
 
   return (
     <ConfigInterviewForm
-      handleOnSubmit={handleCreateInterview}
+      handleOnSubmit={handleUpdateInterview}
       defaultValue={defaultInterview}
     />
   );
