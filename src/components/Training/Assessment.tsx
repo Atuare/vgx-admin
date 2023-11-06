@@ -101,7 +101,7 @@ export function Assessment({
 
           data.map((row: any) => {
             const newQuestion: Partial<IQuestion> = {
-              question: row.QUESTION,
+              text: row.QUESTION,
               alternatives: [
                 {
                   alternative: row.FIRST_OPTION,

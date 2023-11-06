@@ -50,7 +50,7 @@ export function ExamStatusDocModal({
       <Dialog.Trigger asChild>
         <span>{children}</span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
+      <Dialog.Portal>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>
           <form onSubmit={handleSubmit(handleOnSave)}>

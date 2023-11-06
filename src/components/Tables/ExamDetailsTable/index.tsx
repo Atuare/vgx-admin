@@ -28,7 +28,7 @@ dayjs.extend(utc);
 interface ExamDetailsTableProps {
   examId: string;
   setTable: (table: any) => void;
-  table: Table<any>;
+  table: Table<any> | undefined;
   globalFilter?: string;
   defaultTableSize: number;
 }
@@ -255,7 +255,7 @@ export function ExamDetailsTable({
       ?.getSelectedRowModel()
       .flatRows.map(row => row.original);
 
-    const candidaciesIds = selectedRows.map(candidate => candidate.id);
+    const candidaciesIds = selectedRows?.map(candidate => candidate.id) || [];
 
     const status = Object.keys(ExamClassCandidateStatusEnum)[
       Object.values(ExamClassCandidateStatusEnum).indexOf(data.status)

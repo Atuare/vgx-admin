@@ -119,7 +119,7 @@ export default function ProcessData() {
     columnHelper.accessor(value => formatCpf(value.cpf), {
       header: "CPF",
       cell: row => (
-        <div style={{ paddingLeft: 0 }}>{formatCpf(row.getValue())}</div>
+        <div style={{ paddingLeft: 0 }}>{formatCpf(row.getValue() || "")}</div>
       ),
     }),
     columnHelper.accessor("name", {
@@ -128,7 +128,7 @@ export default function ProcessData() {
     }),
     columnHelper.accessor(value => formatWhatsappNumber(value.whatsapp), {
       header: "Whatsapp",
-      cell: row => <div>{formatWhatsappNumber(row.getValue())}</div>,
+      cell: row => <div>{formatWhatsappNumber(row.getValue() || "")}</div>,
     }),
     columnHelper.accessor("role", {
       header: "Vaga",
@@ -181,12 +181,12 @@ export default function ProcessData() {
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        cpf: formatCpf(row.cpf),
-        name: row.name,
-        whatsapp: formatPhoneNumber(row.whatsapp),
-        role: row.role,
-        availabilities: row.availabilities,
-        unit: row.unit,
+        cpf: formatCpf(row.cpf) || "",
+        name: row.name || "",
+        whatsapp: formatPhoneNumber(row.whatsapp) || "",
+        role: row.role || "",
+        availabilities: row.availabilities || "",
+        unit: row.unit || "",
       }));
 
       downloadExcel({
@@ -202,12 +202,12 @@ export default function ProcessData() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          cpf: formatCpf(row.cpf),
-          name: row.name,
-          whatsapp: formatPhoneNumber(row.whatsapp),
-          role: row.role,
-          availabilities: row.availabilities,
-          unit: row.unit,
+          cpf: formatCpf(row.cpf) || "",
+          name: row.name || "",
+          whatsapp: formatPhoneNumber(row.whatsapp) || "",
+          role: row.role || "",
+          availabilities: row.availabilities || "",
+          unit: row.unit || "",
         }));
 
         downloadExcel({

@@ -74,7 +74,7 @@ export default function Profile() {
 
     if (currentPassword && newPassword) {
       changeEmployeePassword({ password: currentPassword, newPassword }).then(
-        e => {
+        (e: any) => {
           if (e?.error?.data?.data?.error?.[0]) {
             toast.error(e?.error?.data?.data?.error?.[0], {
               position: "top-right",

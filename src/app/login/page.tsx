@@ -59,7 +59,7 @@ export default function Login() {
     }
 
     if (isError && error && "status" in error) {
-      toast.error(error.data.data.error[0], {
+      toast.error((error as any).data.data.error[0], {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

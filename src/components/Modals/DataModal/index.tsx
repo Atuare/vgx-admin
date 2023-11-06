@@ -366,7 +366,8 @@ export function DataModal({ children, data }: DataModalProps) {
                               defaultValue={formatCpf(candidate?.cpf ?? "")}
                               onChange={e => {
                                 onChange(e.target.value);
-                                e.target.value = formatCpf(e.target.value);
+                                e.target.value =
+                                  formatCpf(e.target.value) || "";
                               }}
                               maxLength={14}
                             />

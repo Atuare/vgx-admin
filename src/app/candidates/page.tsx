@@ -45,7 +45,7 @@ export default function Candidates() {
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        cpf: formatCpf(row.candidate.cpf),
+        cpf: formatCpf(row.candidate.cpf) || "",
         name: row.candidate.name,
         date: dayjs(
           dateType === "CADASTRO"
@@ -75,7 +75,7 @@ export default function Candidates() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          cpf: formatCpf(row.candidate.cpf),
+          cpf: formatCpf(row.candidate.cpf) || "",
           name: row.candidate.name,
           date: dayjs(
             dateType === "CADASTRO"

@@ -35,7 +35,8 @@ export function TipTapMenu({ editor }: TipTapMenuProps) {
   };
 
   const handleFontSizeChange = (value: string) => {
-    editor.commands.setFontSize(value);
+    // TODO: FIX below editor should not be type 'any' and setFontSize method does not exists on editor.command
+    (editor as any).commands.setFontSize(value);
   };
 
   const handleTextAlignChange = (value: string) => {

@@ -18,7 +18,7 @@ export function DeleteModal({
       <AlertDialog.Trigger asChild>
         <span>{children}</span>
       </AlertDialog.Trigger>
-      <AlertDialog.Portal className={styles.modal}>
+      <AlertDialog.Portal>
         <AlertDialog.Overlay className={styles.modal__overlay} />
         <AlertDialog.Content className={styles.modal__content}>
           <AlertDialog.Title className={styles.modal__title}>

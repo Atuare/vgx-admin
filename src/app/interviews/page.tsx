@@ -150,12 +150,12 @@ export default function Interviews() {
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
-        cpf: formatCpf(row.candidacy.candidate.cpf),
-        name: row.candidacy.candidate.name,
-        link: row.link,
-        unit: row.candidacy.process.unit.unitName,
-        date: dayjs(row.date).utc().format("DD/MM/YYYY"),
-        hour: dayjs(row.date).utc().format("hh:mm"),
+        cpf: formatCpf(row.candidacy.candidate.cpf) || "",
+        name: row.candidacy.candidate.name || "",
+        link: row.link || "",
+        unit: row.candidacy.process.unit.unitName || "",
+        date: dayjs(row.date).utc().format("DD/MM/YYYY") || "",
+        hour: dayjs(row.date).utc().format("hh:mm") || "",
       }));
 
       downloadExcel({
@@ -171,12 +171,12 @@ export default function Interviews() {
 
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
-          cpf: formatCpf(row.candidacy.candidate.cpf),
-          name: row.candidacy.candidate.name,
-          link: row.link,
-          unit: row.candidacy.process.unit.unitName,
-          date: dayjs(row.date).utc().format("DD/MM/YYYY"),
-          hour: dayjs(row.date).utc().format("hh:mm"),
+          cpf: formatCpf(row.candidacy.candidate.cpf) || "",
+          name: row.candidacy.candidate.name || "",
+          link: row.link || "",
+          unit: row.candidacy.process.unit.unitName || "",
+          date: dayjs(row.date).utc().format("DD/MM/YYYY") || "",
+          hour: dayjs(row.date).utc().format("hh:mm") || "",
         }));
 
         downloadExcel({

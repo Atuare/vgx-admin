@@ -502,7 +502,7 @@ export default function AdmissionClass() {
   );
 }
 
-export function Status({ type }: { type: string }) {
+function Status({ type }: { type: AdmissionsStatusEnum }) {
   const bgColor = {
     CONCLUIDO: "var(--sucess)",
     EM_ANDAMENTO: "var(--attention)",

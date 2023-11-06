@@ -27,7 +27,7 @@ export function InterviewCandidateEditModal({
           <h1>Teste</h1>
         </span>
       </Dialog.Trigger>
-      <Dialog.Portal className={styles.modal}>
+      <Dialog.Portal>
         <Dialog.Overlay className={styles.modal__overlay} />
         <Dialog.Content className={styles.modal__content}>
           {/* <form onSubmit={handleSubmit(handleOnSave)}> */}

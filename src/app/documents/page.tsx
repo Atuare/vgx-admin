@@ -99,7 +99,7 @@ export default function Documents() {
     }),
     columnHelper.accessor(value => formatWhatsappNumber(value.whatsapp ?? ""), {
       header: "WhatsApp",
-      cell: row => <div>{formatWhatsappNumber(row.getValue())}</div>,
+      cell: row => <div>{formatWhatsappNumber(row.getValue() || "")}</div>,
     }),
     columnHelper.accessor("unit.unitName", {
       id: "unit",
@@ -159,12 +159,13 @@ export default function Documents() {
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
         status:
-          DocumentStatusEnum[row.status as keyof typeof DocumentStatusEnum],
-        cpf: formatCpf(row.cpf),
+          DocumentStatusEnum[row.status as keyof typeof DocumentStatusEnum] ||
+          "",
+        cpf: formatCpf(row.cpf) || "",
         name: row.name,
-        whatsapp: formatWhatsappNumber(row.whatsapp),
-        unit: row.unit.unitName,
-        createdAt: dayjs(row.createdAt).utc().format("DD/MM/YYYY"),
+        whatsapp: formatWhatsappNumber(row.whatsapp) || "",
+        unit: row.unit.unitName || "",
+        createdAt: dayjs(row.createdAt).utc().format("DD/MM/YYYY") || "",
       }));
 
       downloadExcel({
@@ -181,12 +182,13 @@ export default function Documents() {
       if (rows && rows.length > 0) {
         const excelData = rows.map(row => ({
           status:
-            DocumentStatusEnum[row.status as keyof typeof DocumentStatusEnum],
-          cpf: formatCpf(row.cpf),
-          name: row.name,
-          whatsapp: formatWhatsappNumber(row.whatsapp),
-          unit: row.unit.unitName,
-          createdAt: dayjs(row.createdAt).utc().format("DD/MM/YYYY"),
+            DocumentStatusEnum[row.status as keyof typeof DocumentStatusEnum] ||
+            "",
+          cpf: formatCpf(row.cpf) || "",
+          name: row.name || "",
+          whatsapp: formatWhatsappNumber(row.whatsapp) || "",
+          unit: row.unit.unitName || "",
+          createdAt: dayjs(row.createdAt).utc().format("DD/MM/YYYY") || "",
         }));
 
         downloadExcel({
