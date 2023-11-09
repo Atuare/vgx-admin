@@ -1,3 +1,4 @@
+import { IQuestion } from "@/interfaces/training.interface";
 import { fetchApi } from "@/services/api/fetchApi";
 import { store } from "@/store/store";
 
@@ -33,3 +34,14 @@ export const trainingTypesOptions = [
     id: " Pós contratação",
   },
 ];
+
+export const setAllQuestionIndex = (questions: Partial<IQuestion>[]) => {
+  const newQuestions = questions.map((question, index) => {
+    return {
+      ...question,
+      number: index,
+    };
+  });
+
+  return newQuestions;
+};

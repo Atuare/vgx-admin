@@ -5,6 +5,7 @@ import { Select } from "@/components/Select";
 import useUser from "@/hooks/useUser";
 import { ITrainingCreateForm } from "@/interfaces/training.interface";
 import { useGetAllTrainingTypesQuery } from "@/services/api/fetchApi";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import {
   Control,
@@ -21,6 +22,11 @@ interface TrainingFormInputsProps {
   errors: FieldErrors<ITrainingCreateForm>;
 }
 
+type TSelectOptions = {
+  id: string;
+  name: string;
+};
+
 export function TrainingFormInputs({
   handleChangeAssessmentsFields,
   control,
@@ -28,7 +34,9 @@ export function TrainingFormInputs({
   register,
 }: TrainingFormInputsProps) {
   const { user } = useUser();
-  const [trainingTypesOptions, setTrainingTypesOptions] = useState([]);
+  const [trainingTypesOptions, setTrainingTypesOptions] = useState<
+    TSelectOptions[]
+  >([]);
 
   const { data, isSuccess } = useGetAllTrainingTypesQuery({
     page: 1,
@@ -90,11 +98,12 @@ export function TrainingFormInputs({
               <NumberInput
                 width={120}
                 onChange={val => {
-                  if (!val && typeof value === "undefined") return;
-                  handleChangeAssessmentsFields(
-                    value > val ? "REMOVE" : "APPEND",
-                  );
-                  onChange(val);
+                  if (typeof value !== "undefined" && val !== value) {
+                    handleChangeAssessmentsFields(
+                      value > val ? "REMOVE" : "APPEND",
+                    );
+                    onChange(val);
+                  }
                 }}
                 defaultValue={value}
               />
@@ -138,23 +147,43 @@ export function TrainingFormInputs({
           </div>
         </DataInput>
 
-        <DataInput
-          name="Data inicial"
-          required
-          width="184px"
-          error={errors?.startDate?.message}
-        >
-          <input type="date" {...register("startDate")} />
-        </DataInput>
+        <Controller
+          control={control}
+          name="startDate"
+          render={({ field: { onChange, value } }) => (
+            <DataInput
+              name="Data inicial"
+              required
+              width="184px"
+              error={errors?.startDate?.message}
+            >
+              <input
+                type="date"
+                value={value ? dayjs(value).format("YYYY-MM-DD") : ""}
+                onChange={onChange}
+              />
+            </DataInput>
+          )}
+        />
 
-        <DataInput
-          name="Data final"
-          required
-          width="184px"
-          error={errors?.endDate?.message}
-        >
-          <input type="date" {...register("endDate")} />
-        </DataInput>
+        <Controller
+          control={control}
+          name="endDate"
+          render={({ field: { onChange, value } }) => (
+            <DataInput
+              name="Data final"
+              required
+              width="184px"
+              error={errors?.endDate?.message}
+            >
+              <input
+                type="date"
+                value={value ? dayjs(value).format("YYYY-MM-DD") : ""}
+                onChange={onChange}
+              />
+            </DataInput>
+          )}
+        />
 
         <DataInput
           name="Local"
@@ -179,7 +208,11 @@ export function TrainingFormInputs({
                 options={trainingTypesOptions}
                 placeholder="Selecione"
                 onChange={({ id }) => onChange(id)}
-                defaultValue={value}
+                defaultValue={
+                  trainingTypesOptions
+                    ? trainingTypesOptions.find(item => item.id === value)?.name
+                    : undefined
+                }
               />
             </DataInput>
           )}

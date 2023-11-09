@@ -1,5 +1,8 @@
 import useUser from "@/hooks/useUser";
-import { ITrainingCreateForm } from "@/interfaces/training.interface";
+import {
+  ITrainingCreateForm,
+  ITrainingCreateFormDefaultValue,
+} from "@/interfaces/training.interface";
 import { trainingCreateSchema } from "@/schemas/trainingSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
@@ -10,7 +13,7 @@ import { TrainingCreateAssessments } from "./TrainingCreateAssessments";
 import { TrainingFormInputs } from "./TrainingFormInputs";
 
 interface IFormProps {
-  defaultValue?: ITrainingCreateForm;
+  defaultValue?: ITrainingCreateFormDefaultValue;
   onSubmit: (data: ITrainingCreateForm) => void;
 }
 
@@ -66,6 +69,7 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
     if (!defaultValue) {
       reset({
         trainer: user?.employee?.name,
+        trainingDays: 0,
       });
     }
   }, [user]);
@@ -74,6 +78,19 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
     if (defaultValue) {
       reset({
         ...defaultValue,
+        trainingTypeId: defaultValue.trainingType.id,
+        //   trainingAssessments: defaultValue.trainingAssessments.map(
+        //     assessment => {
+        //       return {
+        //         ...assessment,
+        //         trainingAssessmentQuestions:
+        //           assessment.trainingAssessmentQuestions.map((question, index) => {
+        //             ...question,
+        //             index: index + 1;
+        //           }),
+        //       }
+        //     },
+        //   ),
       });
     }
   }, [defaultValue]);

@@ -61,11 +61,30 @@ interface TrainingAssessmentType {
 }
 
 export interface IQuestion {
+  id: string;
   question: string;
   alternatives: Alternative[];
+  number: number;
 }
 
 interface Alternative {
   alternative: string;
   isCorrect: boolean;
+}
+
+export interface ITrainingCreateFormDefaultValue {
+  trainingName: string;
+  productName?: string;
+  trainer: string;
+  trainingDays: number;
+  participantLimit: number;
+  minimumFrequency: number;
+  startDate: Date;
+  endDate: Date;
+  trainingLocation: string;
+  trainingType: {
+    id: string;
+  };
+  trainingAssessments: TrainingAssessmentType[];
+  number: number;
 }

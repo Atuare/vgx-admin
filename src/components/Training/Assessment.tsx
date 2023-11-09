@@ -5,8 +5,10 @@ import { DataInput } from "@/components/DataInput";
 import { TrainingCreateModal } from "@/components/Modals/TrainingCreateModal";
 import { TrainingCreateTable } from "@/components/Tables/TrainingCreateTable";
 import { TipTap } from "@/components/TipTap";
-import { IQuestion } from "@/interfaces/tests.interface";
-import { ITrainingCreateForm } from "@/interfaces/training.interface";
+import {
+  IQuestion,
+  ITrainingCreateForm,
+} from "@/interfaces/training.interface";
 import { Toast } from "@/utils/toast";
 import * as Accordion from "@radix-ui/react-accordion";
 import { Table } from "@tanstack/react-table";
@@ -33,7 +35,7 @@ interface AssessmentProps {
   trigger: UseFormTrigger<ITrainingCreateForm>;
 }
 
-const defaultTableSize = 5;
+const defaultTableSize = 15;
 
 export function Assessment({
   questionNumber,
@@ -54,7 +56,7 @@ export function Assessment({
       ...questions,
       {
         ...data,
-        index: questions.length + 1,
+        number: questions.length,
       },
     ];
 
@@ -101,7 +103,7 @@ export function Assessment({
 
           data.map((row: any) => {
             const newQuestion: Partial<IQuestion> = {
-              text: row.QUESTION,
+              question: row.QUESTION,
               alternatives: [
                 {
                   alternative: row.FIRST_OPTION,
@@ -307,22 +309,27 @@ export function Assessment({
                 <Controller
                   control={control}
                   name={`trainingAssessments.${index}.disapprovedMessage`}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
-                    <div>
-                      <TipTap
-                        grayBorder
-                        content={field.disapprovedMessage}
-                        getContentFromEditor={content => {
-                          if (content.content[0].content) {
-                            onChange(JSON.stringify(content));
-                          } else {
-                            onChange("");
-                          }
-                        }}
-                      />
-                      <p className={styles.error}>{error?.message}</p>
-                    </div>
-                  )}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => {
+                    return (
+                      <div>
+                        <TipTap
+                          grayBorder
+                          content={value ? JSON.parse(value) : ""}
+                          getContentFromEditor={content => {
+                            if (content.content[0].content) {
+                              onChange(JSON.stringify(content));
+                            } else {
+                              onChange("");
+                            }
+                          }}
+                        />
+                        <p className={styles.error}>{error?.message}</p>
+                      </div>
+                    );
+                  }}
                 />
               </div>
             </section>

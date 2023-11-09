@@ -1,8 +1,9 @@
 import { TrainingCreateModal } from "@/components/Modals/TrainingCreateModal";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
-import { IQuestion } from "@/interfaces/tests.interface";
+import { IQuestion } from "@/interfaces/training.interface";
 import { Toast } from "@/utils/toast";
+import { setAllQuestionIndex } from "@/utils/training";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,7 +33,8 @@ export function TrainingCreateTable({
 
   const handleDeleteQuestion = (id: string) => {
     const newQuestions = questions?.filter(question => question?.id !== id);
-    handleSetQuestions(newQuestions);
+    const newQuestionWithIndex = setAllQuestionIndex(newQuestions);
+    handleSetQuestions(newQuestionWithIndex);
     setCurrentPage(prev => (prev > 1 ? prev - 1 : prev));
     Toast("success", "Questão deletada com sucesso!");
   };
@@ -53,17 +55,19 @@ export function TrainingCreateTable({
 
   const columnHelper = createColumnHelper<IQuestion>();
   const columns = [
-    columnHelper.accessor("index", {
+    columnHelper.accessor("number", {
       header: "Número",
-      cell: row => (
-        <div style={{ fontSize: 14, fontWeight: 700 }}>
-          Questão {row.getValue()}:
-        </div>
-      ),
+      cell: row => {
+        return (
+          <div style={{ fontSize: 14, fontWeight: 700 }}>
+            Questão {Number(row.getValue()) + 1}:
+          </div>
+        );
+      },
     }),
-    columnHelper.accessor("text", {
+    columnHelper.accessor("question", {
       header: "Texto",
-      cell: row => <div>{row.getValue() || ""}</div>,
+      cell: row => <div>{row.getValue()}</div>,
     }),
     {
       header: "Ação",
