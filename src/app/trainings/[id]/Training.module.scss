@@ -44,7 +44,7 @@
     flex-direction: column;
 
     &__header {
-      width: 83vw;
+      width: 100%;
       background: var(--primary-2);
       border-radius: 8px 8px 0 0;
 
@@ -52,7 +52,7 @@
       align-items: center;
       justify-content: space-between;
       overflow-x: auto;
-      // flex-wrap: wrap;
+
       &::-webkit-scrollbar-thumb {
         background-color: var(--primary-1);
       }
