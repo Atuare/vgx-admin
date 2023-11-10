@@ -22,10 +22,15 @@ export function LayoutHeader() {
           </button>
         )}
         <h1>
-          {(pathname.endsWith("/edit") && "Editar treinamento") ||
-            (pathname === "/trainings/create" && "Novo treinamento") ||
-            (data && `${data.data.trainingName} - ${data.data.productName}`) ||
-            "Treinamentos"}
+          {pathname.endsWith("/edit")
+            ? "Editar treinamento"
+            : pathname === "/trainings/create"
+            ? "Novo treinamento"
+            : pathname === "/trainings"
+            ? "Treinamentos"
+            : data
+            ? `${data.data.trainingName} - ${data.data.productName}`
+            : "Treinamentos"}
         </h1>
       </div>
       <AdmProfile />
