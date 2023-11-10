@@ -1,4 +1,5 @@
 import { Cancel, CheckCircle, Unchecked, Warning } from "@/assets/Icons";
+import { ExamClassCandidateStatusEnum } from "@/enums/status.enum";
 import { CandidacyType } from "@/interfaces/candidacy.interface";
 import styles from "./ModalStatus.module.scss";
 
@@ -7,6 +8,11 @@ interface ModalStatusProps {
 }
 
 export function ModalStatus({ data }: ModalStatusProps) {
+  const examStatus =
+    ExamClassCandidateStatusEnum[
+      String(data.examStatus) as keyof typeof ExamClassCandidateStatusEnum
+    ];
+
   const getStatus = () => {
     switch (data.process.requestCv) {
       case true:
@@ -21,11 +27,11 @@ export function ModalStatus({ data }: ModalStatusProps) {
       default:
         return (
           <>
-            <StatusItem title="Prova" type={data.testResult} />
+            <StatusItem title="Prova" type={data.testResult?.status} />
             <StatusItem title="Entrevista" type={data.interview?.status} />
             <StatusItem title="Documentos" type="AREALIZAR" />
             <StatusItem title="Treinamento" type={data.training?.status} />
-            <StatusItem title="Exame adm." type="AREALIZAR" />
+            <StatusItem title="Exame adm." type={examStatus} />
             <StatusItem title="Ass. Contrato" type="AREALIZAR" />
           </>
         );
@@ -54,7 +60,10 @@ function StatusItem({
     | "CANCELADO"
     | "SUSPENSO"
     | "REPROVADO"
-    | "CONCLUIDO";
+    | "CONCLUIDO"
+    | "APTO"
+    | "INAPTO"
+    | "AUSENTE";
 }) {
   const messages = {
     APROVADO: "Aprovado",
@@ -71,10 +80,14 @@ function StatusItem({
     CANCELADO: "Cancelado",
     SUSPENSO: "Suspenso",
     REPROVADO: "Reprovado",
+    APTO: "Apto",
+    INAPTO: "Inapto",
+    AUSENTE: "Ausente",
   };
 
   const icons = {
     APROVADO: <CheckCircle />,
+    APTO: <CheckCircle />,
     ASSINADO: <CheckCircle />,
     CONCLUIDO: <CheckCircle />,
     AREALIZAR: <Unchecked />,
@@ -83,6 +96,8 @@ function StatusItem({
     PENDENTE: <Warning />,
     EM_ANDAMENTO: <Warning />,
     "EM ANDAMENTO": <Warning />,
+    AUSENTE: <Warning />,
+    INAPTO: <Cancel />,
     NAOREALIZADO: <Cancel />,
     NAOASSINADO: <Cancel />,
     CANCELADO: <Cancel />,

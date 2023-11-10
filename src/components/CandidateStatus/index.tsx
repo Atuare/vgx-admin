@@ -1,4 +1,5 @@
 import { Cancel, CheckCircle, Unchecked, Warning } from "@/assets/Icons";
+import { ExamClassCandidateStatusEnum } from "@/enums/status.enum";
 import { CandidacyType } from "@/interfaces/candidacy.interface";
 import styles from "./CandidateStatus.module.scss";
 
@@ -7,13 +8,18 @@ interface CandidateStatusProps {
 }
 
 export function CandidateStatus({ data }: CandidateStatusProps) {
+  const examStatus =
+    ExamClassCandidateStatusEnum[
+      String(data.examStatus) as keyof typeof ExamClassCandidateStatusEnum
+    ];
+
   return (
     <div className={styles.status}>
-      <StatusItem title="PROVA" type={data.testResult} />
+      <StatusItem title="PROVA" type={data.testResult?.status} />
       <StatusItem title="ENTREVISTA" type={data.interview?.status} />
       <StatusItem title="DOCUMENTO" type="AREALIZAR" />
       <StatusItem title="TREINAMENTO" type={data.training?.status} />
-      <StatusItem title="EXAME ADM." type="AREALIZAR" />
+      <StatusItem title="EXAME ADM." type={examStatus} />
       <StatusItem title="CON" type="NAOASSINADO" />
     </div>
   );
@@ -38,10 +44,14 @@ function StatusItem({
     | "CANCELADO"
     | "SUSPENSO"
     | "REPROVADO"
-    | "CONCLUIDO";
+    | "CONCLUIDO"
+    | "APTO"
+    | "INAPTO"
+    | "AUSENTE";
 }) {
   const icons = {
     APROVADO: <CheckCircle />,
+    APTO: <CheckCircle />,
     ASSINADO: <CheckCircle />,
     CONCLUIDO: <CheckCircle />,
     AREALIZAR: <Unchecked />,
@@ -50,6 +60,8 @@ function StatusItem({
     PENDENTE: <Warning />,
     EM_ANDAMENTO: <Warning />,
     "EM ANDAMENTO": <Warning />,
+    AUSENTE: <Warning />,
+    INAPTO: <Cancel />,
     NAOREALIZADO: <Cancel />,
     NAOASSINADO: <Cancel />,
     CANCELADO: <Cancel />,
