@@ -1,0 +1,11 @@
+.trainingDetails__list {
+  width: 83vw;
+}
+
+.trainingDetails__list th:nth-last-child(1) {
+  border-top-right-radius: 0;
+}
+
+.trainingDetails__list th:first-child {
+  border-top-left-radius: 0;
+}

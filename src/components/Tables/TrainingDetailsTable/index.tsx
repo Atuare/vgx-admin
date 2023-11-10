@@ -1,11 +1,13 @@
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
-import { CandidacyType } from "@/interfaces/candidacy.interface";
 import {
-  TrainingStatusEnum,
-  TrainingType,
-} from "@/interfaces/training.interface";
+  CandidacyStatusEnum,
+  CandidacyType,
+} from "@/interfaces/candidacy.interface";
+import { TrainingType } from "@/interfaces/training.interface";
 import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
+import { formatCpf } from "@/utils/formatCpf";
+import { formatWhatsappNumber } from "@/utils/phoneFormating";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -67,35 +69,36 @@ export const TrainingDetailsTable = forwardRef<
         />
       ),
     }),
+    columnHelper.accessor("candidate.name", {
+      header: "Nome",
+      cell: row => {
+        return <div style={{ cursor: "pointer" }}>{row.getValue()}</div>;
+      },
+    }),
     columnHelper.accessor("candidate.cpf", {
       header: "CPF",
-      cell: ({ row }) => {
-        return <div>{row.getValue("candidate.cpf")}</div>;
+      cell: row => {
+        return <div>{formatCpf(row.getValue())}</div>;
+      },
+    }),
+    columnHelper.accessor("candidate.whatsapp", {
+      header: "WhatsApp",
+      cell: row => {
+        return <div>{formatWhatsappNumber(row.getValue())}</div>;
       },
     }),
     columnHelper.accessor("status", {
       header: "Status",
-      cell: ({ row }) => {
-        const rowStatusValue = row.getValue("status");
+      cell: row => {
+        const rowStatusValue = row.getValue();
         const status =
-          TrainingStatusEnum[rowStatusValue as keyof typeof TrainingStatusEnum];
+          CandidacyStatusEnum[
+            rowStatusValue as keyof typeof CandidacyStatusEnum
+          ];
 
         return <FlatText text={status} type={status} />;
       },
     }),
-    // columnHelper.accessor("trainingName", {
-    //   header: "Nome",
-    //   cell: ({ row }) => {
-    //     return (
-    //       <div
-    //         style={{ cursor: "pointer" }}
-    //         onClick={() => push(`/training/${row.original.id}`)}
-    //       >
-    //         {row.getValue("trainingName")}
-    //       </div>
-    //     );
-    //   },
-    // }),
   ];
 
   useEffect(() => {
@@ -119,7 +122,7 @@ export const TrainingDetailsTable = forwardRef<
   if (!training) return null;
 
   return (
-    <section className={styles.process__list}>
+    <section className={styles.trainingDetails__list}>
       <DataTable
         data={training.candidacies}
         size={5}
