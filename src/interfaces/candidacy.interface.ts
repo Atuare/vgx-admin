@@ -1,3 +1,4 @@
+import { ExamClassCandidateStatusEnum } from "@/enums/status.enum";
 import { AdmissionResultType } from "./admissionResult.interface";
 import { IAvailability } from "./availability.interface";
 import { ICandidate } from "./candidate.interface";
@@ -18,6 +19,7 @@ export interface CandidacyType {
   interview: InterviewType;
   admissionResult: AdmissionResultType;
   availability: IAvailability;
+  examStatus: ExamClassCandidateStatusEnum;
   createdAt: string;
   updatedAt: string;
   testResult: any;
