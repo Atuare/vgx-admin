@@ -6,20 +6,25 @@ export function InputContainer({
   children,
   htmlFor,
   width,
+  height,
   lightTitle,
   error,
 }: {
-  title: string;
+  title?: string;
   children: ReactNode;
   htmlFor?: string;
   width?: number | string;
+  height?: number | string;
   lightTitle?: string;
   error?: string;
 }) {
   return (
-    <div className={styles.modal__content__form__input} style={{ width }}>
+    <div
+      className={styles.modal__content__form__input}
+      style={{ width, height }}
+    >
       <div className={styles.label__container}>
-        <label htmlFor={htmlFor || title}>{title}</label>
+        {title && <label htmlFor={htmlFor || title}>{title}</label>}
         {lightTitle && <span>{lightTitle}</span>}
       </div>
       {children}

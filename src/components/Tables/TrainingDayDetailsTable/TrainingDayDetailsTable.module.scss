@@ -1,0 +1,13 @@
+.trainingDayDetails__list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.trainingDayDetails__list th:nth-last-child(1) {
+  border-top-right-radius: 0;
+}
+
+.trainingDayDetails__list th:first-child {
+  border-top-left-radius: 0;
+}

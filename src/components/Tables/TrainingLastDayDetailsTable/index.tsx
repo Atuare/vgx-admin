@@ -1,3 +1,7 @@
+import { ScheduleSend } from "@/assets/Icons";
+import FlatText from "@/components/FlatText";
+import { IconButton } from "@/components/IconButton";
+import { InputContainer } from "@/components/Modals/DataModal/components/InputContainer";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
@@ -6,22 +10,18 @@ import {
 } from "@/interfaces/candidacy.interface";
 import { TrainingType } from "@/interfaces/training.interface";
 import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
-import { formatCpf } from "@/utils/formatCpf";
-import { formatRG } from "@/utils/formatRg";
-import { formatTimeRange } from "@/utils/formatTimeRange";
-import { formatWhatsappNumber } from "@/utils/phoneFormating";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RefObject, forwardRef, useEffect, useState } from "react";
 import { Checkbox } from "../../Checkbox";
-import FlatText from "../../FlatText";
-import styles from "./TrainingDetailsTable.module.scss";
+import styles from "./TrainingLastDayDetailsTable.module.scss";
 dayjs.extend(utc);
 
-interface TrainingDetailsTableProps {
+interface TrainingLastDayDetailsTableProps {
   trainingId: string;
+  trainingDay: number;
   globalFilter?: string;
   tableRef?: RefObject<HTMLButtonElement>;
 }
@@ -29,9 +29,9 @@ interface TrainingDetailsTableProps {
 const defaultTableSize = 5;
 
 // eslint-disable-next-line react/display-name
-export const TrainingDetailsTable = forwardRef<
+export const TrainingLastDayDetailsTable = forwardRef<
   HTMLButtonElement,
-  TrainingDetailsTableProps
+  TrainingLastDayDetailsTableProps
 >((props, ref) => {
   const [table, setTable] = useState<Table<any>>();
   const [training, setTraining] = useState<TrainingType>();
@@ -74,31 +74,107 @@ export const TrainingDetailsTable = forwardRef<
     columnHelper.accessor("candidate.name", {
       header: "Nome",
       cell: row => {
-        return <div style={{ cursor: "pointer" }}>{row.getValue()}</div>;
+        return <div>{row.getValue()}</div>;
       },
     }),
-    columnHelper.accessor("candidate.cpf", {
-      header: "CPF",
+    columnHelper.accessor("trainingParticipantDays", {
+      header: "Presença",
+      id: "presence",
       cell: row => {
-        return <div>{formatCpf(row.getValue())}</div>;
+        const trainingParticipantDayPresence = row
+          .getValue()
+          .find(
+            trainingParticipantDay =>
+              trainingParticipantDay.trainingDay.dayNumber ===
+              props.trainingDay,
+          )?.presence;
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox
+              iconType="solid"
+              isActive={trainingParticipantDayPresence}
+              disabled
+              style={{ width: "auto" }}
+            />
+          </div>
+        );
       },
     }),
-    columnHelper.accessor("candidate.documents.identity.rg", {
-      header: "RG",
+    columnHelper.accessor("trainingParticipantDays", {
+      header: "Ausência",
+      id: "absent",
       cell: row => {
-        return <div>{formatRG(row.getValue())}</div>;
+        const trainingParticipantDayPresence = false; // TODO: get real value
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox
+              iconType="solid"
+              isActive={trainingParticipantDayPresence}
+              disabled
+              style={{ width: "auto" }}
+            />
+          </div>
+        );
       },
     }),
-    columnHelper.accessor("candidate.whatsapp", {
-      header: "WhatsApp",
+    columnHelper.accessor("training", {
+      header: () => (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+          }}
+        >
+          Avaliação final{" "}
+          <IconButton icon={<ScheduleSend />} style={{ display: "flex" }} />
+        </div>
+      ),
       cell: row => {
-        return <div>{formatWhatsappNumber(row.getValue())}</div>;
+        return <div>00</div>; // TODO: get real value
       },
     }),
-    columnHelper.accessor("availability", {
-      header: "Disponibilidade",
+    columnHelper.accessor("trainingParticipantDays", {
+      header: "Observação",
+      id: "observation",
       cell: row => {
-        return <div>{formatTimeRange(row.getValue())}</div>;
+        const trainingParticipantDayObservation = row
+          .getValue()
+          .find(
+            trainingParticipantDay =>
+              trainingParticipantDay.trainingDay.dayNumber ===
+              props.trainingDay,
+          )?.observation;
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <InputContainer htmlFor="observation" height={40}>
+              <input
+                type="text"
+                id="observation"
+                defaultValue={trainingParticipantDayObservation}
+              />
+            </InputContainer>
+          </div>
+        );
       },
     }),
     columnHelper.accessor("status", {
@@ -136,7 +212,7 @@ export const TrainingDetailsTable = forwardRef<
   if (!training) return null;
 
   return (
-    <section className={styles.trainingDetails__list}>
+    <section className={styles.trainingLastDayDetails__list}>
       <DataTable
         data={training.candidacies}
         size={5}
@@ -147,7 +223,7 @@ export const TrainingDetailsTable = forwardRef<
         currentPage={currentPage}
         handleTogglePage={handleTogglePage}
         globalFilterValue={props.globalFilter}
-        tableName="Treinamentos"
+        tableName="Dia Treinamento"
       />
     </section>
   );

@@ -1,13 +1,20 @@
 "use client";
-import { EditSquare, Search, SystemUpdate } from "@/assets/Icons";
+import { DonutLarge, EditSquare, Search, SystemUpdate } from "@/assets/Icons";
 import { Button } from "@/components/Button";
 import { TrainingStatusModal } from "@/components/Modals/TrainingStatusModal";
 import { SearchInput } from "@/components/SearchInput";
-import { Status } from "@/components/Status";
+import { TrainingDayDetailsTable } from "@/components/Tables/TrainingDayDetailsTable";
 import { TrainingDetailsTable } from "@/components/Tables/TrainingDetailsTable";
+import { TrainingLastDayDetailsTable } from "@/components/Tables/TrainingLastDayDetailsTable";
 import { useTableParams } from "@/hooks/useTableParams";
-import { TrainingType } from "@/interfaces/training.interface";
-import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
+import {
+  TrainingStatusEnum,
+  TrainingType,
+} from "@/interfaces/training.interface";
+import {
+  useGetTrainingByIdQuery,
+  useUpdateTrainingMutation,
+} from "@/services/api/fetchApi";
 import dayjs from "dayjs";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,9 +32,11 @@ export default function TrainingDetails() {
   const { setParams } = useTableParams();
   const { get } = useSearchParams();
 
-  const { data, isSuccess, isFetching } = useGetTrainingByIdQuery({
+  const { data, isSuccess, isFetching, refetch } = useGetTrainingByIdQuery({
     id: trainingId,
   });
+
+  const [updateTraining] = useUpdateTrainingMutation();
 
   const handleInputvalue = (value: string) => {};
 
@@ -66,6 +75,25 @@ export default function TrainingDetails() {
     }
   }, [training]);
 
+  const handleUpdateTrainingStatus = (data: any) => {
+    const status =
+      Object.keys(TrainingStatusEnum)[
+        Object.keys(TrainingStatusEnum).indexOf(
+          data.status.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+        )
+      ];
+
+    console.log(data.status.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+    updateTraining({
+      id: trainingId,
+      status: status,
+      reason: data.reason,
+    }).then(() => {
+      refetch();
+    });
+  };
+
   if (!training) return;
 
   return (
@@ -88,7 +116,7 @@ export default function TrainingDetails() {
           <SearchInput handleChangeValue={handleInputvalue} icon={<Search />} />
 
           <div className={styles.training__header__actions__rightButtons}>
-            <TrainingStatusModal handleOnSubmit={() => {}}>
+            <TrainingStatusModal handleOnSubmit={handleUpdateTrainingStatus}>
               <Status type={training.status.replace("_", "")} pointer />
             </TrainingStatusModal>
             <Button
@@ -114,8 +142,49 @@ export default function TrainingDetails() {
             </div>
           ))}
         </header>
-        <TrainingDetailsTable trainingId={trainingId} />
+        {select === 0 ? (
+          <TrainingDetailsTable trainingId={trainingId} />
+        ) : select === training.trainingDays ? (
+          <TrainingLastDayDetailsTable
+            trainingId={trainingId}
+            trainingDay={select}
+          />
+        ) : (
+          select > 0 && (
+            <TrainingDayDetailsTable
+              trainingId={trainingId}
+              trainingDay={select}
+            />
+          )
+        )}
       </main>
+    </div>
+  );
+}
+
+function Status({ type, pointer = false }: { type: any; pointer?: boolean }) {
+  const bgColor = {
+    CONCLUIDO: "var(--sucess)",
+    EM_ANDAMENTO: "var(--attention)",
+    EMANDAMENTO: "var(--attention)",
+    CANCELADO: "var(--error)",
+    SUSPENSO: "var(--secondary-7)",
+  };
+
+  if (type === "EMANDAMENTO") type = "EM_ANDAMENTO";
+
+  const status = TrainingStatusEnum[type as keyof typeof TrainingStatusEnum];
+
+  return (
+    <div
+      className={styles.status}
+      style={{
+        background: bgColor[type as keyof typeof bgColor],
+        cursor: pointer ? "pointer" : "default",
+      }}
+    >
+      {status?.replace("_", " ")}
+      <DonutLarge />
     </div>
   );
 }

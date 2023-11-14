@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/Button";
 import { Checkbox } from "@/components/Checkbox";
 import FlatText from "@/components/FlatText";
-import { SaveModal } from "@/components/SaveModal";
+import { ReleaseContractModal } from "@/components/Modals/ReleaseContractModal";
 import { SearchInput } from "@/components/SearchInput";
 import { DataTable } from "@/components/Table";
 import { FilterButton } from "@/components/Table/Filters/FilterButton";
@@ -33,7 +33,6 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatWhatsappNumber } from "@/utils/phoneFormating";
-import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -52,6 +51,7 @@ export default function AdmissionClass() {
   const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
   const [table, setTable] = useState<Table<any>>();
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [contractSendMethods, setContractSendMethods] = useState<string[]>([]);
 
   const pathname = usePathname();
   const { get } = useSearchParams();
@@ -85,22 +85,24 @@ export default function AdmissionClass() {
 
   const handleReleaseContract = () => {
     const rows = table?.getSelectedRowModel().flatRows.map(row => row.original);
-    if (rows && rows.length > 0) {
-      const admissionsResultIds = rows.map(row => row.id);
-      releaseContract({
-        admissionsResultIds,
-      })
-        .then(() => {
-          Toast("success", "Contratos liberados com sucesso");
-          table?.resetRowSelection();
-          refetch();
-        })
-        .catch(() => {
-          Toast("error", "Erro ao liberar contratos");
-        });
-    } else {
-      Toast("error", "Selecione ao menos um candidato para liberar contrato");
-    }
+
+    console.log(contractSendMethods);
+    // if (rows && rows.length > 0) {
+    //   const admissionsResultIds = rows.map(row => row.id);
+    //   releaseContract({
+    //     admissionsResultIds,
+    //   })
+    //     .then(() => {
+    //       Toast("success", "Contratos liberados com sucesso");
+    //       table?.resetRowSelection();
+    //       refetch();
+    //     })
+    //     .catch(() => {
+    //       Toast("error", "Erro ao liberar contratos");
+    //     });
+    // } else {
+    //   Toast("error", "Selecione ao menos um candidato para liberar contrato");
+    // }
   };
 
   const columnHelper = createColumnHelper<IAdmissionCandidate>();
@@ -469,9 +471,10 @@ export default function AdmissionClass() {
           </div>
         </div>
         <div className={styles.buttonContract}>
-          <SaveModal
+          <ReleaseContractModal
             buttonText="Permitir acesso"
             handleOnSave={handleReleaseContract}
+            onChangeSendMethods={setContractSendMethods}
             icon={<TaskAlt />}
             text="Liberar contratos para assinatura?"
           >
@@ -480,7 +483,7 @@ export default function AdmissionClass() {
               text="Liberar contratos para assinatura"
               icon={<TaskAlt />}
             />
-          </SaveModal>
+          </ReleaseContractModal>
         </div>
       </section>
 

@@ -2,7 +2,7 @@ import { HTMLAttributes, ReactNode } from "react";
 import styles from "./IconButton.module.scss";
 interface IconButtonProps extends HTMLAttributes<HTMLButtonElement> {
   icon: ReactNode;
-  buttonType: "delete" | "edit";
+  buttonType?: "delete" | "edit" | "send";
 }
 
 export function IconButton({ icon, buttonType, ...props }: IconButtonProps) {
@@ -12,7 +12,9 @@ export function IconButton({ icon, buttonType, ...props }: IconButtonProps) {
       className={`${styles.iconButton} ${
         buttonType === "delete"
           ? styles.iconButton__delete
-          : styles.iconButton__edit
+          : buttonType === "edit"
+          ? styles.iconButton__edit
+          : styles.iconButton__send
       }`}
       {...props}
     >

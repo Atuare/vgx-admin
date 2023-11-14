@@ -419,6 +419,8 @@ export const fetchApi = createApi({
     }),
     updateTraining: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
+        console.log(data);
+
         return {
           url: "/training",
           method: "PUT",
