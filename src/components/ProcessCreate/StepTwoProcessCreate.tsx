@@ -161,8 +161,8 @@ export function StepTwoProcessCreate({
                   currentProcessData?.type === "PRESENCIAL"
                     ? true
                     : currentProcessData?.type === "REMOTO"
-                    ? false
-                    : undefined
+                      ? false
+                      : undefined
                 }
                 options={["Presencial", "Remoto"]}
                 onChange={value => {
