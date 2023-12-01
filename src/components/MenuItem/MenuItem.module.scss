@@ -1,0 +1,40 @@
+.item {
+  width: 100%;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  svg {
+    min-width: 24px;
+    min-height: 24px;
+    path {
+      fill: var(--primary-1);
+    }
+  }
+
+  p {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary-1);
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  &.active {
+    background: var(--primary-1);
+
+    svg {
+      path {
+        fill: var(--neutral-3);
+      }
+    }
+
+    p {
+      color: var(--neutral-3);
+    }
+  }
+}

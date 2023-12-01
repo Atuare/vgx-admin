@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 16px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    button {
+      padding: 16px;
+    }
+
+    &_right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}

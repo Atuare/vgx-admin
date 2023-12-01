@@ -1,0 +1,39 @@
+.select {
+  width: 100%;
+  box-shadow: 0px 5px 20px 0px #00000033;
+  background: var(--neutral-3);
+  border-radius: 8px;
+  margin-top: 8px;
+  z-index: 50;
+
+  position: absolute;
+  transform: translateY(100px);
+
+  &__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--hover-neutral-3);
+    }
+
+    svg path {
+      fill: var(--primary-1);
+    }
+
+    p {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--primary-1);
+    }
+
+    &:last-child {
+      border-radius: 0 0 8px 8px;
+    }
+  }
+}

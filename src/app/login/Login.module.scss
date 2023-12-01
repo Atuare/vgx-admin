@@ -1,0 +1,112 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  padding-inline: 64px;
+  background: linear-gradient(90deg, #0a8cf7 0%, #42a7fb 66.27%, #92caf9 100%);
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  overflow-y: hidden;
+
+  .background {
+    width: 60%;
+    max-height: 80%;
+  }
+
+  .form {
+    max-width: 540px;
+    padding: 56px;
+    background: var(--neutral-3);
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    img {
+      margin: 0 auto;
+    }
+
+    &__title {
+      font-size: 34px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    &__inputContainer {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      label {
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      input {
+        width: 100%;
+        height: 56px;
+        border-radius: 8px;
+        padding-inline: 16px;
+        background: var(--neutral-3);
+        box-shadow: 0px 5px 20px 0px #00000033;
+
+        transition: 0.04s all ease-in-out;
+
+        &:focus {
+          border: 2px solid var(--primary-2);
+        }
+      }
+    }
+
+    &__submitButton {
+      background: var(--primary-4);
+      width: 400px;
+      height: 64px;
+      border-radius: 8px;
+      box-shadow: 0px 5px 20px 0px #00000033;
+      cursor: pointer;
+
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-1);
+    }
+
+    button {
+      padding: 16px;
+    }
+  }
+}
+
+@media screen and (max-width: 1606px) {
+  .container {
+    padding-inline: 0px;
+    position: relative;
+
+    .background {
+      max-width: 100%;
+      max-height: auto;
+      width: 100%;
+      height: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .form {
+      z-index: 5;
+    }
+  }
+}
+
+.error {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--error);
+}

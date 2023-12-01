@@ -1,0 +1,43 @@
+.examDetails {
+  width: 100%;
+  padding: 24px 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      p {
+        font-weight: 400px;
+        font-size: 14px;
+        color: var(--primary-2);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__groupSection {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    button {
+      padding: 16px;
+    }
+  }
+}

@@ -1,0 +1,59 @@
+.inscriptions {
+  width: 100%;
+  padding: 24px 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-2);
+  }
+}
+
+.table {
+  &__requirement {
+    text-align: left;
+    padding: 16px 8px;
+
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--neutral-4);
+  }
+
+  &__value {
+    font-weight: 700;
+
+    width: 100%;
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    width: 160px;
+    margin: 0 auto;
+
+    .table__input {
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, 0.2);
+      background: var(--neutral-3);
+      width: 100%;
+    }
+
+    &__submit {
+      button {
+        padding: 10px;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+}

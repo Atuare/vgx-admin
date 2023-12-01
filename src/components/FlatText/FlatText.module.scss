@@ -1,0 +1,15 @@
+.flatText {
+  width: 144px;
+  margin: 0 auto;
+  display: flex;
+  padding: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+
+  span {
+    font-size: 14px;
+    font-weight: 700;
+  }
+}

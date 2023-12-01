@@ -1,22 +1,39 @@
 :root {
-  --neutral-1: "#B3B3B3"
-  --neutral-2: "#E3DBDB"
-  --neutral-3: "#FFFFFF"
-  --neutral-4: "#000000"
+  --neutral-1: #b3b3b3;
+  --neutral-2: #e3dbdb;
+  --neutral-3: #ffffff;
+  --hover-neutral-3: #e6e6e6;
+  --neutral-4: #000000;
 
-  --primary-1: "#001866"
-  --primary-2: "#123CA6"
-  --primary-3: "#0A8CF7"
-  --primary-4: "#31DE90"
+  --primary-1: #001866;
+  --primary-2: #123ca6;
+  --hover-primary-2: #6476a6;
+  --primary-3: #0a8cf7;
+  --hover-primary-3: #3ba2f7;
+  --pressed-primary-3: #007ee5;
+  --primary-4: #31de90;
+  --hover-primary-4: #68dea9;
+  --pressed-primary-4: #04de7c;
 
-  --secondary-1: "#5212A6"
-  --secondary-2: "#7712C4"
-  --secondary-3: "#5F33FF"
-  --secondary-4: "#0A8CF7"
-  --secondary-5: "#31DE90"
-  --secondary-6: "#F9DE4A"
-  --secondary-7: "#FF9012"
-  --secondary-8: "#ED34D1"
+  --secondary-1: #5212a6;
+  --secondary-2: #7712c4;
+  --secondary-3: #5f33ff;
+  --secondary-4: #0a8cf7;
+  --secondary-5: #31de90;
+  --secondary-6: #f9de4a;
+  --secondary-7: #ff9012;
+  --secondary-8: #ed34d1;
+
+  --sucess: #28a745;
+  --attention: #ffc107;
+  --hover-attention: #f9de4a;
+  --error: #dc3545;
+  --hover-error: #dc5865;
+  --links: #007bff;
+}
+
+body {
+  font-family: var(--font-sora);
 }
 
 * {
@@ -42,4 +59,52 @@ button {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+b,
+small {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+::placeholder {
+  color: var(--neutral-1);
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: var(--neutral-1);
+}
+
+::-ms-input-placeholder {
+  color: var(--neutral-1);
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.error-message {
+  font-weight: 700;
+  color: var(--error);
 }

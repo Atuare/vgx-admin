@@ -1,0 +1,132 @@
+.process {
+  width: 100%;
+  padding: 21px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+
+  &__process {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-1);
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h1 {
+        font-size: 27px;
+        font-weight: 700;
+        color: var(--primary-2);
+      }
+
+      .buttonContainer {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        button {
+          padding: 16px;
+        }
+      }
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--neutral-4);
+    }
+  }
+
+  &__data {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+
+    .dataInput {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--neutral-4);
+      }
+
+      input {
+        height: 40px;
+        padding-inline: 16px;
+        color: var(--neutral-4);
+        border-radius: 8px;
+        box-shadow: 0px 5px 20px 0px #00000033;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+
+    h1 {
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--neutral-4);
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      button {
+        padding: 16px;
+      }
+    }
+  }
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-weight: 400;
+    font-size: 17px;
+    color: var(--neutral-1);
+
+    .radio__thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--neutral-1);
+    }
+
+    &[data-state="active"] {
+      color: var(--neutral-4);
+
+      .radio__thumb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--primary-3);
+
+        div {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: var(--primary-3);
+        }
+      }
+    }
+  }
+}

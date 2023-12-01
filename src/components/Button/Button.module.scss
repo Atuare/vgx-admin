@@ -1,0 +1,86 @@
+.button {
+  border-radius: 8px;
+  box-shadow: 0px 5px 20px 0px #00000033;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  cursor: pointer;
+  transition: 0.5s all cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.primary {
+  background: var(--primary-4);
+  color: var(--primary-1);
+  &:hover {
+    background: var(--hover-primary-4);
+  }
+
+  &:focus {
+    background: var(--pressed-primary-4);
+  }
+
+  svg path {
+    fill: var(--primary-1);
+  }
+}
+
+.secondary {
+  background: var(--primary-3);
+  color: var(--neutral-3);
+
+  background: var(--pressed-primary-3);
+
+  svg path {
+    fill: var(--neutral-3);
+  }
+  &:hover {
+    background: var(--hover-primary-3);
+  }
+}
+
+.error {
+  background: var(--error);
+  color: var(--neutral-3);
+  &:hover {
+    background: var(--hover-error);
+  }
+
+  svg path {
+    fill: var(--neutral-3);
+  }
+}
+
+.default {
+  background: none;
+  border-radius: 8px;
+  border: 1px solid var(--primary-1);
+  box-shadow: none;
+
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--primary-1);
+
+  &:hover {
+    border: 1px solid var(--primary-2);
+  }
+
+  svg path {
+    fill: var(--primary-1);
+  }
+}
+
+.warning {
+  background: var(--attention);
+  color: var(--primary-1);
+  &:hover {
+    background: var(--hover-attention);
+  }
+
+  svg path {
+    fill: var(--primary-1);
+  }
+}

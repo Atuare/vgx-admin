@@ -1,0 +1,46 @@
+.checkbox {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
+
+  font-weight: 400;
+  font-size: 17px;
+
+  &.primaryOne {
+    color: var(--neutral-4);
+
+    .checkbox__iconTrigger {
+      fill: var(--primary-1);
+    }
+  }
+
+  &.primaryTwo {
+    color: var(--primary-2);
+
+    .checkbox__iconTrigger {
+      fill: var(--primary-2);
+    }
+  }
+
+  &__icon {
+    svg {
+      width: 16px;
+      height: 16px;
+      g path {
+        fill: #1c1b1f;
+      }
+    }
+  }
+
+  &.disabled {
+    cursor: default;
+    color: var(--neutral-1);
+
+    svg path {
+      fill: var(--neutral-1);
+    }
+  }
+}

@@ -1,0 +1,57 @@
+.admissionEdit {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  &__classInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h1 {
+      color: var(--primary-2);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    &__inputs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 48px;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h1 {
+      color: var(--primary-2);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    &__input {
+      align-self: flex-end;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-end;
+
+    button {
+      padding: 16px;
+    }
+  }
+}
+
+.error {
+  font-weight: 700;
+  color: var(--error);
+  margin-top: 8px;
+}

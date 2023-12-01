@@ -1,9 +1,11 @@
-import { ReactNode } from "react";
-import "./globals.scss";
+import "@/styles/scrollbar.scss";
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
 
-const sora = Sora({ subsets: ["latin"], weight: ["400", "600", "700"] });
+import { ReactNode } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { RootLayoutProvider } from "./RootLayoutProvider";
+import "./globals.scss";
 
 export const metadata: Metadata = {
   title: "Portal Admin",
@@ -13,7 +15,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-br">
-      <body className={sora.className}>{children}</body>
+      <RootLayoutProvider>
+        {children} <ToastContainer />
+      </RootLayoutProvider>
     </html>
   );
 }
