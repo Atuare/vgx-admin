@@ -65,7 +65,7 @@ export function AvailabilityModal({
           {create ? (
             <Button
               buttonType="primary"
-              text="Nova Habilidade"
+              text="Nova Disponibilidade"
               icon={<AddCircle />}
             />
           ) : (
