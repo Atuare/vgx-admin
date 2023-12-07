@@ -16,6 +16,7 @@ import {
   useUpdateTrainingMutation,
 } from "@/services/api/fetchApi";
 import dayjs from "dayjs";
+import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./Training.module.scss";
@@ -83,8 +84,6 @@ export default function TrainingDetails() {
         )
       ];
 
-    console.log(data.status.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
-
     updateTraining({
       id: trainingId,
       status: status,
@@ -119,11 +118,13 @@ export default function TrainingDetails() {
             <TrainingStatusModal handleOnSubmit={handleUpdateTrainingStatus}>
               <Status type={training.status.replace("_", "")} pointer />
             </TrainingStatusModal>
-            <Button
-              buttonType="secondary"
-              text="Editar"
-              icon={<EditSquare />}
-            />
+            <Link href={`/trainings/${trainingId}/edit`}>
+              <Button
+                buttonType="secondary"
+                text="Editar"
+                icon={<EditSquare />}
+              />
+            </Link>
           </div>
         </div>
       </header>

@@ -46,7 +46,7 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
           maxTimeToFinish: 0,
           minimumPassingGrade: 0,
           questionsAmount: 0,
-          aproveMessage: "",
+          approvedMessage: "",
           disapprovedMessage: "",
           orientationMessage: "",
           trainingAssessmentQuestions: [],
@@ -79,18 +79,6 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
       reset({
         ...defaultValue,
         trainingTypeId: defaultValue.trainingType.id,
-        //   trainingAssessments: defaultValue.trainingAssessments.map(
-        //     assessment => {
-        //       return {
-        //         ...assessment,
-        //         trainingAssessmentQuestions:
-        //           assessment.trainingAssessmentQuestions.map((question, index) => {
-        //             ...question,
-        //             index: index + 1;
-        //           }),
-        //       }
-        //     },
-        //   ),
       });
     }
   }, [defaultValue]);

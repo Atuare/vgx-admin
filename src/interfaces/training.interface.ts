@@ -55,7 +55,7 @@ interface TrainingAssessmentType {
   maxTimeToFinish: number;
   questionsAmount: number;
   orientationMessage: string;
-  aproveMessage: string;
+  approvedMessage: string;
   disapprovedMessage: string;
   trainingAssessmentQuestions: IQuestion[];
 }
