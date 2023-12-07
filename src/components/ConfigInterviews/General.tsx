@@ -4,10 +4,7 @@ import {
 } from "@/interfaces/configInterviews.interface";
 import { GeneralSchema } from "@/schemas/configInterviewsSchema";
 import { useGetAllUnitsQuery } from "@/services/api/fetchApi";
-import {
-  convertStringDateToDate,
-  convertStringTimeToDate,
-} from "@/utils/dates";
+import { convertStringTimeToDate } from "@/utils/dates";
 import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -18,29 +15,6 @@ import { DataInput } from "../DataInput";
 import { Select } from "../Select";
 import { TipTap } from "../TipTap";
 import styles from "./ConfigInterview.module.scss";
-
-const initialDatesOptions = [
-  {
-    name: "D+1",
-    id: "D+1",
-  },
-  {
-    name: "D+2",
-    id: "D+2",
-  },
-  {
-    name: "D+3",
-    id: "D+3",
-  },
-  {
-    name: "D+4",
-    id: "D+4",
-  },
-  {
-    name: "D+5",
-    id: "D+5",
-  },
-];
 
 type SelectOptions = {
   name: string;
@@ -56,6 +30,29 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
   const [units, setUnits] = useState<SelectOptions>([]);
 
   const { push } = useRouter();
+
+  const initialDatesOptions = [
+    {
+      name: "D+1",
+      id: "D+1",
+    },
+    {
+      name: "D+2",
+      id: "D+2",
+    },
+    {
+      name: "D+3",
+      id: "D+3",
+    },
+    {
+      name: "D+4",
+      id: "D+4",
+    },
+    {
+      name: "D+5",
+      id: "D+5",
+    },
+  ];
 
   const InterviewType = [
     {
@@ -87,7 +84,6 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
     handleOnSubmit({
       ...data,
       limitTime: convertStringTimeToDate(data.limitTime),
-      startDate: convertStringDateToDate(data.startDate),
     });
   };
 
@@ -105,12 +101,12 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
   }, [unitsIsSuccess]);
 
   useEffect(() => {
-    if (interview)
+    if (interview) {
       reset({
         availableDays: interview.availableDays,
         endMessage: `${interview.endMessage}`,
         limitTime: dayjs(interview.limitTime).format("HH:mm"),
-        startDate: dayjs(interview.startDate).format("YYYY-MM-DD"),
+        startDate: interview.startDate,
         type: interview.type,
         unitOrSite:
           typeof interview.unitOrSite === "string"
@@ -120,6 +116,7 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
               }
             : interview.unitOrSite,
       });
+    }
   }, [interview]);
 
   return (
@@ -186,7 +183,7 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
               <Select
                 options={initialDatesOptions}
                 placeholder="Selecione"
-                onChange={onChange}
+                onChange={val => onChange(val?.id)}
                 value={value}
               />
             </DataInput>
@@ -213,7 +210,20 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
             <TipTap
               grayBorder
               getContentFromEditor={content => {
-                if (content.content[0].content) {
+                if (
+                  content.content.some(
+                    (item: { content: any }) => item?.content,
+                  ) &&
+                  content.content.some(
+                    (item: { content: any[] }) =>
+                      item.content?.every(
+                        subItem =>
+                          subItem.text &&
+                          typeof subItem.text === "string" &&
+                          subItem.text.trim() !== "",
+                      ),
+                  )
+                ) {
                   onChange(JSON.stringify(content));
                 } else {
                   onChange("");

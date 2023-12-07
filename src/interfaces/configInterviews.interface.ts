@@ -61,7 +61,19 @@ export interface IDateModal {
   description: string;
 }
 
-export interface ICreateInterview extends IGeneral {
+export interface ICreateInterview {
+  unitOrSite: {
+    name: string;
+    id: string;
+  };
+  type: {
+    name: string;
+    id: string;
+  };
+  limitTime: string;
+  startDate: string;
+  availableDays: number;
+  endMessage: string;
   schedulings: IScheduling[];
   dates: IDate[];
 }
