@@ -19,6 +19,29 @@ import { Select } from "../Select";
 import { TipTap } from "../TipTap";
 import styles from "./ConfigInterview.module.scss";
 
+const initialDatesOptions = [
+  {
+    name: "D+1",
+    id: "D+1",
+  },
+  {
+    name: "D+2",
+    id: "D+2",
+  },
+  {
+    name: "D+3",
+    id: "D+3",
+  },
+  {
+    name: "D+4",
+    id: "D+4",
+  },
+  {
+    name: "D+5",
+    id: "D+5",
+  },
+];
+
 type SelectOptions = {
   name: string;
   id: string;
@@ -151,13 +174,24 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
           <input type="time" {...register("limitTime")} />
         </DataInput>
 
-        <DataInput
-          name="Data Inicial"
-          required
-          error={errors.startDate?.message}
-        >
-          <input type="date" {...register("startDate")} />
-        </DataInput>
+        <Controller
+          control={control}
+          name="startDate"
+          render={({ field: { onChange, value } }) => (
+            <DataInput
+              name="Data Inicial"
+              required
+              error={errors.startDate?.message}
+            >
+              <Select
+                options={initialDatesOptions}
+                placeholder="Selecione"
+                onChange={onChange}
+                value={value}
+              />
+            </DataInput>
+          )}
+        />
 
         <DataInput
           name="Dias Disponíveis"
