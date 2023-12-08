@@ -40,7 +40,7 @@
     "eslint-config-next": "13.4.13",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
-    "next": "13.4.13",
+    "next": "^13.5.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-export-table-to-excel": "^1.0.6",
@@ -66,12 +66,6 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.0",
     "prettier": "^3.0.1",
-    "sass": "^1.65.1",
-    "stylelint": "^15.10.2",
-    "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-sass-guidelines": "^10.0.0",
-    "stylelint-config-standard": "^34.0.0",
-    "stylelint-config-standard-scss": "^10.0.0",
-    "stylelint-prettier": "^4.0.2"
+    "sass": "^1.65.1"
   }
 }
