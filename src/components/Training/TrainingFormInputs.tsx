@@ -80,7 +80,6 @@ export function TrainingFormInputs({
           <input
             type="text"
             defaultValue={user?.employee?.name}
-            disabled
             {...register("trainer")}
           />
         </DataInput>

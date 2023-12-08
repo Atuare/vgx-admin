@@ -19,6 +19,7 @@ export function ConfigInterviewForm({
   const [interview, setInterview] = useState<ICreateInterview | undefined>(
     defaultValue,
   );
+
   const [step, setStep] = useState<number>(1);
 
   const handleSetInterview = (data: any) => {

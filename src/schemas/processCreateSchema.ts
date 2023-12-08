@@ -1,4 +1,5 @@
 import { isAfterYesterday } from "@/utils/dates";
+import dayjs from "dayjs";
 import * as yup from "yup";
 
 export const processCreateStepOneSchema = yup
@@ -13,13 +14,23 @@ export const processCreateStepOneSchema = yup
         "A data deve ser maior que um dia atrás.",
         isAfterYesterday,
       )
-      .max(yup.ref("endDate"), "A data inicial deve ser menor que a final")
+      .test(
+        "isBeforeEndDate",
+        "A data inicial deve ser menor que a data final",
+        function (value) {
+          const { endDate } = this.parent;
+          if (!endDate) return true;
+          return dayjs(value).isBefore(dayjs(endDate as string));
+        },
+      )
       .required("A data inicial é obrigatória"),
     endDate: yup
-      .date()
-      .min(yup.ref("startDate"), "A data final deve ser maior que a inicial")
-      .required("A data final é obrigatória"),
-    limitCandidates: yup.number().optional(),
+      .mixed()
+      .nullable()
+      .test("is-date", "Data inválida", function (value) {
+        return !value || dayjs(value as string).isValid();
+      }),
+    limitCandidates: yup.mixed().optional(),
     banner: yup
       .mixed()
       .test("required", "O banner é obrigatório", (file: File | any) => file),

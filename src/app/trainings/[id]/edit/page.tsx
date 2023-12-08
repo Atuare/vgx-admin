@@ -27,8 +27,8 @@ export default function TrainingEdit() {
       if ("error" in data) {
         Toast("error", "Erro ao atualizar o treinamento");
       } else {
-        Toast("success", "Treinamento atualizado com sucesso");
         refetch().then(() => push("/trainings"));
+        Toast("success", "Treinamento atualizado com sucesso");
       }
     });
   };

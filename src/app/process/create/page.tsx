@@ -3,12 +3,13 @@ import { StepOneProcessCreate } from "@/components/ProcessCreate/StepOneProcessC
 import { StepThreeProcessCreate } from "@/components/ProcessCreate/StepThreeProcessCreate";
 import { StepTwoProcessCreate } from "@/components/ProcessCreate/StepTwoProcessCreate";
 import { Stepper } from "@/components/Stepper";
+import { IProcessCreateData } from "@/interfaces/process.interface";
 import { useState } from "react";
 import styles from "./ProcessCreate.module.scss";
 
 export default function ProcessCreate() {
   const [step, setStep] = useState(1);
-  const [processData, setProcessData] = useState({} as any);
+  const [processData, setProcessData] = useState<IProcessCreateData>();
 
   const handleSetProcessData = (data: any) => {
     setProcessData(data);

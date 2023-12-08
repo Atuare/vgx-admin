@@ -217,7 +217,7 @@ export function StepOneProcessEdit({
               >
                 <NumberInput
                   onChange={onChange}
-                  defaultValue={currentProcessData?.limitCandidates ?? 1}
+                  defaultValue={currentProcessData?.limitCandidates}
                 />
               </DataInput>
             )}
@@ -239,9 +239,10 @@ export function StepOneProcessEdit({
                   maxSize={5}
                   defaultFile={currentProcessData?.banner}
                   fileName={
+                    currentProcessData?.banner &&
                     typeof currentProcessData?.banner === "string"
                       ? currentProcessData?.banner
-                      : undefined
+                      : ""
                   }
                   width="301px"
                 />

@@ -21,7 +21,7 @@ import { SettingsMenu } from "../SettingsMenu";
 
 const menuItems = [
   {
-    name: "Inicío",
+    name: "Início",
     value: "/",
     icon: <HomeIcon />,
   },

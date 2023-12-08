@@ -1,5 +1,6 @@
 "use client";
 import { TrainingCreateForm } from "@/components/Training/Form";
+import { ITrainingCreateForm } from "@/interfaces/training.interface";
 import { useCreateTrainingMutation } from "@/services/api/fetchApi";
 import { Toast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,7 @@ export default function TrainingCreate() {
   const { push } = useRouter();
   const [createTraining] = useCreateTrainingMutation();
 
-  const handleOnSubmit = (data: any) => {
+  const handleOnSubmit = (data: ITrainingCreateForm) => {
     createTraining({
       status: "EM_ANDAMENTO",
       ...data,

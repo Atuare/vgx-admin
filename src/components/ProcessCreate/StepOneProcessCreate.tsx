@@ -27,14 +27,12 @@ export function StepOneProcessCreate({
   setProcessData: (data: any) => void;
   currentProcessData: any;
 }) {
-  const { file, ...rest } = currentProcessData;
-
   const { back } = useRouter();
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(processCreateStepOneSchema),
     defaultValues: {
-      banner: file,
-      ...rest,
+      ...currentProcessData,
+      banner: currentProcessData?.file,
     },
   });
 
@@ -74,8 +72,11 @@ export function StepOneProcessCreate({
       role: data.role,
       curriculum: data.requestCv,
       startDate: new Date(data.startDate).toISOString(),
-      endDate: new Date(data.endDate).toISOString(),
-      limitCandidates: data.limitCandidates,
+      endDate:
+        data.endDate &&
+        dayjs(data.endDate).isValid() &&
+        new Date(data.endDate).toISOString(),
+      limitCandidates: data.limitCandidates ?? null,
       file: data.banner,
       observations: data.observations,
       registrationCompletionMessage: data.registrationCompletionMessage,
@@ -185,7 +186,9 @@ export function StepOneProcessCreate({
               >
                 <input
                   type="date"
-                  onChange={onChange}
+                  onChange={e => {
+                    onChange(e.target.value);
+                  }}
                   defaultValue={
                     currentProcessData?.endDate &&
                     dayjs(currentProcessData?.endDate).format("YYYY-MM-DD")
@@ -207,7 +210,7 @@ export function StepOneProcessCreate({
               >
                 <NumberInput
                   onChange={onChange}
-                  defaultValue={currentProcessData?.limitCandidates ?? 1}
+                  defaultValue={currentProcessData?.limitCandidates}
                 />
               </DataInput>
             )}

@@ -32,7 +32,6 @@ export function ReleaseContractModal({
   };
 
   useEffect(() => {
-    console.log(sendMethods);
     onChangeSendMethods(sendMethods);
   }, [sendMethods]);
 

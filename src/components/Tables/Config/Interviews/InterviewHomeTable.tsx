@@ -113,10 +113,10 @@ export function InterviewHomeTable({ setTable, table }: IHomeTableProps) {
       header: "Hora limite",
       cell: row => <div>{dayjs(row.getValue()).format("HH:mm:ss")}</div>,
     }),
-    columnHelper.accessor("availableDays", {
+    columnHelper.accessor("startDate", {
       id: "startDate",
       header: "Data Inicial",
-      cell: row => <div>D+{row.getValue()}</div>,
+      cell: row => <div>{row.getValue()}</div>,
     }),
     columnHelper.accessor("availableDays", {
       header: "Dias disponíveis",

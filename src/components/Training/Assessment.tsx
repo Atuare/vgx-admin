@@ -261,13 +261,29 @@ export function Assessment({
               <Controller
                 control={control}
                 name={`trainingAssessments.${index}.orientationMessage`}
-                render={({ field: { onChange }, fieldState: { error } }) => (
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
                   <div>
                     <TipTap
                       grayBorder
-                      content={field.orientationMessage}
+                      content={value ? JSON.parse(value) : ""}
                       getContentFromEditor={content => {
-                        if (content.content[0].content) {
+                        if (
+                          content.content.some(
+                            (item: { content: any }) => item?.content,
+                          ) &&
+                          content.content.some(
+                            (item: { content: any[] }) =>
+                              item.content?.every(
+                                subItem =>
+                                  subItem.text &&
+                                  typeof subItem.text === "string" &&
+                                  subItem.text.trim() !== "",
+                              ),
+                          )
+                        ) {
                           onChange(JSON.stringify(content));
                         } else {
                           onChange("");
@@ -285,14 +301,30 @@ export function Assessment({
                 <h3>Aprovação*</h3>
                 <Controller
                   control={control}
-                  name={`trainingAssessments.${index}.aproveMessage`}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
+                  name={`trainingAssessments.${index}.approvedMessage`}
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <div>
                       <TipTap
                         grayBorder
-                        content={field.aproveMessage}
+                        content={value ? JSON.parse(value) : ""}
                         getContentFromEditor={content => {
-                          if (content.content[0].content) {
+                          if (
+                            content.content.some(
+                              (item: { content: any }) => item?.content,
+                            ) &&
+                            content.content.some(
+                              (item: { content: any[] }) =>
+                                item.content?.every(
+                                  subItem =>
+                                    subItem.text &&
+                                    typeof subItem.text === "string" &&
+                                    subItem.text.trim() !== "",
+                                ),
+                            )
+                          ) {
                             onChange(JSON.stringify(content));
                           } else {
                             onChange("");
@@ -319,7 +351,20 @@ export function Assessment({
                           grayBorder
                           content={value ? JSON.parse(value) : ""}
                           getContentFromEditor={content => {
-                            if (content.content[0].content) {
+                            if (
+                              content.content.some(
+                                (item: { content: any }) => item?.content,
+                              ) &&
+                              content.content.some(
+                                (item: { content: any[] }) =>
+                                  item.content?.every(
+                                    subItem =>
+                                      subItem.text &&
+                                      typeof subItem.text === "string" &&
+                                      subItem.text.trim() !== "",
+                                  ),
+                              )
+                            ) {
                               onChange(JSON.stringify(content));
                             } else {
                               onChange("");

@@ -81,7 +81,7 @@ export const trainingCreateSchema = yup.object({
             .min(1, "Digite um número maior ou igual a 1")
             .required("Campo obrigatório"),
           orientationMessage: yup.string().required("Campo obrigatório"),
-          aproveMessage: yup.string().required("Campo obrigatório"),
+          approvedMessage: yup.string().required("Campo obrigatório"),
           disapprovedMessage: yup.string().required("Campo obrigatório"),
           trainingAssessmentQuestions: yup
             .array()
