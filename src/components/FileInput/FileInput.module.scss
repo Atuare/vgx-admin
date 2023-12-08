@@ -17,6 +17,7 @@
     gap: 8px;
 
     &__label {
+      min-width: 145px;
       height: 37px;
       padding: 0 8px;
       background: var(--primary-4);

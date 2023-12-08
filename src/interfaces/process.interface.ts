@@ -1,3 +1,8 @@
+import { StatusEnum } from "@/enums/status.enum";
+import { IProcessCandidacy } from "./processCandidacy.interface";
+import { IRole } from "./role.interface";
+import { IUnit } from "./unit.interface";
+
 export interface ProcessType {
   id: string;
   type: "PRESENCIAL" | "REMOTO";
@@ -56,6 +61,7 @@ export interface ProcessType {
   createdAt: string;
   updatedAt: string;
   banner: string;
+  candidacy?: IProcessCandidacy[];
 }
 
 export interface ProcessesType {
@@ -82,4 +88,34 @@ export interface RolesType {
     status: "ATIVO" | "INATIVO";
   }[];
   totalCount: number;
+}
+
+export interface IProcessCreateStepOneData {
+  unit: IUnit;
+  role: IRole;
+  requestCv: boolean;
+  startDate: Date;
+  endDate?: Date;
+  limitCandidates?: number;
+  observations?: string;
+  registrationCompletionMessage?: string;
+  banner: File;
+}
+export interface IProcessCreateData {
+  status: StatusEnum;
+  type: string;
+  unit: IUnit;
+  role: IRole;
+  skillsIds: string[];
+  availabilitiesId: string[];
+  schoolingsId: string[];
+  benefitsId: string[];
+  requestCv: boolean;
+  availableForMinors: boolean;
+  startDate: Date;
+  endDate: Date;
+  limitCandidates: number;
+  observations?: string;
+  registrationCompletionMessage?: string;
+  banner: File;
 }

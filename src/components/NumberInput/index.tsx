@@ -33,13 +33,18 @@ export function NumberInput({
       <input type="number" value={value} onChange={handleChangeValue} />
 
       <div className={styles.inputContainer__buttons}>
-        <button type="button" onClick={() => setValue(prev => prev + 1)}>
+        <button
+          type="button"
+          onClick={() => setValue(prev => (isNaN(value) ? 0 : prev + 1))}
+        >
           <ChevronRoundedUp />
         </button>
         <hr />
         <button
           type="button"
-          onClick={() => setValue(prev => (prev > 0 ? prev - 1 : prev))}
+          onClick={() =>
+            setValue(prev => (isNaN(value) ? 0 : prev > 0 ? prev - 1 : prev))
+          }
         >
           <ChevronRoundedDown />
         </button>

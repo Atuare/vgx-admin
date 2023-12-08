@@ -308,8 +308,8 @@ export default function ProcessData() {
           <Input
             defaultValue={
               process.availableForMinors
-                ? "Maiores de 18 anos"
-                : "Todas as idades"
+                ? "Todas as idades"
+                : "Maiores de 18 anos"
             }
             disabled
             height={40}
@@ -330,7 +330,11 @@ export default function ProcessData() {
 
         <DataInput name="Inscrição até">
           <Input
-            defaultValue={dayjs(process.endDate).utc().format("DD/MM/YYYY")}
+            defaultValue={
+              process.endDate && dayjs(process.endDate).isValid()
+                ? dayjs(process.endDate).utc().format("DD/MM/YYYY")
+                : "-"
+            }
             disabled
             height={40}
           />
@@ -338,7 +342,12 @@ export default function ProcessData() {
 
         <DataInput name="Lim. Candidaturas" required>
           <Input
-            defaultValue={process.limitCandidates.toString()}
+            defaultValue={
+              process.limitCandidates &&
+              typeof process.limitCandidates === "number"
+                ? process.limitCandidates.toString()
+                : "-"
+            }
             disabled
             height={40}
           />

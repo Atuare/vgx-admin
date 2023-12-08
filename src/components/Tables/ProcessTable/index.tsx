@@ -87,7 +87,7 @@ export function ProcessTable({
   };
 
   const handleGoDataPage = (rowIndex: number) => {
-    processes!.processes.map((process, index) => {
+    processes?.processes.map((process, index) => {
       if (rowIndex === index) {
         push(`/process/${process.id}`);
       }
@@ -136,7 +136,10 @@ export function ProcessTable({
     ),
 
     columnHelper.accessor(
-      value => dayjs(value.endDate).utc().format("DD/MM/YYYY"),
+      value =>
+        value.endDate &&
+        dayjs(value.endDate).isValid() &&
+        dayjs(value.endDate).utc().format("DD/MM/YYYY"),
       {
         id: "endDate",
         header: "Data fim",
@@ -145,12 +148,13 @@ export function ProcessTable({
     ),
 
     columnHelper.accessor("role.roleText", {
+      id: "role",
       header: () => (
         <FilterButton
           title="Processo/Cargo"
           table={table}
           options={rolesOptions}
-          column="role_roleText"
+          column="role"
         />
       ),
       cell: row => (
@@ -167,12 +171,13 @@ export function ProcessTable({
     }),
 
     columnHelper.accessor("unit.unitName", {
+      id: "unit",
       header: () => (
         <FilterButton
           title="Unidade/Site"
           table={table}
           options={unitsOptions}
-          column="unit_unitName"
+          column="unit"
         />
       ),
       cell: row => <div>{row.getValue() ? row.getValue() : "-"}</div>,
