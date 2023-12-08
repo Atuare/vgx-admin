@@ -51,8 +51,8 @@ export function Radio({
               ? options[0] || "Sim"
               : "Sim"
             : options
-            ? options[1] || "Não"
-            : "Não"}
+              ? options[1] || "Não"
+              : "Não"}
         </button>
       ))}
     </div>

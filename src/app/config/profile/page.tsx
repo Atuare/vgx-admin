@@ -156,8 +156,8 @@ export default function Profile() {
               picture
                 ? URL.createObjectURL(picture)
                 : user?.employee?.image
-                ? user?.employee.image
-                : Placeholder
+                  ? user?.employee.image
+                  : Placeholder
             }
             alt="Avatar"
             width={133}

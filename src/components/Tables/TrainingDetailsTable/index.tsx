@@ -128,7 +128,6 @@ export const TrainingDetailsTable = forwardRef<
 
   useEffect(() => {
     if (training) {
-      console.log("training.candidacies", training?.candidacies);
       // getAllFilters();
     }
   }, [training]);

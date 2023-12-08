@@ -86,7 +86,6 @@ export default function AdmissionClass() {
   const handleReleaseContract = () => {
     const rows = table?.getSelectedRowModel().flatRows.map(row => row.original);
 
-    console.log(contractSendMethods);
     // if (rows && rows.length > 0) {
     //   const admissionsResultIds = rows.map(row => row.id);
     //   releaseContract({

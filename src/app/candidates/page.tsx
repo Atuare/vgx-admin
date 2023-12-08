@@ -51,10 +51,10 @@ export default function Candidates() {
           dateType === "CADASTRO"
             ? row.candidate.createdAt
             : dateType === "ENTREVISTA"
-            ? row.interview.createdAt
-            : dateType === "TREINAMENTO"
-            ? row.training.createdAt
-            : row.createdAt,
+              ? row.interview.createdAt
+              : dateType === "TREINAMENTO"
+                ? row.training.createdAt
+                : row.createdAt,
         )
           .utc()
           .format("DD/MM/YYYY"),
@@ -81,10 +81,10 @@ export default function Candidates() {
             dateType === "CADASTRO"
               ? row.candidate.createdAt
               : dateType === "ENTREVISTA"
-              ? row.interview.createdAt
-              : dateType === "TREINAMENTO"
-              ? row.training.createdAt
-              : row.createdAt,
+                ? row.interview.createdAt
+                : dateType === "TREINAMENTO"
+                  ? row.training.createdAt
+                  : row.createdAt,
           )
             .utc()
             .format("DD/MM/YYYY"),

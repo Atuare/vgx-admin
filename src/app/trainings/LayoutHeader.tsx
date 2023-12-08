@@ -25,12 +25,12 @@ export function LayoutHeader() {
           {pathname.endsWith("/edit")
             ? "Editar treinamento"
             : pathname === "/trainings/create"
-            ? "Novo treinamento"
-            : pathname === "/trainings"
-            ? "Treinamentos"
-            : data
-            ? `${data.data.trainingName} - ${data.data.productName}`
-            : "Treinamentos"}
+              ? "Novo treinamento"
+              : pathname === "/trainings"
+                ? "Treinamentos"
+                : data
+                  ? `${data.data.trainingName} - ${data.data.productName}`
+                  : "Treinamentos"}
         </h1>
       </div>
       <AdmProfile />

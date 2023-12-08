@@ -13,8 +13,8 @@ export function IconButton({ icon, buttonType, ...props }: IconButtonProps) {
         buttonType === "delete"
           ? styles.iconButton__delete
           : buttonType === "edit"
-          ? styles.iconButton__edit
-          : styles.iconButton__send
+            ? styles.iconButton__edit
+            : styles.iconButton__send
       }`}
       {...props}
     >

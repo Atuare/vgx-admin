@@ -15,8 +15,8 @@ export function LayoutHeader({ children }: { children: ReactNode }) {
     pathname === "/config/interviews"
       ? "Configurações - Agendamentos de entrevista"
       : params.id && Array.from(params.id).join("")
-      ? "Editar Agendamento"
-      : "Novo Agendamento";
+        ? "Editar Agendamento"
+        : "Novo Agendamento";
 
   return (
     <div className={styles.container}>

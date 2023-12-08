@@ -11,7 +11,6 @@ export function AccountInput({
   onChange,
   disabled = false,
 }: AccountInputProps) {
-  console.log(defaultValue);
   const [firstAccount, setFirstAccount] = useState(
     defaultValue?.slice(0, 7) ?? "",
   );

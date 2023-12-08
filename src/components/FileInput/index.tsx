@@ -116,8 +116,8 @@ export const FileInput = forwardRef<IClearFileHandle, FileInputProps>(
             {file && typeof file !== "string"
               ? file.name
               : fileName
-              ? fileName
-              : ""}
+                ? fileName
+                : ""}
           </p>
         </div>
 
