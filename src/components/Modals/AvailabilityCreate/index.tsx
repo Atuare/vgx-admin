@@ -1,9 +1,9 @@
 import { AddCircle, Close, EditSquare } from "@/assets/Icons";
 import { Button } from "@/components/Button";
+import { DataInput } from "@/components/DataInput";
 import { IconButton } from "@/components/IconButton";
 import { Select } from "@/components/Select";
 import { availabilityModalConfigSchema } from "@/schemas/configRecordsSchema";
-import { dayOfWeek, daysOfWeekSelect, getDayOfWeekName } from "@/utils/dates";
 import { decimalToTime, hourToDecimal } from "@/utils/formatTimeRange";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -12,10 +12,9 @@ import { Controller, useForm } from "react-hook-form";
 import styles from "./AvailabilityCreate.module.scss";
 
 interface IAvailability {
-  startDay: number;
-  endDay: number;
-  startHour: number;
-  endHour: number;
+  startHour: string;
+  endHour: string;
+  shift: "MANHÃ" | "TARDE" | "NOITE";
 }
 
 interface AvailabilityModalProps {
@@ -24,6 +23,21 @@ interface AvailabilityModalProps {
   create?: boolean;
 }
 
+const shiftOptions = [
+  {
+    name: "Manhã",
+    id: "MANHÃ",
+  },
+  {
+    name: "Tarde",
+    id: "TARDE",
+  },
+  {
+    name: "Noite",
+    id: "NOITE",
+  },
+];
+
 export function AvailabilityModal({
   defaultValue,
   handleOnSubmit,
@@ -31,23 +45,31 @@ export function AvailabilityModal({
 }: AvailabilityModalProps) {
   const [open, setOpen] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     resolver: yupResolver(availabilityModalConfigSchema),
     defaultValues: {
-      startDay: defaultValue?.startDay ? String(defaultValue?.startDay) : "",
-      endDay: defaultValue?.endDay ? String(defaultValue?.endDay) : "",
-      startHour: defaultValue?.startHour ? String(defaultValue?.startHour) : "",
-      endHour: defaultValue?.endHour ? String(defaultValue?.endHour) : "",
+      startHour: defaultValue?.startHour
+        ? decimalToTime(Number(defaultValue?.startHour))
+        : "",
+      endHour: defaultValue?.endHour
+        ? decimalToTime(Number(defaultValue?.endHour))
+        : "",
+      shift: defaultValue?.shift ?? "",
     },
   });
 
   function handleOnSave(data: any) {
     setOpen(false);
     handleOnSubmit({
-      startHour: Number(data.startHour),
-      endHour: Number(data.endHour),
-      startDay: Number(data.startDay),
-      endDay: Number(data.endDay),
+      startHour: Number(hourToDecimal(data.startHour)),
+      endHour: Number(hourToDecimal(data.endHour)),
+      shift: data.shift,
     });
     reset();
   }
@@ -91,90 +113,49 @@ export function AvailabilityModal({
 
               <div className={styles.modal__content__form}>
                 <Controller
-                  name="startDay"
+                  name="shift"
                   control={control}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
+                  render={({
+                    field: { onChange, value },
+                    fieldState: { error },
+                  }) => (
                     <div className={styles.modal__content__form__item}>
-                      <label htmlFor="startDate">Data inicial</label>
-                      <Select
-                        options={daysOfWeekSelect}
-                        placeholder="Selecione"
-                        onChange={({ id }) => onChange(dayOfWeek[id])}
-                        defaultValue={getDayOfWeekName(defaultValue?.startDay)}
-                      />
-                      <span className={styles.error}>
-                        {error?.message && error.message}
-                      </span>
+                      <DataInput name="Período" error={error?.message}>
+                        <Select
+                          options={shiftOptions}
+                          placeholder="Selecione"
+                          onChange={({ id }) => onChange(id)}
+                          defaultValue={
+                            shiftOptions.find(item => item.id === value)?.name
+                          }
+                        />
+                      </DataInput>
                     </div>
                   )}
                 />
 
-                <Controller
-                  name="startHour"
-                  control={control}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
-                    <div className={styles.modal__content__form__item}>
-                      <label htmlFor="startHour">Hora inicial</label>
-                      <input
-                        type="time"
-                        id="startHour"
-                        onChange={e =>
-                          onChange(hourToDecimal(String(e.target.value)))
-                        }
-                        defaultValue={
-                          defaultValue?.startHour &&
-                          decimalToTime(defaultValue?.startHour)
-                        }
-                      />
-                      <span className={styles.error}>
-                        {error?.message && error.message}
-                      </span>
-                    </div>
-                  )}
-                />
+                <div className={styles.modal__content__form__item}>
+                  <DataInput
+                    name="Hora inicial"
+                    error={errors?.startHour?.message}
+                  >
+                    <input
+                      type="time"
+                      id="Hora inicial"
+                      {...register("startHour")}
+                    />
+                  </DataInput>
+                </div>
 
-                <Controller
-                  name="endDay"
-                  control={control}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
-                    <div className={styles.modal__content__form__item}>
-                      <label htmlFor="endDate">Data final</label>
-                      <Select
-                        options={daysOfWeekSelect}
-                        placeholder="Selecione"
-                        onChange={({ id }) => onChange(dayOfWeek[id])}
-                        defaultValue={getDayOfWeekName(defaultValue?.endDay)}
-                      />
-                      <span className={styles.error}>
-                        {error?.message && error.message}
-                      </span>
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  name="endHour"
-                  control={control}
-                  render={({ field: { onChange }, fieldState: { error } }) => (
-                    <div className={styles.modal__content__form__item}>
-                      <label htmlFor="endHour">Hora final</label>
-                      <input
-                        type="time"
-                        id="endHour"
-                        onChange={e =>
-                          onChange(hourToDecimal(String(e.target.value)))
-                        }
-                        defaultValue={
-                          defaultValue?.endHour &&
-                          decimalToTime(defaultValue?.endHour)
-                        }
-                      />
-                      <span className={styles.error}>
-                        {error?.message && error.message}
-                      </span>
-                    </div>
-                  )}
-                />
+                <div className={styles.modal__content__form__item}>
+                  <DataInput name="Hora final" error={errors?.endHour?.message}>
+                    <input
+                      type="time"
+                      id="Hora final"
+                      {...register("endHour")}
+                    />
+                  </DataInput>
+                </div>
               </div>
 
               <div
@@ -182,7 +163,7 @@ export function AvailabilityModal({
                   display: "flex",
                   gap: 10,
                   justifyContent: "flex-end",
-                  padding: 10,
+                  paddingTop: 20,
                 }}
               >
                 <Dialog.Close asChild>
