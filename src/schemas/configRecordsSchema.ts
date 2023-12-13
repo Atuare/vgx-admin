@@ -50,10 +50,29 @@ export const salaryClaimModalConfigSchema = yup
 
 export const availabilityModalConfigSchema = yup
   .object({
-    startDay: yup.string().required("Campo obrigatório"),
-    endDay: yup.string().required("Campo obrigatório"),
-    startHour: yup.string().required("Campo obrigatório"),
-    endHour: yup.string().required("Campo obrigatório"),
+    startHour: yup
+      .string()
+      .required("Campo obrigatório")
+      .test(
+        "greater-than-end-hour",
+        "A hora inicial não pode ser maior que a final",
+        function (startHour) {
+          const { endHour } = this.parent;
+          return startHour <= endHour;
+        },
+      ),
+    endHour: yup
+      .string()
+      .required("Campo obrigatório")
+      .test(
+        "greater-than-start-hour",
+        "A hora final não pode ser menor que a inicial",
+        function (endHour) {
+          const { startHour } = this.parent;
+          return endHour >= startHour;
+        },
+      ),
+    shift: yup.string().required("Campo obrigatório"),
   })
   .required();
 

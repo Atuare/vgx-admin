@@ -146,7 +146,7 @@ export function SchoolingTable({ defaultTableSize, type }: TableProps) {
       cell: row => <div>{row.getValue()}</div>,
     }),
     columnHelper.accessor("informCourse", {
-      header: "Escolaridade",
+      header: "Informar curso",
       cell: row => <div>{row.getValue() ? "Sim" : "Não"}</div>,
     }),
     {

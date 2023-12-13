@@ -26,7 +26,8 @@
     &__form {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      place-content: center;
+      grid-template-columns: 200px 1fr 1fr;
       gap: 16px;
 
       &__item {

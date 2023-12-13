@@ -31,8 +31,7 @@ export interface ProcessType {
     {
       id: string;
       status: "ATIVO" | "INATIVO";
-      startDay: number;
-      endDay: number;
+      shift: "MANHÃ" | "TARDE" | "NOITE";
       startHour: number;
       endHour: number;
     },

@@ -30,7 +30,7 @@ interface TableProps {
   type: number;
 }
 
-export function AvailabilityTable({ defaultTableSize, type }: TableProps) {
+export function AvailabilityTable({ defaultTableSize }: TableProps) {
   const [availabilities, setAvailabilities] = useState<IAvailabilities>();
   const [table, setTable] = useState<Table<any>>();
 
@@ -54,21 +54,34 @@ export function AvailabilityTable({ defaultTableSize, type }: TableProps) {
   const [deleteAvailability] = useDeleteAvaliabilityMutation();
 
   const handleCreateItem = async (data: any) => {
-    await createAvailability({ ...data, status: "ATIVO" });
-    refetch();
-    Toast("success", "Disponibilidade criada com sucesso!");
+    createAvailability({ ...data, status: "ATIVO" })
+      .then(() => {
+        refetch();
+        Toast("success", "Disponibilidade criada com sucesso!");
+      })
+      .catch(() => Toast("error", "Não foi possível criar a disponibilidade!"));
   };
 
   const handleUpdateItem = async (data: any) => {
-    await updateAvailability(data);
-    refetch();
-    Toast("success", "Disponibilidade atualizada com sucesso!");
+    updateAvailability(data)
+      .then(() => {
+        refetch();
+        Toast("success", "Disponibilidade atualizada com sucesso!");
+      })
+      .catch(() =>
+        Toast("error", "Não foi possível atualizar a disponibilidade!"),
+      );
   };
 
   const handleDeleteItem = async (id: string) => {
-    await deleteAvailability({ id });
-    refetch();
-    Toast("success", "Disponibilidade deletada com sucesso!");
+    deleteAvailability({ id })
+      .then(() => {
+        refetch();
+        Toast("success", "Disponibilidade deletada com sucesso!");
+      })
+      .catch(() =>
+        Toast("error", "Não foi possível deletar a disponibilidade!"),
+      );
   };
 
   const handleSwitchChange = (checked: boolean, rowIndex: number) => {
@@ -142,20 +155,18 @@ export function AvailabilityTable({ defaultTableSize, type }: TableProps) {
       },
     }),
     columnHelper.accessor(
-      row => `${row.startDay} ${row.endDay} ${row.startHour} ${row.endHour}`,
+      row => `${row.shift} ${row.startHour} ${row.endHour}`,
       {
         header: "Disponibilidade",
         id: "availability",
         cell: row => {
           const values = String(row.getValue()).split(" ");
-          const startDay = Number(values[0]);
-          const endDay = Number(values[1]);
-          const startHour = Number(values[2]);
-          const endHour = Number(values[3]);
+          const shift = values[0] as "MANHÃ" | "TARDE" | "NOITE";
+          const startHour = values[1];
+          const endHour = values[2];
 
           const value = formatTimeRange({
-            startDay,
-            endDay,
+            shift,
             startHour,
             endHour,
           });
