@@ -32,12 +32,14 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
     resolver: yupResolver(trainingCreateSchema),
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: "trainingAssessments",
     control,
   });
 
-  const handleChangeAssessmentsFields = (type: "APPEND" | "REMOVE") => {
+  const handleChangeAssessmentsFields = (
+    type: "APPEND" | "REMOVE" | "REMOVE_ALL" | "NONE",
+  ) => {
     if (type === "REMOVE" && fields.length === 0) return;
 
     switch (type) {
@@ -54,6 +56,11 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
         break;
       case "REMOVE":
         remove(fields.length - 1);
+        break;
+      case "REMOVE_ALL":
+        replace([]);
+        break;
+      default:
         break;
     }
   };
@@ -79,6 +86,7 @@ export function TrainingCreateForm({ defaultValue, onSubmit }: IFormProps) {
       reset({
         ...defaultValue,
         trainingTypeId: defaultValue.trainingType.id,
+        assessmentsAmount: defaultValue.trainingAssessments.length ?? 0,
       });
     }
   }, [defaultValue]);

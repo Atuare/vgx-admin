@@ -1,5 +1,6 @@
 "use client";
 import { TrainingCreateForm } from "@/components/Training/Form";
+import { ITrainingCreateForm } from "@/interfaces/training.interface";
 import {
   useGetTrainingByIdQuery,
   useUpdateTrainingMutation,
@@ -20,9 +21,11 @@ export default function TrainingEdit() {
     id: Array.from(params.id).join(""),
   });
 
-  const handleOnSubmit = (data: any) => {
+  const handleOnSubmit = (data: ITrainingCreateForm) => {
+    const { assessmentsAmount, ...rest } = data;
+
     updateTraining({
-      ...data,
+      ...rest,
     }).then(data => {
       if ("error" in data) {
         Toast("error", "Erro ao atualizar o treinamento");
