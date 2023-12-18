@@ -8,6 +8,7 @@ export interface IAvailability {
   endHour: string;
   createdAt: Date;
   updatedAt: Date;
+  description: string;
 }
 
 export interface IAvailabilities {

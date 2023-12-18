@@ -15,6 +15,7 @@ interface IAvailability {
   startHour: string;
   endHour: string;
   shift: "MANHÃ" | "TARDE" | "NOITE";
+  description: string;
 }
 
 interface AvailabilityModalProps {
@@ -61,6 +62,7 @@ export function AvailabilityModal({
         ? decimalToTime(Number(defaultValue?.endHour))
         : "",
       shift: defaultValue?.shift ?? "",
+      description: defaultValue?.description ?? "",
     },
   });
 
@@ -70,6 +72,7 @@ export function AvailabilityModal({
       startHour: Number(hourToDecimal(data.startHour)),
       endHour: Number(hourToDecimal(data.endHour)),
       shift: data.shift,
+      description: data.description,
     });
     reset();
   }
@@ -154,6 +157,15 @@ export function AvailabilityModal({
                       id="Hora final"
                       {...register("endHour")}
                     />
+                  </DataInput>
+                </div>
+
+                <div className={styles.modal__content__form__item}>
+                  <DataInput
+                    name="Descrição"
+                    error={errors?.description?.message}
+                  >
+                    <input id="Descrição" {...register("description")} />
                   </DataInput>
                 </div>
               </div>
