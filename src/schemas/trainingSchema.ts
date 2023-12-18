@@ -27,6 +27,12 @@ export const trainingCreateSchema = yup.object({
   trainingName: yup.string().required("Campo obrigatório"),
   productName: yup.string().optional(),
   trainer: yup.string().required("Campo obrigatório"),
+  assessmentsAmount: yup
+    .number()
+    .typeError("Número inválido")
+    .min(1, "Digite um número maior que 0")
+    .integer("Digite um número inteiro")
+    .required("Campo obrigatório"),
   trainingDays: yup
     .number()
     .typeError("Número inválido")

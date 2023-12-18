@@ -6,16 +6,20 @@ interface NumberInputProps {
   defaultValue?: number;
   onChange?: (value: number) => void;
   width?: number;
+  disableManualInput?: boolean;
 }
 
 export function NumberInput({
   defaultValue,
   onChange,
   width,
+  disableManualInput = false,
 }: NumberInputProps) {
   const [value, setValue] = useState<number>(0);
 
   function handleChangeValue(event: React.ChangeEvent<HTMLInputElement>) {
+    if (disableManualInput) return;
+
     const newValue = event.target.valueAsNumber;
     setValue(newValue);
   }
@@ -30,7 +34,12 @@ export function NumberInput({
 
   return (
     <div className={styles.inputContainer} style={{ width }}>
-      <input type="number" value={value} onChange={handleChangeValue} />
+      <input
+        type="number"
+        value={value}
+        onChange={handleChangeValue}
+        disabled={disableManualInput}
+      />
 
       <div className={styles.inputContainer__buttons}>
         <button
