@@ -1,7 +1,9 @@
 import { ScheduleSend } from "@/assets/Icons";
 import FlatText from "@/components/FlatText";
 import { IconButton } from "@/components/IconButton";
+import { CandidateTrainingStatusModal } from "@/components/Modals/CandidateTrainingStatusModal";
 import { InputContainer } from "@/components/Modals/DataModal/components/InputContainer";
+import { ReleaseAssessmentModal } from "@/components/Modals/ReleaseAssessment";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
 import {
@@ -9,7 +11,13 @@ import {
   CandidacyType,
 } from "@/interfaces/candidacy.interface";
 import { TrainingType } from "@/interfaces/training.interface";
-import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
+import {
+  useGetTrainingByIdQuery,
+  useLinkCandidacyToAdmissionMutation,
+  useUpdateAssessmentMutation,
+  useUpdateCandidacyTrainingStatusMutation,
+} from "@/services/api/fetchApi";
+import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -49,8 +57,72 @@ export const TrainingLastDayDetailsTable = forwardRef<
     id: props.trainingId,
   });
 
+  const [updateAssessment] = useUpdateAssessmentMutation();
+  const [updateCandidacyTrainingStatus] =
+    useUpdateCandidacyTrainingStatusMutation();
+  const [linkCandidacyToAdmission] = useLinkCandidacyToAdmissionMutation();
+
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
+  };
+
+  const releaseAssessmentForCandidacies = async () => {
+    const trainingAssessment = training?.trainingAssessments.find(
+      trainingAssessment =>
+        trainingAssessment.trainingDay.dayNumber === props.trainingDay, // last tested: 3
+    );
+
+    try {
+      if (trainingAssessment) {
+        await updateAssessment({
+          id: trainingAssessment.id,
+          availableForCandidacies: true,
+        });
+        Toast("success", "Avaliação liberada com sucesso!");
+      }
+    } catch {
+      Toast("error", "Houve um erro ao tentar liberar a avaliação");
+    }
+  };
+
+  const handleCandidacyTrainingStatus = async (
+    candidacyId: string,
+    data: any,
+  ) => {
+    if (data.class) {
+      try {
+        await linkCandidacyToAdmission({
+          candidacyId,
+          admissionId: data.class,
+        });
+
+        Toast("success", "Candidatura vinculada com sucesso!");
+      } catch {
+        Toast(
+          "error",
+          "Houve um erro ao tentar vincular a candidatura no exame admissionalF",
+        );
+      }
+    } else {
+      try {
+        await updateCandidacyTrainingStatus({
+          id: candidacyId,
+          data: {
+            status: data.status,
+            observation: data.reason,
+          },
+        });
+
+        Toast("success", "Status da candidatura atualizado com sucesso!");
+      } catch {
+        Toast(
+          "error",
+          "Houve um erro ao tentar atualizar o status da candidatura",
+        );
+      }
+    }
+
+    refetch();
   };
 
   const columnHelper = createColumnHelper<CandidacyType>();
@@ -110,8 +182,13 @@ export const TrainingLastDayDetailsTable = forwardRef<
       header: "Ausência",
       id: "absent",
       cell: row => {
-        const trainingParticipantDayPresence = false; // TODO: get real value
-
+        const trainingParticipantDayAbsent = row
+          .getValue()
+          .find(
+            trainingParticipantDay =>
+              trainingParticipantDay.trainingDay.dayNumber ===
+              props.trainingDay,
+          )?.absent;
         return (
           <div
             style={{
@@ -121,7 +198,7 @@ export const TrainingLastDayDetailsTable = forwardRef<
           >
             <Checkbox
               iconType="solid"
-              isActive={trainingParticipantDayPresence}
+              isActive={trainingParticipantDayAbsent}
               disabled
               style={{ width: "auto" }}
             />
@@ -129,7 +206,7 @@ export const TrainingLastDayDetailsTable = forwardRef<
         );
       },
     }),
-    columnHelper.accessor("training", {
+    columnHelper.accessor("id", {
       header: () => (
         <div
           style={{
@@ -140,11 +217,21 @@ export const TrainingLastDayDetailsTable = forwardRef<
           }}
         >
           Avaliação final{" "}
-          <IconButton icon={<ScheduleSend />} style={{ display: "flex" }} />
+          <ReleaseAssessmentModal
+            handleOnRelease={() => releaseAssessmentForCandidacies()}
+            name={String(props.trainingDay)}
+          >
+            <IconButton icon={<ScheduleSend />} style={{ display: "flex" }} />
+          </ReleaseAssessmentModal>{" "}
         </div>
       ),
       cell: row => {
-        return <div>00</div>; // TODO: get real value
+        const candidacyId = row.getValue();
+        const candidacyTrainingGrade = training?.trainingGrades.find(
+          trainingGrade => trainingGrade.candidacyId === candidacyId,
+        )?.trainingGrade;
+
+        return <div>{candidacyTrainingGrade || "Não há"}</div>;
       },
     }),
     columnHelper.accessor("trainingParticipantDays", {
@@ -181,12 +268,23 @@ export const TrainingLastDayDetailsTable = forwardRef<
       header: "Status",
       cell: row => {
         const rowStatusValue = row.getValue();
+        const candidateName = row.row.original.candidate.name;
+        const candidacyId = row.row.original.id;
         const status =
           CandidacyStatusEnum[
             rowStatusValue as keyof typeof CandidacyStatusEnum
           ];
 
-        return <FlatText text={status} type={status} />;
+        return (
+          <CandidateTrainingStatusModal
+            candidateName={candidateName}
+            handleOnSubmit={data =>
+              handleCandidacyTrainingStatus(candidacyId, data)
+            }
+          >
+            <FlatText text={status} type={status} pointer />
+          </CandidateTrainingStatusModal>
+        );
       },
     }),
   ];

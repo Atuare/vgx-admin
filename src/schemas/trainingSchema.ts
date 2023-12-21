@@ -11,6 +11,22 @@ export const trainingModalStatusSchema = yup
   })
   .required();
 
+export const candidateTrainingModalStatusSchema = yup
+  .object({
+    status: yup.string().required("Campo obrigatório"),
+    reason: yup.string().when("status", {
+      is: (status: string) => status !== "APROVADO",
+      then: schema => schema.required("Campo obrigatório"),
+      otherwise: schema => schema.optional(),
+    }),
+    class: yup.string().when("status", {
+      is: (status: string) => status === "APROVADO",
+      then: schema => schema.required("Campo obrigatório"),
+      otherwise: schema => schema.optional(),
+    }),
+  })
+  .required();
+
 export const trainingCreateModalConfigSchema = yup.object().shape({
   text: yup.string().required("Campo obrigatório"),
   firstOption: yup.string().required("Campo obrigatório"),

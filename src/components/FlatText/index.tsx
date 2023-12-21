@@ -3,9 +3,14 @@ import styles from "./FlatText.module.scss";
 interface FlatTextProps {
   text: string;
   type: string;
+  pointer?: boolean;
 }
 
-export default function FlatText({ text, type }: FlatTextProps) {
+export default function FlatText({
+  text,
+  type,
+  pointer = false,
+}: FlatTextProps) {
   const bgColor = {
     CONCLUIDO: "var(--sucess)",
     CONCLUÍDO: "var(--sucess)",
@@ -33,7 +38,10 @@ export default function FlatText({ text, type }: FlatTextProps) {
   return (
     <div
       className={styles.flatText}
-      style={{ background: bgColor[type as keyof typeof bgColor] }}
+      style={{
+        background: bgColor[type as keyof typeof bgColor],
+        cursor: pointer ? "pointer" : "default",
+      }}
     >
       <span>{text}</span>
     </div>
