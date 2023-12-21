@@ -51,13 +51,24 @@ export interface ITrainingCreateForm {
 }
 
 interface TrainingAssessmentType {
+  id: string;
   minimumPassingGrade: number;
   maxTimeToFinish: number;
   questionsAmount: number;
   orientationMessage: string;
   approvedMessage: string;
   disapprovedMessage: string;
+  trainingDay: TrainingDayType;
+  trainingAssessmentGrades: TrainingAssessmentGrade[];
   trainingAssessmentQuestions: IQuestion[];
+}
+
+export interface TrainingAssessmentGrade {
+  candidacy: {
+    id: string;
+    grade: string;
+    trainingAssessment: string;
+  };
 }
 
 export interface IQuestion {
