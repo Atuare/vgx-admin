@@ -41,6 +41,7 @@ export interface ITrainingCreateForm {
   productName?: string;
   trainer: string;
   trainingDays: number;
+  assessmentsAmount: number;
   participantLimit: number;
   minimumFrequency: number;
   startDate: Date;

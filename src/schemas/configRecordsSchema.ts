@@ -73,6 +73,7 @@ export const availabilityModalConfigSchema = yup
         },
       ),
     shift: yup.string().required("Campo obrigatório"),
+    description: yup.string().required("Campo obrigatório"),
   })
   .required();
 

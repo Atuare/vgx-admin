@@ -175,6 +175,10 @@ export function AvailabilityTable({ defaultTableSize }: TableProps) {
         },
       },
     ),
+    columnHelper.accessor("description", {
+      header: "Descrição",
+      cell: row => <div>{row.getValue()}</div>,
+    }),
     {
       header: "Ações",
       cell: (row: any) => {

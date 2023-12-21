@@ -16,7 +16,9 @@ import {
 import styles from "./TrainingCreate.module.scss";
 
 interface TrainingFormInputsProps {
-  handleChangeAssessmentsFields: (type: "APPEND" | "REMOVE") => void;
+  handleChangeAssessmentsFields: (
+    type: "APPEND" | "REMOVE" | "REMOVE_ALL" | "NONE",
+  ) => void;
   register: UseFormRegister<ITrainingCreateForm>;
   control: Control<ITrainingCreateForm>;
   errors: FieldErrors<ITrainingCreateForm>;
@@ -96,13 +98,38 @@ export function TrainingFormInputs({
             >
               <NumberInput
                 width={120}
+                onChange={onChange}
+                defaultValue={value}
+              />
+            </DataInput>
+          )}
+        />
+
+        <Controller
+          name="assessmentsAmount"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DataInput
+              name="Quantidade de avaliações"
+              required
+              error={errors?.assessmentsAmount?.message}
+            >
+              <NumberInput
+                width={120}
+                disableManualInput
                 onChange={val => {
-                  if (typeof value !== "undefined" && val !== value) {
-                    handleChangeAssessmentsFields(
-                      value > val ? "REMOVE" : "APPEND",
-                    );
-                    onChange(val);
-                  }
+                  handleChangeAssessmentsFields(
+                    isNaN(val) || val === 0
+                      ? "REMOVE_ALL"
+                      : (typeof value === "undefined" && val === 1) ||
+                          (typeof value !== "undefined" && value !== val)
+                        ? value > val
+                          ? "REMOVE"
+                          : "APPEND"
+                        : "NONE",
+                  );
+
+                  onChange(val);
                 }}
                 defaultValue={value}
               />
