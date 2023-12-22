@@ -761,6 +761,25 @@ export const fetchApi = createApi({
         },
       }),
     }),
+    updateCandidacyTrainingStatus: builder.mutation<
+      any,
+      { id: string; data: Record<string, string> }
+    >({
+      query: ({ id, data }) => ({
+        url: `/candidacy/${id}/updateStatus`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+    linkCandidacyToAdmission: builder.mutation<
+      any,
+      { candidacyId: string; admissionId: string }
+    >({
+      query: ({ candidacyId, admissionId }) => ({
+        url: `/candidacy/${candidacyId}/link-admission/${admissionId}`,
+        method: "PUT",
+      }),
+    }),
     getAllExams: builder.query<any, any>({
       query: () => ({
         url: `exams/`,
@@ -969,6 +988,15 @@ export const fetchApi = createApi({
         url: `/signature/signer`,
       }),
     }),
+    updateAssessment: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/training-assessment",
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
@@ -1042,6 +1070,8 @@ export const {
   useGetAllCandidacysQuery,
   useReleaseAdmissionContractMutation,
   useUpdateCandidacyCandidateMutation,
+  useUpdateCandidacyTrainingStatusMutation,
+  useLinkCandidacyToAdmissionMutation,
   useGetAllExamsQuery,
   useGetAllExaminersQuery,
   useGetAllExamClassQuery,
@@ -1065,4 +1095,5 @@ export const {
   useUpdateInterviewSchedulingsMutation,
   useCreateSignatureDocumentMutation,
   useGetAllSignatureSignersQuery,
+  useUpdateAssessmentMutation,
 } = fetchApi;

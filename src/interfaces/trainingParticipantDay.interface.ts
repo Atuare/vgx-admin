@@ -6,5 +6,6 @@ export interface TrainingParticipantDayType {
   candidacy: CandidacyType;
   trainingDay: TrainingDayType;
   presence: boolean;
+  absent: boolean;
   observation: string;
 }

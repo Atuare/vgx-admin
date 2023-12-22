@@ -1,11 +1,16 @@
 import { ScheduleSend } from "@/assets/Icons";
 import { IconButton } from "@/components/IconButton";
 import { InputContainer } from "@/components/Modals/DataModal/components/InputContainer";
+import { ReleaseAssessmentModal } from "@/components/Modals/ReleaseAssessment";
 import { DataTable } from "@/components/Table";
 import { useTableParams } from "@/hooks/useTableParams";
 import { CandidacyType } from "@/interfaces/candidacy.interface";
 import { TrainingType } from "@/interfaces/training.interface";
-import { useGetTrainingByIdQuery } from "@/services/api/fetchApi";
+import {
+  useGetTrainingByIdQuery,
+  useUpdateAssessmentMutation,
+} from "@/services/api/fetchApi";
+import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -44,9 +49,29 @@ export const TrainingDayDetailsTable = forwardRef<
   const { data, isSuccess, isFetching, refetch } = useGetTrainingByIdQuery({
     id: props.trainingId,
   });
+  const [updateAssessment] = useUpdateAssessmentMutation();
 
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
+  };
+
+  const releaseAssessmentForCandidacies = async () => {
+    const trainingAssessment = training?.trainingAssessments.find(
+      trainingAssessment =>
+        trainingAssessment.trainingDay.dayNumber === props.trainingDay, // last tested: 3
+    );
+
+    try {
+      if (trainingAssessment) {
+        await updateAssessment({
+          id: trainingAssessment.id,
+          availableForCandidacies: true,
+        });
+        Toast("success", "Avaliação liberada com sucesso!");
+      }
+    } catch {
+      Toast("error", "Houve um erro ao tentar liberar a avaliação");
+    }
   };
 
   const columnHelper = createColumnHelper<CandidacyType>();
@@ -106,7 +131,13 @@ export const TrainingDayDetailsTable = forwardRef<
       header: "Ausência",
       id: "absent",
       cell: row => {
-        const trainingParticipantDayPresence = false; // TODO: get real value
+        const trainingParticipantDayAbsent = row
+          .getValue()
+          .find(
+            trainingParticipantDay =>
+              trainingParticipantDay.trainingDay.dayNumber ===
+              props.trainingDay,
+          )?.absent;
 
         return (
           <div
@@ -117,7 +148,7 @@ export const TrainingDayDetailsTable = forwardRef<
           >
             <Checkbox
               iconType="solid"
-              isActive={trainingParticipantDayPresence}
+              isActive={trainingParticipantDayAbsent}
               disabled
               style={{ width: "auto" }}
             />
@@ -125,7 +156,7 @@ export const TrainingDayDetailsTable = forwardRef<
         );
       },
     }),
-    columnHelper.accessor("training", {
+    columnHelper.accessor("id", {
       header: () => (
         <div
           style={{
@@ -136,11 +167,27 @@ export const TrainingDayDetailsTable = forwardRef<
           }}
         >
           Avaliação{" "}
-          <IconButton icon={<ScheduleSend />} style={{ display: "flex" }} />
+          <ReleaseAssessmentModal
+            handleOnRelease={() => releaseAssessmentForCandidacies()}
+            name={String(props.trainingDay)}
+          >
+            <IconButton icon={<ScheduleSend />} style={{ display: "flex" }} />
+          </ReleaseAssessmentModal>
         </div>
       ),
       cell: row => {
-        return <div>00</div>; // TODO: get real value
+        const candidacyId = row.getValue();
+
+        const trainingAssessment = training?.trainingAssessments.find(
+          trainingAssessment => trainingAssessment.trainingDay.dayNumber === 3, // last tested: 3
+        );
+
+        const grade = trainingAssessment?.trainingAssessmentGrades?.find(
+          trainingAssessmentGrade =>
+            trainingAssessmentGrade?.candidacy?.id === candidacyId,
+        )?.candidacy.grade;
+
+        return <div>{grade || "Não há"}</div>;
       },
     }),
     columnHelper.accessor("trainingParticipantDays", {
@@ -153,7 +200,7 @@ export const TrainingDayDetailsTable = forwardRef<
             trainingParticipantDay =>
               trainingParticipantDay.trainingDay.dayNumber ===
               props.trainingDay,
-          )?.observation;
+          )?.observation; // TODO: Possibility to change observation
 
         return (
           <div
