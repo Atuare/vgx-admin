@@ -63,10 +63,10 @@ export function Select({
                   options.length === 1
                     ? "8px"
                     : index === 0
-                    ? "8px 8px 0 0"
-                    : index + 1 === options.length
-                    ? "0 0 8px 8px"
-                    : "",
+                      ? "8px 8px 0 0"
+                      : index + 1 === options.length
+                        ? "0 0 8px 8px"
+                        : "",
               }}
               className={`${
                 option.id === select || option.name === select

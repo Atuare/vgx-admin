@@ -48,7 +48,15 @@ export interface ITrainingCreateForm {
   endDate: Date;
   trainingLocation: string;
   trainingTypeId: string;
-  trainingAssessments: TrainingAssessmentType[];
+  trainingAssessments: {
+    minimumPassingGrade: number;
+    maxTimeToFinish: number;
+    questionsAmount: number;
+    orientationMessage: string;
+    approvedMessage: string;
+    disapprovedMessage: string;
+    trainingAssessmentQuestions: IQuestion[];
+  }[];
 }
 
 interface TrainingAssessmentType {
