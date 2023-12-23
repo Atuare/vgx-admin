@@ -31,29 +31,6 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
 
   const { push } = useRouter();
 
-  const initialDatesOptions = [
-    {
-      name: "D+1",
-      id: "D+1",
-    },
-    {
-      name: "D+2",
-      id: "D+2",
-    },
-    {
-      name: "D+3",
-      id: "D+3",
-    },
-    {
-      name: "D+4",
-      id: "D+4",
-    },
-    {
-      name: "D+5",
-      id: "D+5",
-    },
-  ];
-
   const InterviewType = [
     {
       name: "Remoto",
@@ -79,6 +56,19 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
     page: 1,
     size: 99999,
   });
+
+  const handleGetDatesOptions = (days: number) => {
+    const initialDatesOptions = [];
+
+    for (let i = 1; i <= days; i++) {
+      initialDatesOptions.push({
+        name: `D+${i}`,
+        id: `D+${i}`,
+      });
+    }
+
+    return initialDatesOptions;
+  };
 
   const handleSubmitGeneneral = (data: IGeneral) => {
     handleOnSubmit({
@@ -181,7 +171,7 @@ export function General({ handleOnSubmit, interview }: IGeneralProps) {
               error={errors.startDate?.message}
             >
               <Select
-                options={initialDatesOptions}
+                options={handleGetDatesOptions(7)}
                 placeholder="Selecione"
                 onChange={val => onChange(val?.id)}
                 value={value}

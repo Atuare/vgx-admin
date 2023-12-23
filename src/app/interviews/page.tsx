@@ -82,16 +82,6 @@ export default function Interviews() {
         </DataModal>
       ),
     }),
-    columnHelper.accessor("link", {
-      header: "Link",
-      cell: row => (
-        <div className={styles.rowLink}>
-          <a href={row.getValue()} target="_blank">
-            Acessar link
-          </a>
-        </div>
-      ),
-    }),
     columnHelper.accessor("candidacy.process.unit.unitName", {
       id: "unit",
       header: () => (
@@ -139,20 +129,12 @@ export default function Interviews() {
       ?.getSelectedRowModel()
       .flatRows.map(row => row.original);
 
-    const columnHeaders = [
-      "CPF",
-      "Nome",
-      "Link",
-      "Unidade/Site",
-      "Data",
-      "Hora",
-    ];
+    const columnHeaders = ["CPF", "Nome", "Unidade/Site", "Data", "Hora"];
 
     if (selectedRows && selectedRows.length > 0) {
       const excelData = selectedRows.map(row => ({
         cpf: formatCpf(row.candidacy.candidate.cpf) || "",
         name: row.candidacy.candidate.name || "",
-        link: row.link || "",
         unit: row.candidacy.process.unit.unitName || "",
         date: dayjs(row.date).utc().format("DD/MM/YYYY") || "",
         hour: dayjs(row.date).utc().format("hh:mm") || "",
@@ -173,7 +155,7 @@ export default function Interviews() {
         const excelData = rows.map(row => ({
           cpf: formatCpf(row.candidacy.candidate.cpf) || "",
           name: row.candidacy.candidate.name || "",
-          link: row.link || "",
+
           unit: row.candidacy.process.unit.unitName || "",
           date: dayjs(row.date).utc().format("DD/MM/YYYY") || "",
           hour: dayjs(row.date).utc().format("hh:mm") || "",
