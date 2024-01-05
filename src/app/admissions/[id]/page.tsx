@@ -22,10 +22,14 @@ import {
   IAdmission,
   IAdmissionCandidate,
 } from "@/interfaces/admissions.interface";
+import { ICandidate } from "@/interfaces/candidate.interface";
+import { IContract } from "@/interfaces/contract.interface";
 import {
+  useCreateSignatureDocumentMutation,
+  useCreateSignatureLinkMutation,
+  useCreateSignatureSignerMutation,
   useGetAdmissionQuery,
   useGetAllUnitsQuery,
-  useReleaseAdmissionContractMutation,
 } from "@/services/api/fetchApi";
 import { admissionsStatus } from "@/utils/admissions";
 import { formatCpf } from "@/utils/formatCpf";
@@ -33,6 +37,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatWhatsappNumber } from "@/utils/phoneFormating";
+import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -51,6 +56,7 @@ export default function AdmissionClass() {
   const [unitsOptions, setUnitsOptions] = useState<string[]>([]);
   const [table, setTable] = useState<Table<any>>();
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [contract, setContract] = useState<IContract>();
   const [contractSendMethods, setContractSendMethods] = useState<string[]>([]);
 
   const pathname = usePathname();
@@ -73,7 +79,9 @@ export default function AdmissionClass() {
     size: 9999,
   });
 
-  const [releaseContract] = useReleaseAdmissionContractMutation();
+  const [createSignatureDocument] = useCreateSignatureDocumentMutation();
+  const [createSignatureSigner] = useCreateSignatureSignerMutation();
+  const [createSignatureLink] = useCreateSignatureLinkMutation();
 
   const handleTogglePage = async (page: number) => {
     setCurrentPage(page + 1);
@@ -83,25 +91,89 @@ export default function AdmissionClass() {
     setGlobalFilter(value);
   };
 
+  const handleCreateSigner = async (candidate: ICandidate) => {
+    try {
+      const res = await createSignatureSigner({
+        email: candidate.email,
+        phone: candidate.whatsapp,
+        name: candidate.name,
+        document: candidate.cpf,
+        birthday: candidate.birthdate,
+      });
+
+      return (res as any).data.data;
+    } catch (err) {
+      Toast("error", "Houve um erro tentando criar um assinante");
+    }
+  };
+
+  const handleCreateContract = async (contract: IContract) => {
+    try {
+      const res = await createSignatureDocument({
+        path: `/${contract.name}-${contract.id}.pdf`,
+        content: contract.document,
+        timeout: new Date(new Date().setDate(new Date().getDate() + 90)),
+        selfless: true,
+        refusal: true,
+      });
+
+      return (res as any).data.data;
+    } catch (err) {
+      Toast("error", "Houve um erro tentando criar um documento de assinatura");
+    }
+  };
+
+  const handleCreateSignatureLink = async (
+    signerData: any,
+    documentData: any,
+  ) => {
+    try {
+      await createSignatureLink({
+        documentKey: documentData.key,
+        signerKey: signerData.key,
+        refusable: true,
+        message: "Há um contrato te aguardando",
+      });
+    } catch (err) {
+      Toast("error", "Houve um erro tentando criar um link de assinatura");
+    }
+  };
+
+  const handleSendContract = async (candidate: ICandidate) => {
+    if (!contract) return;
+
+    const signerData = await handleCreateSigner(candidate);
+    const documentData = await handleCreateContract(contract);
+
+    await handleCreateSignatureLink(signerData, documentData);
+  };
+
   const handleReleaseContract = () => {
     const rows = table?.getSelectedRowModel().flatRows.map(row => row.original);
+    const candidates = (rows?.map(row => row.candidacy.candidate) ||
+      []) as ICandidate[];
 
-    // if (rows && rows.length > 0) {
-    //   const admissionsResultIds = rows.map(row => row.id);
-    //   releaseContract({
-    //     admissionsResultIds,
-    //   })
-    //     .then(() => {
-    //       Toast("success", "Contratos liberados com sucesso");
-    //       table?.resetRowSelection();
-    //       refetch();
-    //     })
-    //     .catch(() => {
-    //       Toast("error", "Erro ao liberar contratos");
-    //     });
-    // } else {
-    //   Toast("error", "Selecione ao menos um candidato para liberar contrato");
-    // }
+    if (!contract) {
+      return Toast("error", "Selecione um contrato");
+    }
+
+    if (rows && rows.length > 0) {
+      Promise.all(
+        candidates.map(async candidate => {
+          return await handleSendContract(candidate);
+        }),
+      )
+        .then(() => {
+          Toast("success", "Contratos liberados com sucesso");
+          table?.resetRowSelection();
+          refetch();
+        })
+        .catch(() => {
+          Toast("error", "Erro ao liberar contratos");
+        });
+    } else {
+      Toast("error", "Selecione ao menos um candidato para liberar contrato");
+    }
   };
 
   const columnHelper = createColumnHelper<IAdmissionCandidate>();
@@ -474,6 +546,7 @@ export default function AdmissionClass() {
             buttonText="Permitir acesso"
             handleOnSave={handleReleaseContract}
             onChangeSendMethods={setContractSendMethods}
+            onChangeContract={setContract}
             icon={<TaskAlt />}
             text="Liberar contratos para assinatura?"
           >

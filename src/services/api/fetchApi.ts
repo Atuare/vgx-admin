@@ -983,6 +983,15 @@ export const fetchApi = createApi({
         };
       },
     }),
+    createSignatureLink: builder.mutation<any, any>({
+      query: (data: Record<string, string>) => {
+        return {
+          url: "/signature/sign",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
     getAllSignatureSigners: builder.query<any, any>({
       query: () => ({
         url: `/signature/signer`,
@@ -1094,6 +1103,8 @@ export const {
   useUpdateInterviewDatesMutation,
   useUpdateInterviewSchedulingsMutation,
   useCreateSignatureDocumentMutation,
+  useCreateSignatureSignerMutation,
+  useCreateSignatureLinkMutation,
   useGetAllSignatureSignersQuery,
   useUpdateAssessmentMutation,
 } = fetchApi;
