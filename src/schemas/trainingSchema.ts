@@ -45,10 +45,10 @@ export const trainingCreateSchema = yup.object({
   trainer: yup.string().required("Campo obrigatório"),
   assessmentsAmount: yup
     .number()
+    .optional()
     .typeError("Número inválido")
     .min(1, "Digite um número maior que 0")
-    .integer("Digite um número inteiro")
-    .required("Campo obrigatório"),
+    .integer("Digite um número inteiro"),
   trainingDays: yup
     .number()
     .typeError("Número inválido")
@@ -115,9 +115,5 @@ export const trainingCreateSchema = yup.object({
         })
         .required("Campo obrigatório"),
     )
-    .test({
-      message: "É necessário no mínimo criar uma avaliação",
-      test: arr => arr && arr.length > 0,
-    })
-    .required("Campo obrigatório"),
+    .optional(),
 });
