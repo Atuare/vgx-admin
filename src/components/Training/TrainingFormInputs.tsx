@@ -108,10 +108,9 @@ export function TrainingFormInputs({
         <Controller
           name="assessmentsAmount"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value = 0 } }) => (
             <DataInput
               name="Quantidade de avaliações"
-              required
               error={errors?.assessmentsAmount?.message}
             >
               <NumberInput
