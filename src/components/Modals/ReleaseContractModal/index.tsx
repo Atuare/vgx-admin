@@ -10,7 +10,7 @@ import styles from "./ReleaseContractModal.module.scss";
 export function ReleaseContractModal({
   children,
   handleOnSave,
-  onChangeSendMethods,
+  onChangeSendMethod,
   onChangeContract,
   text,
   buttonText,
@@ -18,7 +18,7 @@ export function ReleaseContractModal({
 }: {
   children: ReactNode;
   handleOnSave: () => void;
-  onChangeSendMethods: (sendMethods: string[]) => void;
+  onChangeSendMethod: (sendMethod: string) => void;
   onChangeContract: (contract: IContract) => void;
   text: string;
   buttonText: string;
@@ -27,7 +27,7 @@ export function ReleaseContractModal({
   const [contracts, setContracts] = useState<{ name: string; id: string }[]>(
     [],
   );
-  const [sendMethods, setSendMethods] = useState<string[]>([]);
+  const [sendMethod, setSendMethod] = useState<string>("");
 
   const { data: documentsData, isSuccess } = useGetAllContractsQuery({
     page: 1,
@@ -37,13 +37,7 @@ export function ReleaseContractModal({
   });
 
   const updateSendMethod = (sendMethod: string) => {
-    const methodIncluded = sendMethods?.includes(sendMethod);
-
-    const methods = methodIncluded
-      ? sendMethods?.filter(method => method !== sendMethod)
-      : [...sendMethods, sendMethod];
-
-    setSendMethods(methods);
+    setSendMethod(sendMethod);
   };
 
   const handleChangeContract = (id: string) => {
@@ -53,8 +47,8 @@ export function ReleaseContractModal({
   };
 
   useEffect(() => {
-    onChangeSendMethods(sendMethods);
-  }, [sendMethods]);
+    onChangeSendMethod(sendMethod);
+  }, [sendMethod]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -70,7 +64,7 @@ export function ReleaseContractModal({
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
-        <span onClick={() => setSendMethods([])}>{children}</span>
+        <span onClick={() => setSendMethod("")}>{children}</span>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className={styles.modal__overlay} />
@@ -87,11 +81,17 @@ export function ReleaseContractModal({
           </div>
           <div className={styles.modal__checkboxes}>
             <Checkbox
+              key={crypto.randomUUID()}
+              singleSelect
+              isActive={sendMethod === "whatsapp"}
               iconType="solid"
               value="WhatsApp"
               onChangeCheckbox={() => updateSendMethod("whatsapp")}
             />
             <Checkbox
+              key={crypto.randomUUID()}
+              singleSelect
+              isActive={sendMethod === "email"}
               iconType="solid"
               value="E-mail"
               onChangeCheckbox={() => updateSendMethod("email")}

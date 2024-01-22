@@ -33,6 +33,9 @@ export interface IAdmissionCandidate {
   status: AdmissionsStatusEnum;
   accessContract: boolean;
   document: string;
+  documentKey: string | null;
+  signerKey: string | null;
+  listKey: string | null;
   contractStatus: AdmissionContractStatusEnum;
   createdAt: string;
   updatedAt: string;

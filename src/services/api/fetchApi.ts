@@ -965,6 +965,19 @@ export const fetchApi = createApi({
         };
       },
     }),
+    getAllSignatureDocuments: builder.query<any, any>({
+      query: () => ({
+        url: `/signature/`,
+      }),
+    }),
+    getSignatureDocument: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `/signature/${id}`,
+        params: {
+          id,
+        },
+      }),
+    }),
     createSignatureDocument: builder.mutation<any, any>({
       query: (data: Record<string, string>) => {
         return {
@@ -1102,6 +1115,8 @@ export const {
   useDeleteInterviewSettingMutation,
   useUpdateInterviewDatesMutation,
   useUpdateInterviewSchedulingsMutation,
+  useGetAllSignatureDocumentsQuery,
+  useGetSignatureDocumentQuery,
   useCreateSignatureDocumentMutation,
   useCreateSignatureSignerMutation,
   useCreateSignatureLinkMutation,

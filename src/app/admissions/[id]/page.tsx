@@ -37,6 +37,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { formatRG } from "@/utils/formatRg";
 import { formatTimeRange } from "@/utils/formatTimeRange";
 import { formatWhatsappNumber } from "@/utils/phoneFormating";
+import { getSignatureDocument } from "@/utils/signature";
 import { Toast } from "@/utils/toast";
 import { Table, createColumnHelper } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -57,7 +58,7 @@ export default function AdmissionClass() {
   const [table, setTable] = useState<Table<any>>();
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [contract, setContract] = useState<IContract>();
-  const [contractSendMethods, setContractSendMethods] = useState<string[]>([]);
+  const [contractSendMethods, setContractSendMethods] = useState<string>("");
 
   const pathname = usePathname();
   const { get } = useSearchParams();
@@ -91,12 +92,19 @@ export default function AdmissionClass() {
     setGlobalFilter(value);
   };
 
+  const handleGetSignatureDocument = async (id: string) => {
+    const document = await getSignatureDocument(id);
+
+    return document;
+  };
+
   const handleCreateSigner = async (candidate: ICandidate) => {
     try {
       const res = await createSignatureSigner({
         email: candidate.email,
         phone: candidate.whatsapp,
         name: candidate.name,
+        auths: [contractSendMethods],
         document: candidate.cpf,
         birthday: candidate.birthdate,
       });
@@ -126,9 +134,11 @@ export default function AdmissionClass() {
   const handleCreateSignatureLink = async (
     signerData: any,
     documentData: any,
+    admissionResult: any,
   ) => {
     try {
       await createSignatureLink({
+        admissionResult: admissionResult,
         documentKey: documentData.key,
         signerKey: signerData.key,
         refusable: true,
@@ -139,13 +149,16 @@ export default function AdmissionClass() {
     }
   };
 
-  const handleSendContract = async (candidate: ICandidate) => {
+  const handleSendContract = async (
+    candidate: ICandidate,
+    admissionResult: any,
+  ) => {
     if (!contract) return;
 
     const signerData = await handleCreateSigner(candidate);
     const documentData = await handleCreateContract(contract);
 
-    await handleCreateSignatureLink(signerData, documentData);
+    await handleCreateSignatureLink(signerData, documentData, admissionResult);
   };
 
   const handleReleaseContract = () => {
@@ -159,8 +172,8 @@ export default function AdmissionClass() {
 
     if (rows && rows.length > 0) {
       Promise.all(
-        candidates.map(async candidate => {
-          return await handleSendContract(candidate);
+        candidates.map(async (candidate, i) => {
+          return await handleSendContract(candidate, rows[i]);
         }),
       )
         .then(() => {
@@ -173,6 +186,22 @@ export default function AdmissionClass() {
         });
     } else {
       Toast("error", "Selecione ao menos um candidato para liberar contrato");
+    }
+  };
+
+  const handleOpenDocument = async (documentKey: string, e: any) => {
+    e.preventDefault();
+
+    const document = (await handleGetSignatureDocument(documentKey))?.data;
+
+    const openInNewTab = (url: string) => {
+      window.open(url, "_blank", "noreferrer");
+    };
+
+    if (document?.downloads?.signed_file_url) {
+      openInNewTab(document.downloads.signed_file_url);
+    } else if (document?.downloads?.original_file_url) {
+      openInNewTab(document?.downloads?.original_file_url);
     }
   };
 
@@ -363,17 +392,38 @@ export default function AdmissionClass() {
     ),
     columnHelper.accessor("document", {
       header: "Documento",
-      cell: row => (
-        <div style={{ width: 180 }}>
-          <a
-            style={{ fontSize: 14, fontWeight: 400 }}
-            href="https://www.clicksign.com/"
-            target="_blank"
-          >
-            Acessar documento
-          </a>
-        </div>
-      ),
+      cell: async row => {
+        const documentKey = row.row.original.documentKey;
+
+        if (!documentKey) {
+          return (
+            <div style={{ width: 180 }}>
+              <p style={{ fontSize: 14, fontWeight: 400 }}>
+                Não há documento liberado
+              </p>
+            </div>
+          );
+        }
+
+        // TODO: document visualization
+
+        return (
+          <div style={{ width: 180 }}>
+            {true ? (
+              <a
+                style={{ fontSize: 14, fontWeight: 400 }}
+                href="https://www.clicksign.com/"
+                target="_blank"
+                onClick={async e => await handleOpenDocument(documentKey, e)}
+              >
+                Acessar documento
+              </a>
+            ) : (
+              <></>
+            )}
+          </div>
+        );
+      },
     }),
   ];
 
@@ -545,7 +595,7 @@ export default function AdmissionClass() {
           <ReleaseContractModal
             buttonText="Permitir acesso"
             handleOnSave={handleReleaseContract}
-            onChangeSendMethods={setContractSendMethods}
+            onChangeSendMethod={setContractSendMethods}
             onChangeContract={setContract}
             icon={<TaskAlt />}
             text="Liberar contratos para assinatura?"
