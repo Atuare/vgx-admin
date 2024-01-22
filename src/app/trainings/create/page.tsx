@@ -10,11 +10,12 @@ export default function TrainingCreate() {
   const [createTraining] = useCreateTrainingMutation();
 
   const handleOnSubmit = (data: ITrainingCreateForm) => {
-    const { assessmentsAmount, ...rest } = data;
+    const { assessmentsAmount, trainingAssessments = [], ...rest } = data;
 
     createTraining({
       status: "EM_ANDAMENTO",
       ...rest,
+      trainingAssessments,
     }).then(data => {
       if ("error" in data) {
         Toast("error", "Erro ao criar o treinamento");
