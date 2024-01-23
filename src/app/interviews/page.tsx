@@ -229,7 +229,7 @@ export default function Interviews() {
       <DataTable
         ref={tableRef}
         currentPage={currentPage}
-        defaultTableSize={5}
+        defaultTableSize={15}
         handleTogglePage={handleTogglePage}
         setTable={setTable}
         columns={columns}
