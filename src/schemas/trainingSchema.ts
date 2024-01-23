@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import * as yup from "yup";
 
 export const trainingModalStatusSchema = yup
@@ -71,7 +72,10 @@ export const trainingCreateSchema = yup.object({
     .date()
     .typeError("Data inválida")
     .required("Campo obrigatório")
-    .min(new Date(), "Data inicial deve ser maior que a data atual")
+    .min(
+      dayjs(new Date()).subtract(1, "day").toDate(),
+      "Data inicial deve ser igual ou maior que a data atual",
+    )
     .max(yup.ref("endDate"), "Data inicial deve ser menor que a data final"),
   endDate: yup
     .date()
