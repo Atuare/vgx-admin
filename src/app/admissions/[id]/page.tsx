@@ -138,7 +138,7 @@ export default function AdmissionClass() {
   ) => {
     try {
       await createSignatureLink({
-        admissionResult: admissionResult,
+        admissionResult: { ...admissionResult, document: contract?.document },
         documentKey: documentData.key,
         signerKey: signerData.key,
         refusable: true,
