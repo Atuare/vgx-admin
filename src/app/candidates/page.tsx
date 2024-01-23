@@ -12,7 +12,7 @@ import { downloadExcel } from "react-export-table-to-excel";
 import styles from "./Candidates.module.scss";
 
 dayjs.extend(utc);
-const defaultTableSize = 2;
+const defaultTableSize = 15;
 
 const convertDateFilterSelect = {
   CADASTRO: "Data Cadastro",
